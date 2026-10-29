@@ -1,5 +1,5 @@
 import type React from 'react'
-import { Cloud, GitBranch, Tag } from 'lucide-react'
+import { Archive, Cloud, GitBranch, Tag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import {
@@ -12,6 +12,8 @@ import {
 import { splitRemoteBranchName } from '../../../../shared/git-remote-branch-name'
 import type { GitHistoryItemRef } from '../../../../shared/git-history'
 import type { GitGraphRequest } from './git-graph-request'
+import { GitGraphStashMenuContent } from './git-graph-stash-menu'
+import { GIT_GRAPH_STASH_REF_PREFIX } from '../../../../shared/codezera/git-graph-types'
 
 type BadgeGroup = {
   ref: GitHistoryItemRef
@@ -63,6 +65,9 @@ function BadgeMenu({
 }): React.JSX.Element {
   const { ref } = group
   const isCurrent = ref.category === 'branches' && ref.name === currentBranch
+  if (ref.id.startsWith(GIT_GRAPH_STASH_REF_PREFIX)) {
+    return <GitGraphStashMenuContent selector={ref.name} onRequest={onRequest} />
+  }
   if (ref.category === 'remote branches') {
     const split = splitRemoteBranchName(ref.name)
     return (
@@ -186,8 +191,13 @@ export function GitGraphRefBadges({
     <span className="flex shrink-0 items-center gap-1" onClick={(event) => event.stopPropagation()}>
       {groupRefs(refs).map((group) => {
         const { ref } = group
-        const Icon =
-          ref.category === 'tags' ? Tag : ref.category === 'remote branches' ? Cloud : GitBranch
+        const Icon = ref.id.startsWith(GIT_GRAPH_STASH_REF_PREFIX)
+          ? Archive
+          : ref.category === 'tags'
+            ? Tag
+            : ref.category === 'remote branches'
+              ? Cloud
+              : GitBranch
         const isCurrent = ref.category === 'branches' && ref.name === currentBranch
         return (
           <ContextMenu key={ref.id}>

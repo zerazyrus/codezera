@@ -7,6 +7,8 @@ import type { GitHistoryItem } from '../../../../shared/git-history'
 import type { GitBranchChangeEntry } from '../../../../shared/git-diff-compare-types'
 import type { GitGraphLaneRef } from './git-graph-layout'
 import { GitGraphLanesThrough } from './git-graph-lanes-svg'
+import { GitGraphIssueText } from './git-graph-issue-text'
+import type { GitGraphIssueLinking } from '../../../../shared/codezera/git-graph-types'
 
 type TreeNode = {
   name: string
@@ -115,7 +117,8 @@ export function GitGraphCommitDetails({
   onOpenFile,
   onOpenAll,
   onSelectCommit,
-  onClose
+  onClose,
+  issueLinking
 }: {
   item: GitHistoryItem
   files: GitHistoryCommitFilesState
@@ -125,6 +128,7 @@ export function GitGraphCommitDetails({
   onOpenAll: () => void
   onSelectCommit: (id: string) => void
   onClose: () => void
+  issueLinking: GitGraphIssueLinking | null
 }): React.JSX.Element {
   const tree = useMemo(() => (files.status === 'ready' ? buildTree(files.entries) : null), [files])
   return (
@@ -172,7 +176,9 @@ export function GitGraphCommitDetails({
               {new Date(item.timestamp).toString()}
             </Field>
           ) : null}
-          <pre className="whitespace-pre-wrap pt-3 font-sans">{item.message.trim()}</pre>
+          <pre className="whitespace-pre-wrap pt-3 font-sans">
+            <GitGraphIssueText text={item.message.trim()} linking={issueLinking} />
+          </pre>
         </div>
         <div className="scrollbar-sleek max-h-80 min-w-0 overflow-auto border-l border-border py-2 pl-3 pr-9">
           {files.status === 'loading' ? (

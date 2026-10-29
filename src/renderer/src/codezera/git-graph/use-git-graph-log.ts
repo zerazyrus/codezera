@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getConnectionId } from '@/lib/connection-context'
 import {
   GIT_GRAPH_PAGE_SIZE,
+  type GitGraphLogOptions,
   type GitGraphLogResult
 } from '../../../../shared/codezera/git-graph-types'
 
@@ -10,17 +11,19 @@ export type GitGraphLogState =
   | { status: 'ready'; result: GitGraphLogResult }
   | { status: 'error'; error: string; result?: GitGraphLogResult }
 
-/** Loads the graph for one worktree; superseded responses are dropped by sequence number. */
+/** Loads the graph for one worktree; waits for repo options, and drops superseded responses by sequence number. */
 export function useGitGraphLog({
   worktreeId,
   worktreePath,
   selectedRefs,
-  showRemoteBranches
+  showRemoteBranches,
+  options
 }: {
   worktreeId: string
   worktreePath: string
   selectedRefs: string[] | null
   showRemoteBranches: boolean
+  options: GitGraphLogOptions | null
 }): {
   state: GitGraphLogState
   refresh: (options?: { wakeWslDistro?: boolean }) => Promise<void>
@@ -36,7 +39,10 @@ export function useGitGraphLog({
   }, [worktreeId])
 
   const refresh = useCallback(
-    async (options?: { wakeWslDistro?: boolean }): Promise<void> => {
+    async (refreshOptions?: { wakeWslDistro?: boolean }): Promise<void> => {
+      if (!options) {
+        return
+      }
       const requestId = ++requestSeqRef.current
       setState((previous) => ({ status: 'loading', result: previous.result }))
       try {
@@ -46,7 +52,8 @@ export function useGitGraphLog({
           refs: selectedRefs,
           showRemoteBranches,
           limit,
-          ...(options?.wakeWslDistro ? { wakeWslDistro: true } : {})
+          options,
+          ...(refreshOptions?.wakeWslDistro ? { wakeWslDistro: true } : {})
         })
         if (requestSeqRef.current === requestId) {
           setState({ status: 'ready', result })
@@ -58,7 +65,7 @@ export function useGitGraphLog({
         }
       }
     },
-    [limit, selectedRefs, showRemoteBranches, worktreeId, worktreePath]
+    [limit, options, selectedRefs, showRemoteBranches, worktreeId, worktreePath]
   )
 
   useEffect(() => {

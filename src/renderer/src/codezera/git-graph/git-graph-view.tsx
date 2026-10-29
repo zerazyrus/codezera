@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { CloudDownload, Loader2, RefreshCw } from 'lucide-react'
+import { CloudDownload, Loader2, RefreshCw, Settings } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -24,7 +24,8 @@ import { GitGraphCommitDetails } from './git-graph-commit-details'
 import { GitGraphBranchPicker } from './git-graph-branch-picker'
 import { GitGraphRequestDialog } from './git-graph-request-dialog'
 import type { GitGraphRequest } from './git-graph-request'
-import { useGitGraphStore, useGitGraphViewState } from './git-graph-store'
+import { useGitGraphRepoSettings, useGitGraphStore, useGitGraphViewState } from './git-graph-store'
+import { GitGraphRepoSettingsDialog } from './git-graph-repo-settings-dialog'
 import { useGitGraphLog } from './use-git-graph-log'
 import { layoutGitGraph } from './git-graph-layout'
 import { GIT_GRAPH_LANE_WIDTH, GIT_GRAPH_ROW_HEIGHT, GitGraphRowSvg } from './git-graph-lanes-svg'
@@ -76,12 +77,29 @@ function HeaderCell({ children }: { children: React.ReactNode }): React.JSX.Elem
 export function GitGraphView({
   worktreeId,
   worktreePath,
+  repoId,
+  repoName,
   repoTarget
 }: {
   worktreeId: string
   worktreePath: string
+  repoId: string
+  repoName: string
   repoTarget: RuntimeClientTarget
 }): React.JSX.Element {
+  const settings = useGitGraphRepoSettings(repoId, worktreeId)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const logOptions = useMemo(
+    () =>
+      settings && {
+        showStashes: settings.showStashes,
+        showTags: settings.showTags,
+        includeReflogs: settings.includeReflogs,
+        firstParentOnly: settings.firstParentOnly,
+        hiddenRemotes: settings.hiddenRemotes
+      },
+    [settings]
+  )
   const showRemoteBranches = useGitGraphStore((s) => s.showRemoteBranches)
   const setShowRemoteBranches = useGitGraphStore((s) => s.setShowRemoteBranches)
   const patchView = useGitGraphStore((s) => s.patchView)
@@ -98,7 +116,8 @@ export function GitGraphView({
     worktreeId,
     worktreePath,
     selectedRefs,
-    showRemoteBranches
+    showRemoteBranches,
+    options: logOptions
   })
   const result = state.result
   const [filesById, setFilesById] = useState<Record<string, GitHistoryCommitFilesState>>({})
@@ -264,6 +283,13 @@ export function GitGraphView({
           >
             <RefreshCw />
           </ToolbarIconButton>
+          <ToolbarIconButton
+            label={translate('codezera.gitGraph.settings.open', 'Repository Settings')}
+            disabled={!settings}
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings />
+          </ToolbarIconButton>
         </div>
       </div>
       <div
@@ -320,6 +346,7 @@ export function GitGraphView({
                 onToggle={toggleCommit}
                 onRequest={handleRequest}
                 onCommitAction={handleCommitAction}
+                issueLinking={settings?.issueLinking ?? null}
               />
               {expanded ? (
                 <GitGraphCommitDetails
@@ -331,6 +358,7 @@ export function GitGraphView({
                   onOpenAll={() => void openHistoryCommitDiff(item)}
                   onSelectCommit={selectCommit}
                   onClose={() => setExpandedId(null)}
+                  issueLinking={settings?.issueLinking ?? null}
                 />
               ) : null}
             </div>
@@ -350,6 +378,20 @@ export function GitGraphView({
         ) : null}
       </div>
       <GitGraphRequestDialog request={request} onClose={() => setRequest(null)} onRun={runAction} />
+      {settings ? (
+        <GitGraphRepoSettingsDialog
+          open={settingsOpen}
+          onOpenChange={setSettingsOpen}
+          repoId={repoId}
+          repoName={repoName}
+          worktreeId={worktreeId}
+          worktreePath={worktreePath}
+          settings={settings}
+          selectedRefs={selectedRefs}
+          branches={result?.branches ?? []}
+          onRun={runAction}
+        />
+      ) : null}
     </div>
   )
 }

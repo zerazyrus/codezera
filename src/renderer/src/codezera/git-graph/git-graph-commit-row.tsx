@@ -19,6 +19,9 @@ import { GitGraphRefBadges } from './git-graph-ref-badges'
 import type { GitGraphRequest } from './git-graph-request'
 import type { GitGraphRow } from './git-graph-layout'
 import { GIT_GRAPH_ROW_HEIGHT, GitGraphRowSvg } from './git-graph-lanes-svg'
+import { GitGraphIssueText } from './git-graph-issue-text'
+import { GitGraphStashMenuContent, gitGraphStashSelector } from './git-graph-stash-menu'
+import type { GitGraphIssueLinking } from '../../../../shared/codezera/git-graph-types'
 
 const pad = (value: number): string => String(value).padStart(2, '0')
 
@@ -167,7 +170,8 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
   currentBranch,
   onToggle,
   onRequest,
-  onCommitAction
+  onCommitAction,
+  issueLinking
 }: {
   item: GitHistoryItem
   row: GitGraphRow
@@ -178,9 +182,11 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
   onToggle: (item: GitHistoryItem) => void
   onRequest: (request: GitGraphRequest) => void
   onCommitAction: (action: GitHistoryCommitAction, item: GitHistoryItem) => void
+  issueLinking: GitGraphIssueLinking | null
 }): React.JSX.Element {
   // VS Code Git Graph mutes merge commits so the work they bring in stands out.
   const muted = item.parentIds.length > 1
+  const stashSelector = gitGraphStashSelector(item)
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -212,7 +218,7 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
               onRequest={onRequest}
             />
             <span className={cn('truncate', isHead && 'font-bold', muted && 'opacity-50')}>
-              {item.subject}
+              <GitGraphIssueText text={item.subject} linking={issueLinking} />
             </span>
           </div>
           <span className={cn('truncate tabular-nums', muted && 'opacity-50')}>
@@ -226,12 +232,16 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
           </span>
         </div>
       </ContextMenuTrigger>
-      <CommitMenu
-        item={item}
-        currentBranch={currentBranch}
-        onRequest={onRequest}
-        onCommitAction={onCommitAction}
-      />
+      {stashSelector ? (
+        <GitGraphStashMenuContent selector={stashSelector} onRequest={onRequest} />
+      ) : (
+        <CommitMenu
+          item={item}
+          currentBranch={currentBranch}
+          onRequest={onRequest}
+          onCommitAction={onCommitAction}
+        />
+      )}
     </ContextMenu>
   )
 })

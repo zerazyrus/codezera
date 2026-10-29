@@ -43,6 +43,12 @@ export function CodezeraPanelContent({ file }: { file: OpenFile }): React.JSX.El
     )
   }
   return (
-    <GitGraphView worktreeId={worktree.id} worktreePath={worktree.path} repoTarget={repoTarget} />
+    <GitGraphView
+      worktreeId={worktree.id}
+      worktreePath={worktree.path}
+      repoId={worktree.repoId}
+      repoName={repo?.displayName ?? worktree.path}
+      repoTarget={repoTarget}
+    />
   )
 }

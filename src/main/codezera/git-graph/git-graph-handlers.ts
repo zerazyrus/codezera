@@ -5,7 +5,10 @@ import type { GitHistoryExecutor } from '../../../shared/git-history-types'
 import type {
   GitGraphActionRequest,
   GitGraphLogRequest,
-  GitGraphLogResult
+  GitGraphLogResult,
+  GitGraphRepoInfo,
+  GitGraphRepoInfoRequest,
+  GitGraphRepoSettings
 } from '../../../shared/codezera/git-graph-types'
 import { gitExecFileAsync } from '../../git/runner'
 import { gitOptionsForWorktree } from '../../git/git-runtime-options'
@@ -14,6 +17,8 @@ import { requireReachableGitRoute } from '../../providers/execution-host-provide
 import { getConnectionExecutionHostId } from '../../../shared/execution-host'
 import { loadGitGraph } from './git-graph-log'
 import { runGitGraphAction } from './git-graph-actions'
+import { loadGitGraphRepoInfo } from './git-graph-repo-info'
+import { getGitGraphRepoSettings, setGitGraphRepoSettings } from './git-graph-settings-store'
 
 function executorFor(gitOptions: LocalProjectWorktreeGitOptions): GitHistoryExecutor {
   return (args, cwd) => gitExecFileAsync(args, gitOptionsForWorktree(cwd, gitOptions))
@@ -42,5 +47,26 @@ export function registerCodezeraGitGraphHandlers(store: Store): void {
         runGitGraphAction(executorFor(gitOptions), path, args.action)
       )
     }
+  )
+
+  ipcMain.handle(
+    'codezera:gitGraph:repoInfo',
+    async (_event, args: GitGraphRepoInfoRequest): Promise<GitGraphRepoInfo> => {
+      requireReachableGitRoute(getConnectionExecutionHostId(args.connectionId))
+      return readWorktreeGitUnlessWslStopped(store, args.worktreePath, true, (path, gitOptions) =>
+        loadGitGraphRepoInfo(executorFor(gitOptions), path)
+      )
+    }
+  )
+
+  ipcMain.handle(
+    'codezera:gitGraph:getSettings',
+    (_event, repoId: string): Promise<GitGraphRepoSettings> => getGitGraphRepoSettings(repoId)
+  )
+
+  ipcMain.handle(
+    'codezera:gitGraph:setSettings',
+    (_event, repoId: string, settings: unknown): Promise<void> =>
+      setGitGraphRepoSettings(repoId, settings)
   )
 }
