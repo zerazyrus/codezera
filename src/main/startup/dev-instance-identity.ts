@@ -80,9 +80,7 @@ export function getDevInstanceIdentity(
   return {
     name: dockTitle,
     // Share one dev Keychain key; branch identity remains in the display name.
-    // Codezera: a dev run on the packaged profile sets this to the packaged name ("orca") so both
-    // apps read and write secrets with the same Keychain key.
-    appName: cleanEnvValue(env.CODEZERA_SAFE_STORAGE_APP_NAME) ?? `${BASE_APP_NAME} Dev`,
+    appName: `${BASE_APP_NAME} Dev`,
     isDev: true,
     devLabel,
     devBranch: branch,
