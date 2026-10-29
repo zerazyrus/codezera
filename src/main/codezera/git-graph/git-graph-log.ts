@@ -137,9 +137,18 @@ export async function loadGitGraph(
       ? selected
       : [
           '--branches',
-          ...(options.showTags ? ['--tags'] : []),
+          // Fetched tags carry no remote, so with a remote hidden they would drag its history back
+          // in; they still decorate the commits that stay visible.
+          ...(options.showTags && hiddenRemotePrefixes.length === 0 ? ['--tags'] : []),
           ...(request.showRemoteBranches
-            ? [...hiddenRemotePrefixes.map((prefix) => `--exclude=${prefix}*`), '--remotes']
+            ? [
+                // `--exclude` before `--remotes` matches names relative to refs/remotes/, so
+                // `refs/remotes/x/*` would silently match nothing.
+                ...hiddenRemotePrefixes.map(
+                  (prefix) => `--exclude=${prefix.slice('refs/remotes/'.length)}*`
+                ),
+                '--remotes'
+              ]
             : []),
           ...(options.includeReflogs ? ['--reflog'] : []),
           'HEAD'
