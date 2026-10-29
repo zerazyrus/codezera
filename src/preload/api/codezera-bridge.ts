@@ -1,0 +1,13 @@
+import { ipcRenderer } from 'electron'
+import type { GitGraphApi } from '../../shared/codezera/git-graph-types'
+
+export type CodezeraApi = {
+  gitGraph: GitGraphApi
+}
+
+export const codezeraApi: CodezeraApi = {
+  gitGraph: {
+    log: (args) => ipcRenderer.invoke('codezera:gitGraph:log', args),
+    runAction: (args) => ipcRenderer.invoke('codezera:gitGraph:action', args)
+  }
+}

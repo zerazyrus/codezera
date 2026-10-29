@@ -18,6 +18,7 @@ import {
 } from './git-history-commit-context-menu'
 import type { SourceControlRowOpenEvent } from '../listing/split-open'
 import { translate } from '@/i18n/i18n'
+import { OpenGitGraphButton } from '@/codezera/git-graph/open-git-graph-button'
 
 export type GitHistoryPanelState =
   | { status: 'idle' | 'loading'; result?: GitHistoryResult; error?: string }
@@ -283,6 +284,7 @@ export function GitHistoryPanel({
               )}
             </TooltipContent>
           </Tooltip>
+          <OpenGitGraphButton className="my-auto h-auto w-auto p-0.5 text-muted-foreground hover:bg-transparent hover:text-foreground dark:hover:bg-transparent" />
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

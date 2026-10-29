@@ -22686,5 +22686,92 @@
     "repairing": "Orca is repairing the permissions now.",
     "repairFailed": "Orca could not repair them, which usually means the folder needs an administrator.",
     "runCommands": "Run these in an Administrator Command Prompt, then relaunch Orca:"
+  },
+  "codezera": {
+    "gitGraph": {
+      "branches": {
+        "all": "Show all",
+        "count": "{{count}} branches",
+        "search": "Search branches...",
+        "empty": "No branches match."
+      },
+      "commit": {
+        "addBranch": "Create branch here…",
+        "checkoutTitle": "Checkout commit",
+        "checkoutDescription": "Checks out {{commit}} as a detached HEAD.",
+        "checkout": "Checkout (detached)…",
+        "cherryPickTitle": "Cherry-pick commit",
+        "cherryPick": "Cherry-pick…",
+        "revertTitle": "Revert commit",
+        "revertDescription": "Creates a commit on {{target}} that undoes {{commit}}.",
+        "revert": "Revert…",
+        "reset": "Reset {{target}} to this commit",
+        "resetTitle": "Reset ({{mode}})",
+        "resetHard": "Moves {{target}} to {{commit}} and discards every uncommitted change.",
+        "resetKeep": "Moves {{target}} to {{commit}} and keeps changes in the working tree.",
+        "resetSoft": "Soft — keep changes staged",
+        "resetMixed": "Mixed — keep changes unstaged",
+        "resetHardItem": "Hard — discard changes…",
+        "copyHash": "Copy commit hash",
+        "copyMessage": "Copy commit message",
+        "openRemote": "Open commit in browser",
+        "explain": "Explain changes"
+      },
+      "folder": "This workspace is a folder, not a git repository.",
+      "remoteUnsupported": "Git Graph supports local workspaces only for now.",
+      "resize": "Resize Git Graph",
+      "checkout": {
+        "remote": "Checkout",
+        "remoteBranch": "Checkout as local branch",
+        "tag": "Checkout",
+        "tagItem": "Checkout tag (detached)",
+        "branch": "Checkout",
+        "branchItem": "Checkout branch"
+      },
+      "merge": {
+        "title": "Merge branch",
+        "item": "Merge into current branch…"
+      },
+      "deleteBranch": {
+        "title": "Delete branch",
+        "description": "Deletes the local branch. Unmerged commits are refused unless forced.",
+        "item": "Delete branch…"
+      },
+      "createBranch": {
+        "title": "Create branch",
+        "description": "Starts at {{commit}}.",
+        "name": "Branch name",
+        "placeholder": "feature/my-branch",
+        "checkout": "Check out the new branch",
+        "submit": "Create branch"
+      },
+      "dialog": {
+        "cancel": "Cancel"
+      },
+      "action": {
+        "done": "Git command finished",
+        "failed": "Git command failed"
+      },
+      "title": "Git Graph",
+      "branchesLabel": "Branches",
+      "showRemote": "Show remote branches",
+      "fetch": "Fetch from all remotes",
+      "refresh": "Refresh",
+      "restore": "Show workbench",
+      "maximize": "Maximize",
+      "close": "Close Git Graph",
+      "column": {
+        "graph": "Graph",
+        "description": "Description",
+        "date": "Date",
+        "author": "Author",
+        "commit": "Commit"
+      },
+      "uncommitted": "Uncommitted changes ({{count}})",
+      "loadMore": "Load more commits",
+      "empty": "No commits yet.",
+      "closeButton": "Close Git Graph",
+      "openButton": "Open Git Graph"
+    }
   }
 }
