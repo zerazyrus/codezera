@@ -16,6 +16,7 @@ import type {
   OpenCheckRunDetailsState,
   OpenConflictMetadata
 } from '../../../../../../shared/editor-tab-view-types'
+import type { CodezeraPanel } from '../../../../../../shared/codezera/codezera-panel'
 
 export type BranchCompareLike = Pick<
   GitBranchCompareSummary,
@@ -82,6 +83,7 @@ export type OpenFile = {
   fileContentReloadNonce?: number
   /** Why: CI check-details tabs are virtual editor tabs backed by fetched PR check-run metadata, not a file on disk. */
   checkRunDetails?: OpenCheckRunDetailsState
+  codezeraPanel?: CodezeraPanel
   // Only host-mirrored tabs may be culled on omission; locally opened tabs survive.
   mirroredFromRuntimeSession?: boolean
   // Read-only is orthogonal to mode: logs cannot edit/autosave/rename; persist only true.
@@ -90,7 +92,13 @@ export type OpenFile = {
   csvPreviewOnly?: boolean
   /** Why: explicit live tail, only meaningful for a read-only local log. */
   liveTail?: boolean
-  mode: 'edit' | 'diff' | 'conflict-review' | 'markdown-preview' | 'check-details'
+  mode:
+    | 'edit'
+    | 'diff'
+    | 'conflict-review'
+    | 'markdown-preview'
+    | 'check-details'
+    | 'codezera-panel'
 }
 
 export type ActivityBarPosition = 'top' | 'side'

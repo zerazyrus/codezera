@@ -11,7 +11,6 @@ import { TitlebarLeftControls } from './TitlebarLeftControls'
 import { RightSidebarToggle, TitlebarMainStrip } from './TitlebarMainStrip'
 import type { AppChromeLayout } from './use-app-chrome-layout'
 import type { FloatingWorkspacePanelState } from './use-floating-workspace-panel'
-import { GitGraphDock } from '../codezera/git-graph/git-graph-dock'
 
 // Skips the shell render each workspace switch causes; its props only change on toggle.
 const MemoFloatingTerminalToggleButton = memo(FloatingTerminalToggleButton)
@@ -223,7 +222,6 @@ export function AppWorkspaceShell(props: {
                       <ActivePage layout={layout} />
                     </RecoverableRenderErrorBoundary>
                   </Suspense>
-                  <GitGraphDock />
                 </div>
                 {floatingWorkspace.showToggleButton ? (
                   <MemoFloatingTerminalToggleButton

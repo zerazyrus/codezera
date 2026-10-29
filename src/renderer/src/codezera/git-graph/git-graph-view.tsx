@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { CloudDownload, Loader2, Maximize2, Minimize2, RefreshCw, X } from 'lucide-react'
+import { CloudDownload, Loader2, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -11,29 +11,26 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useGitHistoryCommitActions } from '@/components/right-sidebar/source-control/sync/use-git-history-commit-actions'
-import {
-  GitHistoryCommitFiles,
-  type GitHistoryCommitFilesState
-} from '@/components/right-sidebar/source-control/sync/git-history-commit-files'
+import type { GitHistoryCommitFilesState } from '@/components/right-sidebar/source-control/sync/git-history-commit-files'
 import type { RuntimeClientTarget } from '../../../../shared/runtime-client-target'
-import type {
-  GitHistoryGraphColorId,
-  GitHistoryItem,
-  GitHistoryItemRef
-} from '../../../../shared/git-history'
-import type { GitBranchChangeEntry } from '../../../../shared/git-diff-compare-types'
-import { buildGitHistoryViewModels } from '../../../../shared/git-history-graph'
+import type { GitHistoryItem } from '../../../../shared/git-history'
 import type { GitGraphAction } from '../../../../shared/codezera/git-graph-types'
-import { GIT_GRAPH_GRID_COLUMNS, GitGraphCommitRow } from './git-graph-commit-row'
+import {
+  GIT_GRAPH_GRID_COLUMNS,
+  GitGraphCommitRow,
+  formatGitGraphDate
+} from './git-graph-commit-row'
+import { GitGraphCommitDetails } from './git-graph-commit-details'
 import { GitGraphBranchPicker } from './git-graph-branch-picker'
 import { GitGraphRequestDialog } from './git-graph-request-dialog'
 import type { GitGraphRequest } from './git-graph-request'
-import { GIT_GRAPH_SPLIT_HEIGHT_RATIO, useGitGraphDock } from './git-graph-dock-store'
+import { useGitGraphStore, useGitGraphViewState } from './git-graph-store'
 import { useGitGraphLog } from './use-git-graph-log'
+import { layoutGitGraph } from './git-graph-layout'
+import { GIT_GRAPH_LANE_WIDTH, GIT_GRAPH_ROW_HEIGHT, GitGraphRowSvg } from './git-graph-lanes-svg'
 
-const SWIMLANE_WIDTH = 11
-const MIN_GRAPH_COLUMN_WIDTH = 56
-const MAX_GRAPH_COLUMN_WIDTH = 320
+const MIN_GRAPH_COLUMN_WIDTH = 64
+const MAX_GRAPH_COLUMN_WIDTH = 400
 const NO_SPLIT_GROUP = (): undefined => undefined
 
 function ToolbarIconButton({
@@ -53,7 +50,7 @@ function ToolbarIconButton({
         <Button
           type="button"
           variant="ghost"
-          size="icon-xs"
+          size="icon-sm"
           aria-label={label}
           disabled={disabled}
           onClick={onClick}
@@ -61,10 +58,18 @@ function ToolbarIconButton({
           {children}
         </Button>
       </TooltipTrigger>
-      <TooltipContent side="top" sideOffset={4}>
+      <TooltipContent side="bottom" sideOffset={4}>
         {label}
       </TooltipContent>
     </Tooltip>
+  )
+}
+
+function HeaderCell({ children }: { children: React.ReactNode }): React.JSX.Element {
+  return (
+    <span className="flex h-full items-center justify-center truncate border-l border-border px-1 first:border-l-0">
+      {children}
+    </span>
   )
 }
 
@@ -77,11 +82,18 @@ export function GitGraphView({
   worktreePath: string
   repoTarget: RuntimeClientTarget
 }): React.JSX.Element {
-  const selectedRefs = useGitGraphDock((s) => s.selectedRefs)
-  const showRemoteBranches = useGitGraphDock((s) => s.showRemoteBranches)
-  const heightRatio = useGitGraphDock((s) => s.heightRatio)
-  const { setOpen, setHeightRatio, setSelectedRefs, setShowRemoteBranches } =
-    useGitGraphDock.getState()
+  const showRemoteBranches = useGitGraphStore((s) => s.showRemoteBranches)
+  const setShowRemoteBranches = useGitGraphStore((s) => s.setShowRemoteBranches)
+  const patchView = useGitGraphStore((s) => s.patchView)
+  const { selectedRefs, expandedId } = useGitGraphViewState(worktreeId)
+  const setSelectedRefs = useCallback(
+    (refs: string[] | null) => patchView(worktreeId, { selectedRefs: refs }),
+    [patchView, worktreeId]
+  )
+  const setExpandedId = useCallback(
+    (id: string | null) => patchView(worktreeId, { expandedId: id }),
+    [patchView, worktreeId]
+  )
   const { state, refresh, loadMore } = useGitGraphLog({
     worktreeId,
     worktreePath,
@@ -89,10 +101,10 @@ export function GitGraphView({
     showRemoteBranches
   })
   const result = state.result
-  const [expandedId, setExpandedId] = useState<string | null>(null)
   const [filesById, setFilesById] = useState<Record<string, GitHistoryCommitFilesState>>({})
   const [request, setRequest] = useState<Exclude<GitGraphRequest, { kind: 'run' }> | null>(null)
   const [fetching, setFetching] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const { loadCommitFiles, openCommitFile, openHistoryCommitDiff, handleCommitAction } =
     useGitHistoryCommitActions({
       activeWorktreeId: worktreeId,
@@ -100,12 +112,6 @@ export function GitGraphView({
       activeRepoTarget: repoTarget,
       resolveSplitTargetGroupId: NO_SPLIT_GROUP
     })
-
-  useEffect(() => {
-    setExpandedId(null)
-    setFilesById({})
-    setSelectedRefs(null)
-  }, [setSelectedRefs, worktreeId])
 
   // Orca's status poller notices commits, checkouts and edits made elsewhere (terminal, agents).
   const statusHead = useAppStore((s) => s.gitStatusHeadByWorktree[worktreeId])
@@ -119,65 +125,57 @@ export function GitGraphView({
     statusKeyRef.current = key
   }, [refresh, statusEntryCount, statusHead])
 
-  const viewModels = useMemo(() => {
-    if (!result) {
-      return []
-    }
-    const colorMap = new Map<string, GitHistoryGraphColorId | undefined>()
-    for (const item of result.items) {
-      for (const ref of item.references ?? []) {
-        // Unset entries take the lane color, so each badge matches its line like VS Code Git Graph.
-        colorMap.set(ref.id, undefined)
-      }
-    }
-    const currentRef: GitHistoryItemRef | undefined = result.headOid
-      ? {
-          id: result.currentBranch ? `refs/heads/${result.currentBranch}` : 'HEAD',
-          name: result.currentBranch ?? 'HEAD',
-          revision: result.headOid
-        }
-      : undefined
-    return buildGitHistoryViewModels(result.items, colorMap, currentRef)
-  }, [result])
-
-  const graphColumnWidth = useMemo(() => {
-    let lanes = 1
-    for (const viewModel of viewModels) {
-      lanes = Math.max(lanes, viewModel.inputSwimlanes.length, viewModel.outputSwimlanes.length)
-    }
-    return Math.min(
-      MAX_GRAPH_COLUMN_WIDTH,
-      Math.max(MIN_GRAPH_COLUMN_WIDTH, SWIMLANE_WIDTH * (lanes + 1))
-    )
-  }, [viewModels])
-
-  const toggleCommit = useCallback(
-    (item: GitHistoryItem) => {
-      setExpandedId((current) => (current === item.id ? null : item.id))
-      if (filesById[item.id]?.status === 'ready') {
-        return
-      }
-      setFilesById((prev) => ({ ...prev, [item.id]: { status: 'loading' } }))
-      loadCommitFiles(item).then(
-        (entries) => setFilesById((prev) => ({ ...prev, [item.id]: { status: 'ready', entries } })),
-        (error: unknown) =>
-          setFilesById((prev) => ({
-            ...prev,
-            [item.id]: {
-              status: 'error',
-              error: error instanceof Error ? error.message : String(error)
-            }
-          }))
-      )
-    },
-    [filesById, loadCommitFiles]
+  const layout = useMemo(
+    () =>
+      layoutGitGraph(
+        result?.items ?? [],
+        result?.headOid ?? null,
+        (result?.uncommittedCount ?? 0) > 0
+      ),
+    [result]
+  )
+  const graphWidth = Math.min(
+    MAX_GRAPH_COLUMN_WIDTH,
+    Math.max(MIN_GRAPH_COLUMN_WIDTH, GIT_GRAPH_LANE_WIDTH * layout.laneCount + 12)
   )
 
-  const revealWorkbench = useCallback(() => {
-    if (useGitGraphDock.getState().heightRatio > GIT_GRAPH_SPLIT_HEIGHT_RATIO) {
-      setHeightRatio(GIT_GRAPH_SPLIT_HEIGHT_RATIO)
+  const expandedItem = expandedId
+    ? (result?.items.find((item) => item.id === expandedId) ?? null)
+    : null
+  const expandedFilesStatus = expandedId ? filesById[expandedId]?.status : undefined
+  // Also covers a remounted tab whose expanded commit survived in the store.
+  useEffect(() => {
+    if (!expandedItem || expandedFilesStatus !== undefined) {
+      return
     }
-  }, [setHeightRatio])
+    const id = expandedItem.id
+    setFilesById((prev) => ({ ...prev, [id]: { status: 'loading' } }))
+    loadCommitFiles(expandedItem).then(
+      (entries) => setFilesById((prev) => ({ ...prev, [id]: { status: 'ready', entries } })),
+      (error: unknown) =>
+        setFilesById((prev) => ({
+          ...prev,
+          [id]: { status: 'error', error: error instanceof Error ? error.message : String(error) }
+        }))
+    )
+  }, [expandedFilesStatus, expandedItem, loadCommitFiles])
+
+  const toggleCommit = useCallback(
+    (item: GitHistoryItem) => setExpandedId(expandedId === item.id ? null : item.id),
+    [expandedId, setExpandedId]
+  )
+
+  const selectCommit = useCallback(
+    (id: string) => {
+      setExpandedId(id)
+      requestAnimationFrame(() =>
+        scrollRef.current
+          ?.querySelector(`[data-commit-id="${id}"]`)
+          ?.scrollIntoView({ block: 'nearest' })
+      )
+    },
+    [setExpandedId]
+  )
 
   const runAction = useCallback(
     async (action: GitGraphAction): Promise<boolean> => {
@@ -227,14 +225,16 @@ export function GitGraphView({
   }
 
   const loading = state.status === 'loading'
-  const maximized = heightRatio >= 1
+  const lanesStyle = { ['--git-graph-lanes' as string]: `${graphWidth}px` }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-background" data-testid="git-graph-view">
-      <div className="flex h-9 shrink-0 items-center gap-3 border-b border-border px-3 text-xs">
-        <span className="font-semibold">{translate('codezera.gitGraph.title', 'Git Graph')}</span>
-        <span className="text-muted-foreground">
-          {translate('codezera.gitGraph.branchesLabel', 'Branches')}
+    <div
+      className="flex h-full min-h-0 flex-col bg-background text-[13px]"
+      data-testid="git-graph-view"
+    >
+      <div className="relative flex h-10 shrink-0 items-center justify-center gap-3 border-b border-border px-3">
+        <span className="font-bold">
+          {translate('codezera.gitGraph.branchesLabel', 'Branches')}:
         </span>
         <GitGraphBranchPicker
           branches={result?.branches ?? []}
@@ -242,17 +242,17 @@ export function GitGraphView({
           showRemoteBranches={showRemoteBranches}
           onChange={setSelectedRefs}
         />
-        <Label className="flex items-center gap-1.5 text-xs font-normal">
+        <Label className="flex items-center gap-1.5 text-[13px] font-bold">
           <Checkbox
             checked={showRemoteBranches}
             onCheckedChange={(value) => setShowRemoteBranches(value === true)}
           />
-          {translate('codezera.gitGraph.showRemote', 'Show remote branches')}
+          {translate('codezera.gitGraph.showRemote', 'Show Remote Branches')}
         </Label>
-        <div className="ml-auto flex items-center gap-1">
-          {loading ? <Loader2 className="size-3.5 animate-spin text-muted-foreground" /> : null}
+        <div className="absolute right-2 flex items-center gap-0.5">
+          {loading ? <Loader2 className="mr-1 size-4 animate-spin text-muted-foreground" /> : null}
           <ToolbarIconButton
-            label={translate('codezera.gitGraph.fetch', 'Fetch from all remotes')}
+            label={translate('codezera.gitGraph.fetch', 'Fetch from Remote(s)')}
             disabled={fetching}
             onClick={() => void fetchAll()}
           >
@@ -264,121 +264,74 @@ export function GitGraphView({
           >
             <RefreshCw />
           </ToolbarIconButton>
-          <ToolbarIconButton
-            label={
-              maximized
-                ? translate('codezera.gitGraph.restore', 'Show workbench')
-                : translate('codezera.gitGraph.maximize', 'Maximize')
-            }
-            onClick={() => setHeightRatio(maximized ? GIT_GRAPH_SPLIT_HEIGHT_RATIO : 1)}
-          >
-            {maximized ? <Minimize2 /> : <Maximize2 />}
-          </ToolbarIconButton>
-          <ToolbarIconButton
-            label={translate('codezera.gitGraph.close', 'Close Git Graph')}
-            onClick={() => setOpen(false)}
-          >
-            <X />
-          </ToolbarIconButton>
         </div>
       </div>
       <div
-        className="grid h-7 shrink-0 items-center gap-x-3 border-b border-border pr-3 text-[11px] font-semibold text-muted-foreground"
-        style={{
-          gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS,
-          ['--git-graph-lanes' as string]: `${graphColumnWidth}px`
-        }}
+        className="grid h-8 shrink-0 items-center gap-x-2 border-b border-border pr-2 font-bold"
+        style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS, ...lanesStyle }}
       >
-        <span className="pl-2">{translate('codezera.gitGraph.column.graph', 'Graph')}</span>
-        <span>{translate('codezera.gitGraph.column.description', 'Description')}</span>
-        <span>{translate('codezera.gitGraph.column.date', 'Date')}</span>
-        <span>{translate('codezera.gitGraph.column.author', 'Author')}</span>
-        <span>{translate('codezera.gitGraph.column.commit', 'Commit')}</span>
+        <HeaderCell>{translate('codezera.gitGraph.column.graph', 'Graph')}</HeaderCell>
+        <HeaderCell>{translate('codezera.gitGraph.column.description', 'Description')}</HeaderCell>
+        <HeaderCell>{translate('codezera.gitGraph.column.date', 'Date')}</HeaderCell>
+        <HeaderCell>{translate('codezera.gitGraph.column.author', 'Author')}</HeaderCell>
+        <HeaderCell>{translate('codezera.gitGraph.column.commit', 'Commit')}</HeaderCell>
       </div>
       <div
+        ref={scrollRef}
         role="table"
         className="scrollbar-sleek min-h-0 flex-1 overflow-auto"
-        style={{ ['--git-graph-lanes' as string]: `${graphColumnWidth}px` }}
+        style={lanesStyle}
       >
         {state.status === 'error' ? (
-          <div className="px-3 py-2 text-xs text-destructive">{state.error}</div>
+          <div className="px-3 py-2 text-destructive">{state.error}</div>
         ) : null}
-        {result && result.uncommittedCount > 0 ? (
+        {result && layout.uncommitted ? (
           <div
             role="row"
             tabIndex={0}
-            className="grid h-6 cursor-pointer items-center gap-x-3 pr-3 text-xs hover:bg-accent"
-            style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS }}
+            className="grid cursor-pointer items-center gap-x-2 pr-2 hover:bg-accent/60"
+            style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS, height: GIT_GRAPH_ROW_HEIGHT }}
             onClick={openSourceControl}
             onKeyDown={(event) => (event.key === 'Enter' ? openSourceControl() : undefined)}
           >
-            <svg
-              aria-hidden="true"
-              width={SWIMLANE_WIDTH * 2}
-              height={24}
-              className="overflow-visible"
-            >
-              <line
-                x1={SWIMLANE_WIDTH}
-                y1={12}
-                x2={SWIMLANE_WIDTH}
-                y2={24}
-                stroke="var(--muted-foreground)"
-                strokeDasharray="2 2"
-              />
-              <circle
-                cx={SWIMLANE_WIDTH}
-                cy={12}
-                r={3.5}
-                fill="var(--background)"
-                stroke="var(--muted-foreground)"
-                strokeWidth={1.5}
-              />
-            </svg>
-            <span className="truncate font-semibold">
-              {translate('codezera.gitGraph.uncommitted', 'Uncommitted changes ({{count}})', {
+            <GitGraphRowSvg row={layout.uncommitted} width={graphWidth} node="hollow" />
+            <span className="truncate font-bold">
+              {translate('codezera.gitGraph.uncommitted', 'Uncommitted Changes ({{count}})', {
                 count: result.uncommittedCount
               })}
             </span>
-            <span />
-            <span />
-            <span />
+            <span className="truncate tabular-nums">{formatGitGraphDate(result.loadedAt)}</span>
+            <span>*</span>
+            <span>*</span>
           </div>
         ) : null}
-        {viewModels.map((viewModel) => {
-          const item = viewModel.historyItem
+        {result?.items.map((item, index) => {
+          const row = layout.rows[index]!
           const expanded = expandedId === item.id
           return (
             <div key={item.id}>
               <GitGraphCommitRow
-                viewModel={viewModel}
+                item={item}
+                row={row}
+                graphWidth={graphWidth}
+                isHead={item.id === result.headOid}
                 expanded={expanded}
-                currentBranch={result?.currentBranch ?? null}
+                currentBranch={result.currentBranch}
                 onToggle={toggleCommit}
                 onRequest={handleRequest}
                 onCommitAction={handleCommitAction}
               />
               {expanded ? (
-                <div className="border-b border-border pl-[var(--git-graph-lanes)]">
-                  {item.message && item.message.trim() !== item.subject ? (
-                    <pre className="whitespace-pre-wrap px-9 py-1.5 font-sans text-xs text-muted-foreground">
-                      {item.message.trim()}
-                    </pre>
-                  ) : null}
-                  <GitHistoryCommitFiles
-                    state={filesById[item.id] ?? { status: 'loading' }}
-                    author={item.authorEmail ? `${item.author} <${item.authorEmail}>` : item.author}
-                    timestamp={item.timestamp}
-                    onOpenFile={(entry: GitBranchChangeEntry, event) => {
-                      revealWorkbench()
-                      openCommitFile(item, entry, event)
-                    }}
-                    onOpenAll={() => {
-                      revealWorkbench()
-                      void openHistoryCommitDiff(item)
-                    }}
-                  />
-                </div>
+                <GitGraphCommitDetails
+                  item={item}
+                  files={filesById[item.id] ?? { status: 'loading' }}
+                  lanes={row.below}
+                  graphWidth={graphWidth}
+                  onOpenFile={(entry, event) => openCommitFile(item, entry, event)}
+                  onOpenAll={() => void openHistoryCommitDiff(item)}
+                  onSelectCommit={selectCommit}
+                  onClose={() => setExpandedId(null)}
+                />
               ) : null}
             </div>
           )
@@ -391,7 +344,7 @@ export function GitGraphView({
           </div>
         ) : null}
         {result && result.items.length === 0 && !loading ? (
-          <div className="px-3 py-2 text-xs text-muted-foreground">
+          <div className="px-3 py-2 text-muted-foreground">
             {translate('codezera.gitGraph.empty', 'No commits yet.')}
           </div>
         ) : null}

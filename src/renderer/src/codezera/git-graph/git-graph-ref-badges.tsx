@@ -9,7 +9,6 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { graphColor } from '@/components/right-sidebar/source-control/sync/git-history-graph-svg'
 import { splitRemoteBranchName } from '../../../../shared/git-remote-branch-name'
 import type { GitHistoryItemRef } from '../../../../shared/git-history'
 import type { GitGraphRequest } from './git-graph-request'
@@ -169,10 +168,13 @@ function BadgeMenu({
 
 export function GitGraphRefBadges({
   refs,
+  color,
   currentBranch,
   onRequest
 }: {
   refs: readonly GitHistoryItemRef[]
+  /** The commit's lane color; every badge on the row shares it, like VS Code Git Graph. */
+  color: string
   currentBranch: string | null
   onRequest: (request: GitGraphRequest) => void
 }): React.JSX.Element | null {
@@ -186,25 +188,35 @@ export function GitGraphRefBadges({
         const { ref } = group
         const Icon =
           ref.category === 'tags' ? Tag : ref.category === 'remote branches' ? Cloud : GitBranch
-        const color = ref.color ? graphColor(ref.color) : 'var(--muted-foreground)'
         const isCurrent = ref.category === 'branches' && ref.name === currentBranch
         return (
           <ContextMenu key={ref.id}>
             <ContextMenuTrigger asChild>
               <span
                 data-testid="git-graph-ref"
-                className={cn(
-                  'inline-flex max-w-[16rem] items-center gap-1 rounded-sm border px-1 text-[11px] leading-[18px]',
-                  isCurrent && 'font-semibold'
-                )}
+                className="inline-flex h-[18px] max-w-[18rem] items-stretch overflow-hidden rounded-[3px] border leading-4"
                 style={{ borderColor: color }}
               >
-                <Icon className="size-3 shrink-0" style={{ color }} />
-                <span className="truncate text-foreground">{ref.name}</span>
+                {isCurrent ? (
+                  <span className="flex items-center pl-1" aria-hidden="true">
+                    <span className="size-2 rounded-full border-2" style={{ borderColor: color }} />
+                  </span>
+                ) : null}
+                <span className="flex items-center px-[3px]" style={{ backgroundColor: color }}>
+                  <Icon className="size-3 shrink-0 text-white" />
+                </span>
+                <span
+                  className={cn(
+                    'flex items-center truncate px-1.5 text-foreground',
+                    isCurrent && 'font-bold'
+                  )}
+                >
+                  {ref.name}
+                </span>
                 {group.remotes.map((remote) => (
                   <span
                     key={remote}
-                    className="border-l pl-1 italic text-muted-foreground"
+                    className="flex items-center border-l px-1.5 italic text-muted-foreground"
                     style={{ borderColor: color }}
                   >
                     {remote}

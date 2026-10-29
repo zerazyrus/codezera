@@ -29,6 +29,8 @@ export type GitGraphLogResult = {
   currentBranch: string | null
   branches: GitGraphBranch[]
   uncommittedCount: number
+  /** When the graph was read; the Uncommitted Changes row shows it, like VS Code Git Graph. */
+  loadedAt: number
 }
 
 export type GitGraphAction =

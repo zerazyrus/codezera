@@ -22719,7 +22719,6 @@
       },
       "folder": "This workspace is a folder, not a git repository.",
       "remoteUnsupported": "Git Graph supports local workspaces only for now.",
-      "resize": "Resize Git Graph",
       "checkout": {
         "remote": "Checkout",
         "remoteBranch": "Checkout as local branch",
@@ -22754,12 +22753,9 @@
       },
       "title": "Git Graph",
       "branchesLabel": "Branches",
-      "showRemote": "Show remote branches",
-      "fetch": "Fetch from all remotes",
+      "showRemote": "Show Remote Branches",
+      "fetch": "Fetch from Remote(s)",
       "refresh": "Refresh",
-      "restore": "Show workbench",
-      "maximize": "Maximize",
-      "close": "Close Git Graph",
       "column": {
         "graph": "Graph",
         "description": "Description",
@@ -22767,11 +22763,21 @@
         "author": "Author",
         "commit": "Commit"
       },
-      "uncommitted": "Uncommitted changes ({{count}})",
+      "uncommitted": "Uncommitted Changes ({{count}})",
       "loadMore": "Load more commits",
       "empty": "No commits yet.",
-      "closeButton": "Close Git Graph",
-      "openButton": "Open Git Graph"
+      "openButton": "Open Git Graph",
+      "details": {
+        "commit": "Commit",
+        "parents": "Parents",
+        "author": "Author",
+        "date": "Date",
+        "openAll": "Open all changes together",
+        "close": "Close commit details"
+      }
+    },
+    "panel": {
+      "noWorktree": "Workspace not found."
     }
   }
 }

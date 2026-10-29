@@ -16,6 +16,7 @@ import { translate } from '@/i18n/i18n'
 import { useEditorConflictNavigation } from './useEditorConflictNavigation'
 import { useMarkdownDocuments } from './useMarkdownDocuments'
 import type { MarkdownRenderState } from './markdown-render-mode'
+import { CodezeraPanelContent } from '@/codezera/codezera-panel-content'
 
 // Retry is a user act: it may start a stopped WSL distro.
 const USER_RETRY = { wakeWslDistro: true }
@@ -128,6 +129,10 @@ export function EditorContent({
       activeFile.diffSource === 'combined-uncommitted' ||
       activeFile.diffSource === 'combined-branch' ||
       activeFile.diffSource === 'combined-commit')
+
+  if (activeFile.mode === 'codezera-panel') {
+    return <CodezeraPanelContent file={activeFile} />
+  }
 
   if (activeFile.mode === 'check-details') {
     const checkRunDetails = activeFile.checkRunDetails

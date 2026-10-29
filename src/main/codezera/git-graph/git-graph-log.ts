@@ -61,7 +61,7 @@ export async function loadGitGraph(
     readOptional(git, cwd, ['status', '--porcelain=v1', '--untracked-files=all'])
   ])
   const uncommittedCount = porcelain ? porcelain.split('\n').filter(Boolean).length : 0
-  const base = { limit, headOid, currentBranch, branches, uncommittedCount }
+  const base = { limit, headOid, currentBranch, branches, uncommittedCount, loadedAt: Date.now() }
   if (!headOid) {
     return { ...base, items: [], hasMore: false }
   }

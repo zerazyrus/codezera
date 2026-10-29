@@ -19,9 +19,13 @@ export function isEditorTabContentType(
 
 /** Editor tabs with no file behind them: their path is a synthetic id, never a workspace path. */
 export function isVirtualEditorFile(file: Pick<OpenFile, 'mode'>): boolean {
-  return file.mode === 'check-details'
+  return file.mode === 'check-details' || file.mode === 'codezera-panel'
 }
 
 export function editorTabContentTypeForMode(mode: OpenFile['mode']): EditorTabContentType {
+  if (mode === 'codezera-panel') {
+    // Codezera panels ride the transient check-details tab kind: never restored from disk.
+    return 'check-details'
+  }
   return mode === 'conflict-review' || mode === 'check-details' || mode === 'diff' ? mode : 'editor'
 }

@@ -1,15 +1,14 @@
 import type React from 'react'
 import { GitGraph } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
+import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { useGitGraphDock } from './git-graph-dock-store'
+import { openCodezeraPanel } from '../open-codezera-panel'
 
 export function OpenGitGraphButton({ className }: { className?: string }): React.JSX.Element {
-  const open = useGitGraphDock((s) => s.open)
-  const label = open
-    ? translate('codezera.gitGraph.closeButton', 'Close Git Graph')
-    : translate('codezera.gitGraph.openButton', 'Open Git Graph')
+  const worktreeId = useAppStore((s) => s.activeWorktreeId)
+  const label = translate('codezera.gitGraph.openButton', 'Open Git Graph')
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -19,11 +18,13 @@ export function OpenGitGraphButton({ className }: { className?: string }): React
           size="icon-xs"
           className={className}
           aria-label={label}
-          aria-pressed={open}
+          disabled={!worktreeId}
           data-testid="open-git-graph"
           onClick={(event) => {
             event.stopPropagation()
-            useGitGraphDock.getState().setOpen(!open)
+            if (worktreeId) {
+              openCodezeraPanel(worktreeId, 'git-graph')
+            }
           }}
         >
           <GitGraph className="size-3.5" />

@@ -13,22 +13,23 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { GitHistoryGraphSvg } from '@/components/right-sidebar/source-control/sync/git-history-graph-svg'
 import type { GitHistoryCommitAction } from '@/components/right-sidebar/source-control/sync/git-history-commit-context-menu'
 import type { GitHistoryItem } from '../../../../shared/git-history'
-import type { GitHistoryItemViewModel } from '../../../../shared/git-history-graph'
 import { GitGraphRefBadges } from './git-graph-ref-badges'
 import type { GitGraphRequest } from './git-graph-request'
+import type { GitGraphRow } from './git-graph-layout'
+import { GIT_GRAPH_ROW_HEIGHT, GitGraphRowSvg } from './git-graph-lanes-svg'
 
-const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit'
+const pad = (value: number): string => String(value).padStart(2, '0')
+
+/** VS Code Git Graph's date column: `29 Oct 2026 17:00`. */
+export function formatGitGraphDate(timestamp: number): string {
+  const date = new Date(timestamp)
+  const month = uiDateTimeFormat({ month: 'short' }).format(date)
+  return `${date.getDate()} ${month} ${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
-export const GIT_GRAPH_GRID_COLUMNS = 'var(--git-graph-lanes) minmax(0,1fr) 150px 150px 80px'
+export const GIT_GRAPH_GRID_COLUMNS = 'var(--git-graph-lanes) minmax(0,1fr) 140px 140px 80px'
 
 function CommitMenu({
   item,
@@ -158,22 +159,28 @@ function CommitMenu({
 }
 
 export const GitGraphCommitRow = memo(function GitGraphCommitRow({
-  viewModel,
+  item,
+  row,
+  graphWidth,
+  isHead,
   expanded,
   currentBranch,
   onToggle,
   onRequest,
   onCommitAction
 }: {
-  viewModel: GitHistoryItemViewModel
+  item: GitHistoryItem
+  row: GitGraphRow
+  graphWidth: number
+  isHead: boolean
   expanded: boolean
   currentBranch: string | null
   onToggle: (item: GitHistoryItem) => void
   onRequest: (request: GitGraphRequest) => void
   onCommitAction: (action: GitHistoryCommitAction, item: GitHistoryItem) => void
 }): React.JSX.Element {
-  const item = viewModel.historyItem
-  const isHead = viewModel.kind === 'HEAD'
+  // VS Code Git Graph mutes merge commits so the work they bring in stands out.
+  const muted = item.parentIds.length > 1
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -182,11 +189,12 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
           tabIndex={0}
           aria-expanded={expanded}
           data-testid="git-graph-commit"
+          data-commit-id={item.id}
           className={cn(
-            'grid h-6 cursor-pointer items-center gap-x-3 pr-3 text-xs hover:bg-accent focus-visible:bg-accent focus-visible:outline-none',
+            'grid cursor-pointer items-center gap-x-2 pr-2 hover:bg-accent/60 focus-visible:outline-none',
             expanded && 'bg-accent'
           )}
-          style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS }}
+          style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS, height: GIT_GRAPH_ROW_HEIGHT }}
           onClick={() => onToggle(item)}
           onKeyDown={(event) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -195,31 +203,25 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
             }
           }}
         >
-          <div className="h-6 overflow-hidden">
-            <GitHistoryGraphSvg viewModel={viewModel} />
-          </div>
-          <div className="flex min-w-0 items-center gap-1.5">
+          <GitGraphRowSvg row={row} width={graphWidth} node={isHead ? 'hollow' : 'filled'} />
+          <div className="flex min-w-0 items-center gap-1">
             <GitGraphRefBadges
               refs={item.references ?? []}
+              color={row.color}
               currentBranch={currentBranch}
               onRequest={onRequest}
             />
-            <span
-              className={cn(
-                'truncate',
-                isHead ? 'font-semibold text-foreground' : 'text-foreground'
-              )}
-            >
+            <span className={cn('truncate', isHead && 'font-bold', muted && 'opacity-50')}>
               {item.subject}
             </span>
           </div>
-          <span className="truncate tabular-nums text-muted-foreground">
-            {item.timestamp ? uiDateTimeFormat(DATE_OPTIONS).format(item.timestamp) : ''}
+          <span className={cn('truncate tabular-nums', muted && 'opacity-50')}>
+            {item.timestamp ? formatGitGraphDate(item.timestamp) : ''}
           </span>
-          <span className="truncate text-muted-foreground" title={item.authorEmail}>
+          <span className={cn('truncate', muted && 'opacity-50')} title={item.authorEmail}>
             {item.author}
           </span>
-          <span className="truncate font-mono text-[11px] text-muted-foreground">
+          <span className={cn('truncate font-mono text-[12px]', muted && 'opacity-50')}>
             {item.id.slice(0, 8)}
           </span>
         </div>

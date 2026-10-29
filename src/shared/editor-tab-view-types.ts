@@ -14,6 +14,7 @@ import type {
 import type { GitLabProjectRef } from './gitlab-types'
 import type { PRCheckDetail, PRCheckRunDetails } from './github/check-types'
 import type { GitHubRepositoryIdentity } from './github/pull-request-types'
+import type { CodezeraPanel } from './codezera/codezera-panel'
 
 export type DiffSource =
   | 'unstaged'
@@ -107,3 +108,4 @@ export type EditorTabView =
     }
   | { mode: 'conflict-review'; conflictReview?: ConflictReviewState }
   | { mode: 'check-details'; checkRunDetails?: OpenCheckRunDetailsState }
+  | { mode: 'codezera-panel'; codezeraPanel?: CodezeraPanel }

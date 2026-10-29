@@ -33,6 +33,8 @@ function editorTabViewOf(file: OpenFile): EditorTabView | null {
       return { mode: 'conflict-review', ...pickStoredFields(file, ['conflictReview']) }
     case 'check-details':
       return { mode: 'check-details', ...pickStoredFields(file, ['checkRunDetails']) }
+    case 'codezera-panel':
+      return { mode: 'codezera-panel', ...pickStoredFields(file, ['codezeraPanel']) }
   }
 }
 
