@@ -117,7 +117,8 @@ jobs:
     needs: sync
     if: needs.sync.outputs.release == 'true'
     strategy:
-      fail-fast: true
+      # Each leg finishes on its own, so "Re-run failed jobs" only rebuilds the broken platform.
+      fail-fast: false
       matrix:
         include:
           - platform: mac
@@ -166,6 +167,8 @@ jobs:
           # Uploads may land long after the draft was created.
           EP_GH_IGNORE_TIME: 'true'
           ORCA_BUILD_SOURCE_COMMIT: ${{ needs.sync.outputs.upstream_commit }}
+          # The x64 terminal-host boot check runs under Rosetta; 20s is borderline on GitHub's 3-core runners.
+          CODEZERA_TERMINAL_HOST_BOOT_TIMEOUT_MS: '120000'
         run: node config/scripts/codezera-package.mjs ${{ matrix.platform }} --version '${{ needs.sync.outputs.version }}' --publish always
 
   publish:
