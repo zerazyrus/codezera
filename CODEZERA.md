@@ -13,6 +13,14 @@ Codezera ships from `zerazyrus/codezera` (branch `codezera`), merged daily from 
 
 Requires repo secret `CODEZERA_SYNC_TOKEN`: a fine-grained PAT on this repo with **Contents: read/write** and **Workflows: read/write** (upstream merges change `.github/workflows`, which `GITHUB_TOKEN` cannot push).
 
+## Release notes
+
+Generated from commit subjects by `node config/scripts/codezera-package.mjs notes`:
+
+- **Codezera**: commits since the previous `v*` tag that are not in Orca, so write user-readable subjects (`feat(codezera): Git Graph hiện stash`).
+- **Orca**: commits merged from upstream since the previous release, with PR links (collapsed list + compare link).
+- To add context, edit the release on GitHub after it publishes. Later runs never rewrite old notes.
+
 ## Version
 
 Orca `a.b.c`, Codezera build `n` → `a.b.(c*100+n)`, e.g. Orca 1.4.214 → 1.4.21401, 1.4.21402… Plain semver, so the stable updater orders builds across Orca bumps. Computed from origin tags by `node config/scripts/codezera-package.mjs version`.

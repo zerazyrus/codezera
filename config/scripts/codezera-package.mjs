@@ -1,10 +1,11 @@
-// Codezera: build (and optionally publish) the fork's desktop app.
-// Usage: node config/scripts/codezera-package.mjs <version|mac|win> [--version X] [--publish never|always]
+// Codezera: build (and optionally publish) the fork's desktop app, and write its release notes.
+// Usage: node config/scripts/codezera-package.mjs <version|upstream-commit|notes|mac|win> [--version X] [--publish never|always]
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const MAX_BUILDS_PER_ORCA_VERSION = 99
+const MAX_LISTED_ORCA_CHANGES = 400
 
 function git(args) {
   return execFileSync('git', args, { encoding: 'utf8' }).trim()
@@ -37,19 +38,84 @@ export function codezeraVersion(orcaVersion, existingTags) {
   return `${major}.${minor}.${base + build + 1}`
 }
 
-function nextVersion() {
-  const orcaVersion = JSON.parse(readFileSync(resolve('package.json'), 'utf8')).version
+function originReleaseTags() {
   // Origin only: fetched upstream tags (Orca's own v1.5.1…) would look like Codezera builds.
-  const tags = git(['ls-remote', '--tags', '--refs', 'origin', 'v*'])
+  return git(['ls-remote', '--tags', '--refs', 'origin', 'v*'])
     .split('\n')
     .filter(Boolean)
     .map((line) => line.split('refs/tags/')[1])
-  return codezeraVersion(orcaVersion, tags)
 }
 
+function nextVersion() {
+  const orcaVersion = JSON.parse(readFileSync(resolve('package.json'), 'utf8')).version
+  return codezeraVersion(orcaVersion, originReleaseTags())
+}
+
+const UPSTREAM_REF = process.env.CODEZERA_UPSTREAM_REF ?? 'upstream/main'
+
 /** Skill installs pin to a commit on stablyai/orca, so use the last merged upstream commit. */
-function upstreamCommit() {
-  return git(['merge-base', 'HEAD', process.env.CODEZERA_UPSTREAM_REF ?? 'upstream/main'])
+function upstreamCommit(ref = 'HEAD') {
+  return git(['merge-base', ref, UPSTREAM_REF])
+}
+
+function subjects(range) {
+  return git(['log', '--no-merges', '--format=%s', ...range])
+    .split('\n')
+    .filter(Boolean)
+}
+
+/** "fix: x (#123)" → markdown linking the upstream PR. */
+function linkOrcaPr(subject) {
+  return subject.replace(/\(#(\d+)\)$/, '([#$1](https://github.com/stablyai/orca/pull/$1))')
+}
+
+/** Notes = commit subjects since the previous release: Codezera's own first, then Orca's merged ones. */
+function releaseNotes() {
+  const previous = originReleaseTags()
+    .sort(new Intl.Collator('en', { numeric: true }).compare)
+    .at(-1)
+  if (previous) {
+    git(['fetch', '--quiet', '--no-tags', 'origin', `refs/tags/${previous}:refs/tags/${previous}`])
+  }
+  const upstreamNow = upstreamCommit()
+  const upstreamBefore = previous ? upstreamCommit(previous) : null
+  const own = subjects([previous ? `${previous}..HEAD` : 'HEAD', `^${UPSTREAM_REF}`])
+  const orca = upstreamBefore ? subjects([`${upstreamBefore}..${upstreamNow}`]) : []
+  const short = (sha) => sha.slice(0, 10)
+
+  const lines = ['## Codezera', '']
+  lines.push(...(own.length ? own.map((s) => `- ${s}`) : ['- Không có thay đổi riêng.']), '')
+  lines.push('## Orca', '')
+  if (!upstreamBefore) {
+    lines.push(
+      `Dựa trên Orca [\`${short(upstreamNow)}\`](https://github.com/stablyai/orca/commit/${upstreamNow}).`
+    )
+  } else if (orca.length === 0) {
+    lines.push('Không có cập nhật mới từ Orca.')
+  } else {
+    lines.push(
+      `${orca.length} thay đổi từ Orca ([so sánh](https://github.com/stablyai/orca/compare/${short(upstreamBefore)}...${short(upstreamNow)})).`,
+      '',
+      '<details><summary>Danh sách</summary>',
+      '',
+      // GitHub caps release bodies at 125k chars; the compare link covers the rest.
+      ...orca.slice(0, MAX_LISTED_ORCA_CHANGES).map((s) => `- ${linkOrcaPr(s)}`),
+      ...(orca.length > MAX_LISTED_ORCA_CHANGES
+        ? [`- … và ${orca.length - MAX_LISTED_ORCA_CHANGES} thay đổi khác (xem so sánh)`]
+        : []),
+      '',
+      '</details>'
+    )
+  }
+  lines.push(
+    '',
+    '## Cài đặt',
+    '',
+    '**macOS (chưa ký):** kéo Codezera vào Applications rồi chạy một lần `xattr -cr /Applications/Codezera.app`. Các bản sau cập nhật ngay trong app.',
+    '',
+    '**Windows:** SmartScreen cảnh báo thì bấm *More info → Run anyway*.'
+  )
+  return lines.join('\n')
 }
 
 function run(command, args, env) {
@@ -119,11 +185,13 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename
     console.log(nextVersion())
   } else if (command === 'upstream-commit') {
     console.log(upstreamCommit())
+  } else if (command === 'notes') {
+    console.log(releaseNotes())
   } else if (command === 'mac' || command === 'win') {
     packageApp(command)
   } else {
     console.error(
-      'Usage: codezera-package.mjs <version|upstream-commit|mac|win> [--version X] [--publish never|always]'
+      'Usage: codezera-package.mjs <version|upstream-commit|notes|mac|win> [--version X] [--publish never|always]'
     )
     process.exit(2)
   }

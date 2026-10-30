@@ -94,25 +94,20 @@ jobs:
           } >>"$GITHUB_OUTPUT"
           echo "last=$last_tag head=$sha release=$release"
 
+      # Notes = commit subjects since the previous release (Codezera's own, then Orca's), see CODEZERA.md.
       - name: Open a fresh draft release
         if: steps.decide.outputs.release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: v${{ steps.decide.outputs.version }}
           SHA: ${{ steps.decide.outputs.sha }}
-          UPSTREAM: ${{ steps.decide.outputs.upstream_commit }}
         run: |
           set -euo pipefail
+          node config/scripts/codezera-package.mjs notes >"$RUNNER_TEMP/notes.md"
           # A failed earlier run leaves a draft for the same (untagged) version.
           gh release delete "$TAG" --yes 2>/dev/null || true
           gh release create "$TAG" --draft --target "$SHA" --title "Codezera ${TAG#v}" \
-            --notes "Codezera ${TAG#v} — built on Orca [\`${UPSTREAM:0:10}\`](https://github.com/stablyai/orca/commit/$UPSTREAM).
-
-          **macOS (unsigned):** after dragging Codezera into Applications, run once:
-          \`\`\`
-          xattr -cr /Applications/Codezera.app
-          \`\`\`
-          Later updates install from inside the app."
+            --notes-file "$RUNNER_TEMP/notes.md"
 
   build:
     needs: sync
