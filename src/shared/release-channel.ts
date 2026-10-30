@@ -1,4 +1,5 @@
 import { compareAppVersions, isValidAppVersion } from './app-version'
+import { APP_RELEASE_REPO } from './codezera-identity'
 
 export type ReleaseChannel = 'stable' | 'rc' | 'hourly' | 'daily' | 'adhoc'
 
@@ -23,6 +24,9 @@ export const HOURLY_RELEASE_REPO = 'stablyai/orca-hourly'
 export const DAILY_RELEASE_REPO = 'stablyai/orca-daily'
 export const ADHOC_RELEASE_REPO = 'stablyai/orca-adhoc'
 export const MAIN_RELEASE_REPO = 'stablyai/orca'
+// Codezera: app builds ship from APP_RELEASE_REPO; MAIN_RELEASE_REPO still serves Orca's live policy assets.
+// The fork has no dev-channel repos, so every channel resolves to its one release repo.
+const isForkRelease = APP_RELEASE_REPO !== MAIN_RELEASE_REPO
 
 /** The dev channels, each published to its own repo rather than the main one. */
 const DEDICATED_REPO_CHANNELS = ['hourly', 'daily', 'adhoc'] as const
@@ -30,11 +34,11 @@ const DEDICATED_REPO_CHANNELS = ['hourly', 'daily', 'adhoc'] as const
 export type DedicatedRepoChannel = (typeof DEDICATED_REPO_CHANNELS)[number]
 
 const CHANNEL_RELEASE_REPOS: Record<ReleaseChannel, string> = {
-  stable: MAIN_RELEASE_REPO,
-  rc: MAIN_RELEASE_REPO,
-  hourly: HOURLY_RELEASE_REPO,
-  daily: DAILY_RELEASE_REPO,
-  adhoc: ADHOC_RELEASE_REPO
+  stable: APP_RELEASE_REPO,
+  rc: APP_RELEASE_REPO,
+  hourly: isForkRelease ? APP_RELEASE_REPO : HOURLY_RELEASE_REPO,
+  daily: isForkRelease ? APP_RELEASE_REPO : DAILY_RELEASE_REPO,
+  adhoc: isForkRelease ? APP_RELEASE_REPO : ADHOC_RELEASE_REPO
 }
 
 export function isReleaseChannel(value: unknown): value is ReleaseChannel {
@@ -177,7 +181,7 @@ export function getVersionChannel(version: string): ReleaseChannel | null {
 /** Dev tags need their publishing repo or links 404. Missing versions use the releases list; latest can fail during GitHub API degradation. */
 export function getReleaseNotesUrlForVersion(version: string | null): string {
   const channel = version ? getVersionChannel(version) : null
-  const repo = channel ? getReleaseRepoForChannel(channel) : MAIN_RELEASE_REPO
+  const repo = channel ? getReleaseRepoForChannel(channel) : APP_RELEASE_REPO
   return version
     ? `https://github.com/${repo}/releases/tag/v${normalizeTagToVersion(version)}`
     : `https://github.com/${repo}/releases`

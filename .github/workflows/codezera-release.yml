@@ -1,0 +1,187 @@
+# Codezera: daily upstream merge → mac + windows build → one GitHub Release.
+# Orca's own release workflows are guarded to stablyai/orca and never run here.
+name: codezera-release
+
+on:
+  schedule:
+    # 06:00 Asia/Ho_Chi_Minh.
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Release even when nothing changed since the last release
+        type: boolean
+        default: false
+
+concurrency:
+  group: codezera-release
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    if: github.repository == 'zerazyrus/codezera'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      release: ${{ steps.decide.outputs.release }}
+      sha: ${{ steps.decide.outputs.sha }}
+      version: ${{ steps.decide.outputs.version }}
+      upstream_commit: ${{ steps.decide.outputs.upstream_commit }}
+    steps:
+      # Orca's CI targets its own runners/secrets; merges keep adding workflows, so re-disable them every run.
+      - name: Disable inherited Orca workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh workflow list --all --json path,state --jq '.[] | select(.state == "active") | .path' \
+            | grep -v '^.github/workflows/codezera-' \
+            | while read -r path; do gh workflow disable "$(basename "$path")" || true; done
+
+      # A PAT with `workflow` scope: upstream merges touch .github/workflows, which GITHUB_TOKEN cannot push.
+      - uses: actions/checkout@v6
+        with:
+          ref: codezera
+          fetch-depth: 0
+          token: ${{ secrets.CODEZERA_SYNC_TOKEN }}
+
+      - name: Merge upstream Orca
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'codezera-bot'
+          git config user.email 'codezera-bot@users.noreply.github.com'
+          git remote add upstream https://github.com/stablyai/orca.git
+          git fetch --no-tags upstream main
+          if git merge --no-edit upstream/main; then
+            git push origin HEAD:codezera
+            exit 0
+          fi
+          conflicts="$(git diff --name-only --diff-filter=U)"
+          git merge --abort
+          title="Upstream merge conflict $(date -u +%F)"
+          body="$(printf 'Daily merge of stablyai/orca main into codezera stopped on conflicts:\n\n```\n%s\n```\n\nResolve locally: `git fetch upstream main && git merge upstream/main`, then push codezera.' "$conflicts")"
+          gh issue create --title "$title" --body "$body" --label upstream-conflict 2>/dev/null \
+            || gh issue create --title "$title" --body "$body"
+          echo "::error::Upstream merge conflicted: $conflicts"
+          exit 1
+
+      - name: Decide whether to release
+        id: decide
+        env:
+          FORCE: ${{ inputs.force }}
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          last_tag="$(git ls-remote --tags --refs origin 'v*' | awk -F/ '{print $3}' | sort -V | tail -1)"
+          release=true
+          if [[ -n "$last_tag" && "$FORCE" != 'true' ]]; then
+            git fetch --no-tags origin "refs/tags/$last_tag:refs/tags/$last_tag"
+            [[ "$(git rev-parse "$last_tag^{commit}")" == "$sha" ]] && release=false
+          fi
+          {
+            echo "release=$release"
+            echo "sha=$sha"
+            echo "version=$(node config/scripts/codezera-package.mjs version)"
+            echo "upstream_commit=$(node config/scripts/codezera-package.mjs upstream-commit)"
+          } >>"$GITHUB_OUTPUT"
+          echo "last=$last_tag head=$sha release=$release"
+
+      - name: Open a fresh draft release
+        if: steps.decide.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.decide.outputs.version }}
+          SHA: ${{ steps.decide.outputs.sha }}
+          UPSTREAM: ${{ steps.decide.outputs.upstream_commit }}
+        run: |
+          set -euo pipefail
+          # A failed earlier run leaves a draft for the same (untagged) version.
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          gh release create "$TAG" --draft --target "$SHA" --title "Codezera ${TAG#v}" \
+            --notes "Codezera ${TAG#v} — built on Orca [\`${UPSTREAM:0:10}\`](https://github.com/stablyai/orca/commit/$UPSTREAM).
+
+          **macOS (unsigned):** after dragging Codezera into Applications, run once:
+          \`\`\`
+          xattr -cr /Applications/Codezera.app
+          \`\`\`
+          Later updates install from inside the app."
+
+  build:
+    needs: sync
+    if: needs.sync.outputs.release == 'true'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: mac
+            os: macos-15
+          - platform: win
+            os: windows-2022
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 150
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      ORCA_BACKGROUND_LAUNCH: '1'
+      # Unsigned builds: never pick up a stray keychain identity.
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.sync.outputs.sha }}
+
+      - uses: pnpm/setup@v2
+        with:
+          install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            mobile/pnpm-lock.yaml
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: pnpm install --frozen-lockfile ${{ matrix.platform == 'mac' && '--cpu=current,x64,arm64' || '' }}
+
+      - uses: ./.github/actions/install-mobile-dependencies
+
+      - name: Build and upload to the draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # Uploads may land long after the draft was created.
+          EP_GH_IGNORE_TIME: 'true'
+          ORCA_BUILD_SOURCE_COMMIT: ${{ needs.sync.outputs.upstream_commit }}
+        run: node config/scripts/codezera-package.mjs ${{ matrix.platform }} --version '${{ needs.sync.outputs.version }}' --publish always
+
+  publish:
+    needs: [sync, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify updater manifests and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.sync.outputs.version }}
+        run: |
+          set -euo pipefail
+          assets="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          echo "$assets"
+          for required in latest-mac.yml latest.yml codezera-macos-arm64.dmg codezera-macos-x64.dmg codezera-macos-arm64.zip codezera-windows-setup.exe; do
+            grep -qx "$required" <<<"$assets" || { echo "::error::Missing $required"; exit 1; }
+          done
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
