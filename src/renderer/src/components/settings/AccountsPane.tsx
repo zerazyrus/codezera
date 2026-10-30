@@ -72,6 +72,7 @@ import { MiniMaxAccountsSection } from './MiniMaxAccountsSection'
 import { useUsageHostSettings } from './use-usage-host-settings'
 import { ManagedDataAccountsSection } from './ManagedDataAccountsSection'
 import { renderAccountsRemovalDialogs } from './accounts-pane-removal-dialogs'
+import { CkitAccountsSection, CKIT_SEARCH_KEYWORDS } from '@/codezera/ckit/CkitAccountsSection'
 
 export { getAccountsPaneSearchEntries }
 
@@ -323,6 +324,12 @@ export function AccountsPane({
     recordOpenCodeSettingEdit
   }
   const visibleSections = [
+    // Ckit reads this computer's omp config, so paired web clients have nothing to show.
+    !isWebClientLocation() &&
+    (!searchQuery ||
+      CKIT_SEARCH_KEYWORDS.some((k) => k.includes(searchQuery.trim().toLowerCase()))) ? (
+      <CkitAccountsSection key="ckit" />
+    ) : null,
     !searchQuery || /opencode|devin|account/i.test(searchQuery) ? (
       <div key={accountOwnerKey} className="space-y-8">
         <ManagedDataAccountsSection provider="opencode" target={accountOwner} />

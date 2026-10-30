@@ -38,6 +38,8 @@ import { useStatusBarController } from './use-status-bar-controller'
 import { isOwnerNotSetUpPlaceholder } from './owner-usage-rate-limits'
 import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
+import { CkitQuotaStatusSegment } from '@/codezera/ckit/CkitQuotaStatusSegment'
+import { useCkitQuotaStore } from '@/codezera/ckit/ckit-quota-store'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -64,6 +66,9 @@ export function StatusBarSurface({
   // Memoized labels still need to follow language changes.
   useTranslation()
   const controller = useStatusBarController(floatingTerminalOpen)
+  const ckitState = useCkitQuotaStore((s) => s.status?.state)
+  const ckitRefreshing = useCkitQuotaStore((s) => s.refreshing)
+  const refreshCkit = useCkitQuotaStore((s) => s.refresh)
   if (!controller) {
     return null
   }
@@ -107,6 +112,10 @@ export function StatusBarSurface({
     usageRef,
     usageTightestOnly
   } = controller
+  // Codezera: a set-up Ckit counts as usage tracking, so it replaces the setup CTA and shares the refresh button.
+  const ckitActive =
+    !isPairedWebClientWindow() && ckitState !== undefined && ckitState !== 'not-configured'
+  const orcaUsageVisible = anyVisible && !isEmptyUsageState
   const usageMode = usageTightestOnly ? 'compact' : statusBarUsageMode
   const unitLabelState = getUsageUnitLabelState(rosterProviders, collapsedUsageProviders, usageMode)
 
@@ -133,8 +142,9 @@ export function StatusBarSurface({
         data-overflowing={overflowing}
       >
         <div ref={usageRef} className="flex shrink-0 items-center gap-3">
+          {!isPairedWebClientWindow() ? <CkitQuotaStatusSegment compact={compact} /> : null}
           {isEmptyUsageState ? (
-            showEmptyUsageCta ? (
+            showEmptyUsageCta && !ckitActive ? (
               <StatusBarUsageEmptyCta remoteOwner={remoteOwner} />
             ) : null
           ) : hasVisibleUsageMeters ? (
@@ -259,12 +269,19 @@ export function StatusBarSurface({
               </DropdownMenu>
             </StatusBarUsageChangeNotices>
           ) : null}
-          {anyVisible && !isEmptyUsageState && (
+          {(orcaUsageVisible || ckitActive) && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
+                  onClick={() => {
+                    if (orcaUsageVisible) {
+                      handleRefresh()
+                    }
+                    if (ckitActive) {
+                      void refreshCkit()
+                    }
+                  }}
+                  disabled={isRefreshing || ckitRefreshing}
                   className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
                   aria-label={translate(
                     'auto.components.status.bar.StatusBar.3325d996cb',
@@ -273,7 +290,7 @@ export function StatusBarSurface({
                 >
                   <RefreshCw
                     size={11}
-                    className={isRefreshing || anyFetching ? 'animate-spin' : ''}
+                    className={isRefreshing || anyFetching || ckitRefreshing ? 'animate-spin' : ''}
                   />
                 </button>
               </TooltipTrigger>

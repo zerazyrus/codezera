@@ -1,10 +1,12 @@
 import { ipcRenderer } from 'electron'
 import type { GitGraphApi } from '../../shared/codezera/git-graph-types'
 import type { OrcaImportApi } from '../../shared/codezera/orca-import-types'
+import type { CkitApi } from '../../shared/codezera/ckit-types'
 
 export type CodezeraApi = {
   gitGraph: GitGraphApi
   orcaImport: OrcaImportApi
+  ckit: CkitApi
 }
 
 export const codezeraApi: CodezeraApi = {
@@ -19,5 +21,9 @@ export const codezeraApi: CodezeraApi = {
   orcaImport: {
     probe: () => ipcRenderer.invoke('codezera:orcaImport:probe'),
     run: () => ipcRenderer.invoke('codezera:orcaImport:run')
+  },
+  ckit: {
+    getQuota: () => ipcRenderer.invoke('codezera:ckit:getQuota'),
+    saveApiKey: (apiKey) => ipcRenderer.invoke('codezera:ckit:saveApiKey', apiKey)
   }
 }

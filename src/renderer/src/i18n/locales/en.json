@@ -23283,6 +23283,31 @@
     },
     "panel": {
       "noWorktree": "Workspace not found."
+    },
+    "ckit": {
+      "day": "Day",
+      "window": "Window",
+      "resets": "Resets {{when}}",
+      "statusLabel": "Ckit quota",
+      "unlimited": "Unlimited",
+      "tooltipTitle": "Ckit · CloudGO AI Gateway",
+      "unlimitedHint": "This key has no quota limit.",
+      "title": "Ckit (CloudGO AI Gateway)",
+      "description": "Set up ckit and your CloudGO gateway key, then track your personal quota in the status bar.",
+      "keyFound": "Provider {{provider}} · key {{key}}",
+      "loading": "Loading…",
+      "refresh": "Refresh quota",
+      "keyLabel": "CloudGO gateway API key",
+      "saveKey": "Verify & save",
+      "step1": "Install ckit",
+      "installed": "ckit is installed on this computer.",
+      "windowsUnsupported": "ckit has no Windows installer yet. You can still enter your key below to track quota.",
+      "installTerminal": "ckit setup",
+      "installTerminalLabel": "ckit install terminal",
+      "installHint": "Press Enter to install ckit and its agent harness (omp, skills, codegraph).",
+      "step2": "Enter your CloudGO gateway key",
+      "step2Hint": "Codezera checks the key with the gateway, then saves it to {{path}} so ckit, omp and Codezera all use it. A backup of the old file is kept next to it.",
+      "changeKey": "Change key"
     }
   },
   "pet": {

@@ -34,7 +34,7 @@ import { useNow } from '@/hooks/use-now'
 
 const CALM_STALE_USAGE_MAX_AGE_MS = 30 * 60_000
 
-function MiniBar({
+export function MiniBar({
   usedPct,
   display
 }: {
@@ -54,7 +54,7 @@ function MiniBar({
   )
 }
 
-function WindowLabel({
+export function WindowLabel({
   w,
   label,
   display,
