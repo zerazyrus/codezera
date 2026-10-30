@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import path from 'node:path'
 import type { AppIdentity } from '../../shared/app-identity'
 import { PACKAGED_APP_NAME, PACKAGED_APP_USER_MODEL_ID } from '../../shared/codezera-identity'
+import { isCodezeraReviewBuild } from '../codezera/codezera-flavor'
 
 const BASE_APP_NAME = 'Orca'
 const BASE_APP_USER_MODEL_ID = 'com.stablyai.orca'
@@ -56,16 +57,19 @@ export function getDevInstanceIdentity(
   env: NodeJS.ProcessEnv = process.env
 ): DevInstanceIdentity {
   if (!isDev) {
+    // Codezera review builds get their own name, so userData and the single-instance lock stay apart from the release app.
+    const review = isCodezeraReviewBuild()
+    const name = review ? `${PACKAGED_APP_NAME} Review` : PACKAGED_APP_NAME
     return {
-      name: PACKAGED_APP_NAME,
-      appName: PACKAGED_APP_NAME,
+      name,
+      appName: name,
       isDev: false,
       devLabel: null,
       devBranch: null,
       devWorktreeName: null,
       devRepoRoot: null,
       dockBadgeLabel: null,
-      appUserModelId: PACKAGED_APP_USER_MODEL_ID
+      appUserModelId: review ? `${PACKAGED_APP_USER_MODEL_ID}.review` : PACKAGED_APP_USER_MODEL_ID
     }
   }
 

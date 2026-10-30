@@ -133,9 +133,18 @@ function readFlag(name, fallback) {
   return index === -1 ? fallback : process.argv[index + 1]
 }
 
+// Review builds sort above every release so the updater never offers to replace them; 99.<date>.<hhmm> names the build.
+function reviewVersion(now = new Date()) {
+  const pad = (value) => String(value).padStart(2, '0')
+  const date = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`
+  return `99.${date}.${now.getHours() * 100 + now.getMinutes()}`
+}
+
 function packageApp(platform) {
-  const version = readFlag('version', null) ?? nextVersion()
-  const publish = readFlag('publish', 'never')
+  // `--review`: "Codezera Review" with its own bundle id and userData, safe beside the release app.
+  const review = process.argv.includes('--review')
+  const version = readFlag('version', null) ?? (review ? reviewVersion() : nextVersion())
+  const publish = review ? 'never' : readFlag('publish', 'never')
   // Local smoke builds: one arch (`--arch arm64`) and reuse of an existing out/ (`--skip-build`).
   const arch = readFlag('arch', null)
   const skipBuild = process.argv.includes('--skip-build')
@@ -143,7 +152,8 @@ function packageApp(platform) {
     ORCA_BUILD_COMMIT: git(['rev-parse', 'HEAD']),
     ORCA_BUILD_SOURCE_COMMIT: process.env.ORCA_BUILD_SOURCE_COMMIT || upstreamCommit(),
     ORCA_LOCAL_BUILD_VERSION: version,
-    ...(arch ? { CODEZERA_MAC_ARCHS: arch } : {})
+    ...(arch ? { CODEZERA_MAC_ARCHS: arch } : {}),
+    ...(review ? { CODEZERA_FLAVOR: 'review' } : {})
   }
   console.log(`[codezera] ${platform} ${version} (skills @ ${env.ORCA_BUILD_SOURCE_COMMIT})`)
   // Same sequence as Orca's release-mac-build / dev-channel-win-build workflows.
@@ -191,7 +201,7 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename
     packageApp(command)
   } else {
     console.error(
-      'Usage: codezera-package.mjs <version|upstream-commit|notes|mac|win> [--version X] [--publish never|always]'
+      'Usage: codezera-package.mjs <version|upstream-commit|notes|mac|win> [--version X] [--publish never|always] [--review] [--arch arm64] [--skip-build]'
     )
     process.exit(2)
   }

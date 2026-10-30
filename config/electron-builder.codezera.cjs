@@ -6,31 +6,39 @@ const { publisherName: _signPathPublisher, ...unsignedSigntoolOptions } =
 
 // Local smoke builds pass one arch; CI ships both.
 const macArchs = process.env.CODEZERA_MAC_ARCHS?.split(',') ?? ['x64', 'arm64']
+// Local review builds (`codezera-package.mjs --review`) install beside the release app, never over it.
+// The runtime reads `codezeraFlavor` to pick its own app name, userData and single-instance lock.
+const review = process.env.CODEZERA_FLAVOR === 'review'
+const productName = review ? 'Codezera Review' : 'Codezera'
+const artifactBase = review ? 'codezera-review' : 'codezera'
 
 module.exports = {
   ...base,
-  appId: 'net.thezera.codezera',
-  productName: 'Codezera',
-  // `name` drives the packaged userData dir (~/Library/Application Support/codezera), separate from Orca's.
-  extraMetadata: { ...base.extraMetadata, name: 'codezera' },
+  appId: review ? 'net.thezera.codezera.review' : 'net.thezera.codezera',
+  productName,
+  extraMetadata: {
+    ...base.extraMetadata,
+    name: artifactBase,
+    ...(review ? { codezeraFlavor: 'review' } : {})
+  },
   win: {
     ...base.win,
-    executableName: 'Codezera',
+    executableName: productName.replace(' ', ''),
     // Unsigned installers: a baked publisherName would make the updater reject every Codezera update.
     signtoolOptions: unsignedSigntoolOptions,
     verifyUpdateCodeSignature: false
   },
-  nsis: { ...base.nsis, artifactName: 'codezera-windows-setup.${ext}' },
+  nsis: { ...base.nsis, artifactName: `${artifactBase}-windows-setup.\${ext}` },
   mac: {
     ...base.mac,
     // Applies to the zip; dmg keeps its own artifactName below.
-    artifactName: 'codezera-macos-${arch}.${ext}',
+    artifactName: `${artifactBase}-macos-\${arch}.\${ext}`,
     target: [
       { target: 'dmg', arch: macArchs },
       { target: 'zip', arch: macArchs }
     ]
   },
-  dmg: { ...base.dmg, artifactName: 'codezera-macos-${arch}.${ext}' },
+  dmg: { ...base.dmg, artifactName: `${artifactBase}-macos-\${arch}.\${ext}` },
   publish: {
     provider: 'github',
     owner: 'zerazyrus',

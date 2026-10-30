@@ -45,6 +45,11 @@ CSC_IDENTITY_AUTO_DISCOVERY=false node config/scripts/codezera-package.mjs mac -
 
 Output: `dist/`. Needs `pnpm install` and `pnpm -C mobile install --frozen-lockfile`.
 
+**Review builds** (`--review`) produce `Codezera Review.app` for testing unreleased changes beside the installed release:
+
+- Own bundle id `net.thezera.codezera.review` and userData `~/Library/Application Support/codezera-review`, so projects, settings and the single-instance lock never touch the release app.
+- Version `99.<yyyymmdd>.<hhmm>`: above every release, so the updater never replaces it. Never published.
+
 ## Download links (thezera.net/apps/codezera)
 
 `https://github.com/zerazyrus/codezera/releases/latest/download/` + `codezera-macos-arm64.dmg` | `codezera-macos-x64.dmg` | `codezera-windows-setup.exe`
