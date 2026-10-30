@@ -24,6 +24,7 @@ import { SettingsSubsectionHeader, SettingsSwitchRow } from './SettingsFormContr
 import { translate } from '@/i18n/i18n'
 import { DefaultWindowsProjectRuntimeSetting } from './DefaultWindowsProjectRuntimeSetting'
 import { defaultScopeHost } from '@/lib/default-creation-host'
+import { ImportFromOrcaSetting } from '@/codezera/orca-import/import-from-orca'
 
 export {
   createAutoSaveDelayDraftState,
@@ -277,6 +278,7 @@ export function GeneralPane({
   return (
     <div className="space-y-6">
       <SettingsSectionStack sections={visibleSections} spacing="section" />
+      <ImportFromOrcaSetting />
       {matchesSettingsSearch(searchQuery, getGeneralSupportSearchEntries()) ? (
         <GeneralSupportSection
           hasPrecedingSections={visibleSections.some((section) => section !== null)}

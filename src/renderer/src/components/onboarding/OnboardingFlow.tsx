@@ -17,6 +17,7 @@ import { shouldRequestOnboardingSkipConfirmation } from './onboarding-dismiss-ta
 import logo from '../../../../../resources/logo.svg'
 import { translate } from '@/i18n/i18n'
 import { addAppKeyListener, removeAppKeyListener } from '@/lib/app-keyboard-router'
+import { ImportFromOrcaNotice } from '@/codezera/orca-import/import-from-orca'
 
 const stepCopy = {
   agent: {
@@ -304,6 +305,7 @@ export default function OnboardingFlow({
                   {copy.subtitle}
                 </p>
               ) : null}
+              {stepIndex === 0 ? <ImportFromOrcaNotice /> : null}
             </div>
 
             <div

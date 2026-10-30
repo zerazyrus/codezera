@@ -23223,6 +23223,16 @@
         "dropItem": "Drop stash…"
       }
     },
+    "orcaImport": {
+      "action": "Import from Orca",
+      "failed": "Could not import from Orca: {{message}}",
+      "noticeTitle": "Already using Orca?",
+      "noticeDescription": "Bring over {{count}} projects, workspaces and settings instead of setting up again.",
+      "settingTitle": "Import from Orca",
+      "settingDescription": "Replace projects, workspaces and settings with the ones from Orca on this computer.",
+      "settingFound": "Found {{count}} projects in {{path}}. Current data is kept in a backup folder.",
+      "settingMissing": "No Orca data on this computer."
+    },
     "panel": {
       "noWorktree": "Workspace not found."
     }

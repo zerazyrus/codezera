@@ -1,8 +1,10 @@
 import { ipcRenderer } from 'electron'
 import type { GitGraphApi } from '../../shared/codezera/git-graph-types'
+import type { OrcaImportApi } from '../../shared/codezera/orca-import-types'
 
 export type CodezeraApi = {
   gitGraph: GitGraphApi
+  orcaImport: OrcaImportApi
 }
 
 export const codezeraApi: CodezeraApi = {
@@ -13,5 +15,9 @@ export const codezeraApi: CodezeraApi = {
     getSettings: (repoId) => ipcRenderer.invoke('codezera:gitGraph:getSettings', repoId),
     setSettings: (repoId, settings) =>
       ipcRenderer.invoke('codezera:gitGraph:setSettings', repoId, settings)
+  },
+  orcaImport: {
+    probe: () => ipcRenderer.invoke('codezera:orcaImport:probe'),
+    run: () => ipcRenderer.invoke('codezera:orcaImport:run')
   }
 }

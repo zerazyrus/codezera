@@ -103,7 +103,7 @@ import { mainProcessState as state } from './main-process-state'
 import { initializeSyntheticTitleRuntime } from './synthetic-title-runtime'
 import { initializeBrowserProcessUserAgent } from '../browser/browser-process-user-agent'
 import { initializeBrowserIdentityModeStore } from '../browser/browser-identity-mode-store'
-import { acquireProfileStateRuntimeAdmission } from '../persistence/profile-state/profile-state-access'
+import { admitProfileStateAfterOrcaImport } from '../codezera/orca-import/orca-import-startup'
 import { getActiveProfileStateLocation } from '../persistence/profile-state/profile-state-active-location'
 import {
   acquireDesktopProfileLockOrExplain,
@@ -259,7 +259,8 @@ function initializeMainProcessPreflight(options: MainProcessPreflightOptions): b
   if (!skip && !bypass && !acquireDesktopProfileLockOrExplain(getCanonicalUserDataPath())) {
     return false
   }
-  state.profileStateAdmission = acquireProfileStateRuntimeAdmission(getCanonicalUserDataPath())
+  // Codezera: also applies a staged "Import from Orca" before any profile file opens.
+  state.profileStateAdmission = admitProfileStateAfterOrcaImport(getCanonicalUserDataPath())
   // Renderer and worker defaults must be fixed before any session exists.
   initializeBrowserProcessUserAgent(
     initializeBrowserIdentityModeStore(getCanonicalUserDataPath()).appliedMode
