@@ -218,7 +218,7 @@ export function GitGraphRefBadges({
                 <span
                   className={cn(
                     'flex items-center truncate px-1.5 text-foreground',
-                    isCurrent && 'font-bold'
+                    isCurrent && 'font-semibold'
                   )}
                 >
                   {ref.name}

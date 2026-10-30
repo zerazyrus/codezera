@@ -49,7 +49,7 @@ export function GitGraphRowSvg({
         cx={cx}
         cy={cy}
         r={NODE_RADIUS}
-        fill={node === 'filled' ? row.color : 'var(--background)'}
+        fill={node === 'filled' ? row.color : 'var(--editor-surface)'}
         stroke={row.color}
         strokeWidth={node === 'filled' ? 1 : STROKE_WIDTH}
       />

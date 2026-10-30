@@ -248,11 +248,11 @@ export function GitGraphView({
 
   return (
     <div
-      className="flex h-full min-h-0 flex-col bg-background text-[13px]"
+      className="flex h-full min-h-0 flex-col bg-editor-surface text-[13px]"
       data-testid="git-graph-view"
     >
       <div className="relative flex h-10 shrink-0 items-center justify-center gap-3 border-b border-border px-3">
-        <span className="font-bold">
+        <span className="font-medium text-muted-foreground">
           {translate('codezera.gitGraph.branchesLabel', 'Branches')}:
         </span>
         <GitGraphBranchPicker
@@ -261,7 +261,7 @@ export function GitGraphView({
           showRemoteBranches={showRemoteBranches}
           onChange={setSelectedRefs}
         />
-        <Label className="flex items-center gap-1.5 text-[13px] font-bold">
+        <Label className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
           <Checkbox
             checked={showRemoteBranches}
             onCheckedChange={(value) => setShowRemoteBranches(value === true)}
@@ -293,7 +293,7 @@ export function GitGraphView({
         </div>
       </div>
       <div
-        className="grid h-8 shrink-0 items-center gap-x-2 border-b border-border pr-2 font-bold"
+        className="grid h-8 shrink-0 items-center gap-x-2 border-b border-border pr-2 text-[12px] font-medium text-muted-foreground"
         style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS, ...lanesStyle }}
       >
         <HeaderCell>{translate('codezera.gitGraph.column.graph', 'Graph')}</HeaderCell>
@@ -321,7 +321,7 @@ export function GitGraphView({
             onKeyDown={(event) => (event.key === 'Enter' ? openSourceControl() : undefined)}
           >
             <GitGraphRowSvg row={layout.uncommitted} width={graphWidth} node="hollow" />
-            <span className="truncate font-bold">
+            <span className="truncate font-medium">
               {translate('codezera.gitGraph.uncommitted', 'Uncommitted Changes ({{count}})', {
                 count: result.uncommittedCount
               })}

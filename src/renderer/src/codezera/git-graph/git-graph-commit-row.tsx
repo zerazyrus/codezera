@@ -217,17 +217,27 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
               currentBranch={currentBranch}
               onRequest={onRequest}
             />
-            <span className={cn('truncate', isHead && 'font-bold', muted && 'opacity-50')}>
+            <span className={cn('truncate', isHead && 'font-semibold', muted && 'opacity-50')}>
               <GitGraphIssueText text={item.subject} linking={issueLinking} />
             </span>
           </div>
-          <span className={cn('truncate tabular-nums', muted && 'opacity-50')}>
+          <span
+            className={cn('truncate tabular-nums text-muted-foreground', muted && 'opacity-50')}
+          >
             {item.timestamp ? formatGitGraphDate(item.timestamp) : ''}
           </span>
-          <span className={cn('truncate', muted && 'opacity-50')} title={item.authorEmail}>
+          <span
+            className={cn('truncate text-muted-foreground', muted && 'opacity-50')}
+            title={item.authorEmail}
+          >
             {item.author}
           </span>
-          <span className={cn('truncate font-mono text-[12px]', muted && 'opacity-50')}>
+          <span
+            className={cn(
+              'truncate font-mono text-[12px] text-muted-foreground',
+              muted && 'opacity-50'
+            )}
+          >
             {item.id.slice(0, 8)}
           </span>
         </div>
