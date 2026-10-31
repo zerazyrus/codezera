@@ -46,12 +46,44 @@ function originReleaseTags() {
     .map((line) => line.split('refs/tags/')[1])
 }
 
-function nextVersion() {
-  const orcaVersion = JSON.parse(readFileSync(resolve('package.json'), 'utf8')).version
-  return codezeraVersion(orcaVersion, originReleaseTags())
+const UPSTREAM_REMOTE = process.env.CODEZERA_UPSTREAM_REMOTE ?? 'upstream'
+const UPSTREAM_REF = process.env.CODEZERA_UPSTREAM_REF ?? `${UPSTREAM_REMOTE}/main`
+
+/**
+ * Newest stable Orca release already merged here. Orca tags detached release commits and only
+ * sometimes bumps main's package.json, so main's version lags its real releases.
+ */
+function mergedOrcaReleaseVersion() {
+  const upstreamNow = upstreamCommit()
+  // Annotated tags list the tag object then the commit (`^{}`); the later line wins.
+  const commits = new Map()
+  for (const line of git(['ls-remote', '--tags', UPSTREAM_REMOTE, 'refs/tags/v*']).split('\n')) {
+    const match = /^([0-9a-f]+)\trefs\/tags\/v(\d+\.\d+\.\d+)(?:\^\{\})?$/.exec(line)
+    if (match) {
+      commits.set(match[2], match[1])
+    }
+  }
+  const { compare } = new Intl.Collator('en', { numeric: true })
+  const releases = [...commits]
+    .map(([version, sha]) => ({ sha, version }))
+    .sort((a, b) => compare(b.version, a.version))
+  for (const { sha, version } of releases) {
+    git(['fetch', '--quiet', '--no-tags', UPSTREAM_REMOTE, sha])
+    // The release commit sits on its main source commit; merged once that source is in our history.
+    const source = git(['merge-base', sha, UPSTREAM_REF])
+    try {
+      git(['merge-base', '--is-ancestor', source, upstreamNow])
+      return version
+    } catch {
+      // Cut from main after our merge point; try an older release.
+    }
+  }
+  return JSON.parse(readFileSync(resolve('package.json'), 'utf8')).version
 }
 
-const UPSTREAM_REF = process.env.CODEZERA_UPSTREAM_REF ?? 'upstream/main'
+function nextVersion() {
+  return codezeraVersion(mergedOrcaReleaseVersion(), originReleaseTags())
+}
 
 /** Skill installs pin to a commit on stablyai/orca, so use the last merged upstream commit. */
 function upstreamCommit(ref = 'HEAD') {

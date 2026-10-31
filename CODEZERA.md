@@ -23,7 +23,7 @@ Generated from commit subjects by `node config/scripts/codezera-package.mjs note
 
 ## Version
 
-Orca `a.b.c`, Codezera build `n` → `a.b.(c*100+n)`, e.g. Orca 1.4.214 → 1.4.21401, 1.4.21402… Plain semver, so the stable updater orders builds across Orca bumps. Computed from origin tags by `node config/scripts/codezera-package.mjs version`.
+Orca release `a.b.c`, Codezera build `n` → `a.b.(c*100+n)`, e.g. Orca 1.4.245 → 1.4.24501, 1.4.24502… `a.b.c` is the newest stable Orca tag whose source commit is already merged (Orca tags detached release commits and rarely bumps `main`'s `package.json`, so that lags; it is only the fallback). Plain semver, so the stable updater orders builds across Orca releases. Computed by `node config/scripts/codezera-package.mjs version` (needs the `upstream` remote).
 
 ## Identity (kept out of Orca's files to avoid merge conflicts)
 
