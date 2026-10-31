@@ -31,6 +31,14 @@ Orca `a.b.c`, Codezera build `n` → `a.b.(c*100+n)`, e.g. Orca 1.4.214 → 1.4.
 - `src/shared/codezera-identity.ts`: release repo + packaged app name. Vitest defines `CODEZERA_UPSTREAM_IDENTITY`, so Orca's own tests still assert Orca values.
 - `ORCA_BUILD_SOURCE_COMMIT` pins skill installs to the merged Orca commit (fork commits don't exist upstream).
 
+## Icons
+
+Sources: `resources/icon-source/codezera/*.svg` (Z + terminal cursor from the zera mark). Outputs keep Orca's filenames so no code or builder config changes:
+
+- `icon-source/icon.icon` (Assets/logo.svg = `glyph.svg`) → `bash resources/icon-source/generate.sh` → `build/icon.{icns,ico,png}`, `icon.png`.
+- `rsvg-convert -w 256 icon-dev.svg -o resources/icon-dev.png`; `alt-gradient.svg` → `app-icons/orca-blue.png`, `alt-stripes.svg` → `app-icons/orca-watercolor.png` (`-w 1024`); `logo-mono.svg` → `resources/logo.svg` (white; UI inverts in light mode).
+- Upstream icon changes conflict on these files: keep ours (`git checkout --ours <file>`).
+
 ## Unsigned macOS
 
 - First install: `xattr -cr /Applications/Codezera.app`.
