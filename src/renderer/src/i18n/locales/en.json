@@ -23341,7 +23341,7 @@
       "unlimited": "Unlimited",
       "tooltipTitle": "Ckit · CloudGO AI Gateway",
       "unlimitedHint": "This key has no quota limit.",
-      "dayHint": "The rolling window drains back to 0% when idle. The day budget only grows and blocks requests at 100% until it resets.",
+      "limitsHint": "Each limit blocks requests at 100%. The rolling window drains back to 0% when idle; the day budget only grows until it resets.",
       "title": "Ckit (CloudGO AI Gateway)",
       "description": "Set up ckit and your CloudGO gateway key, then track your personal quota in the status bar.",
       "keyFound": "Provider {{provider}} · key {{key}}",

@@ -6,7 +6,14 @@ import { useAppStore } from '@/store'
 import { WindowLabel } from '@/components/status-bar/StatusBarProviderSegment'
 import { normalizeUsagePercentageDisplay } from '../../../../shared/usage-percentage-display'
 import { useCkitQuotaPolling, useCkitQuotaStore } from './ckit-quota-store'
-import { CkitDayBar, CloudgoLogo, ckitResetLabel, ckitWindowLabel } from './ckit-quota-presentation'
+import {
+  CKIT_USAGE_TEXT_CLASS,
+  CkitDayBar,
+  CloudgoLogo,
+  ckitResetLabel,
+  ckitUsageLevel,
+  ckitWindowLabel
+} from './ckit-quota-presentation'
 
 /** Ckit gateway quota chip, styled like the Claude/Codex usage chips. Hidden until ckit is set up. */
 export function CkitQuotaStatusSegment({
@@ -25,7 +32,6 @@ export function CkitQuotaStatusSegment({
   }
 
   const windows = status.state === 'ok' ? status.windows : []
-  const day = windows.find((w) => w.kind === 'day')
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -50,20 +56,25 @@ export function CkitQuotaStatusSegment({
               {windows.map((w, index) => (
                 <React.Fragment key={w.kind}>
                   {index > 0 ? <span className="text-muted-foreground">·</span> : null}
-                  {w.kind === 'day' ? (
-                    <CkitDayBar usedPercent={w.usedPercent} display={display} />
-                  ) : null}
-                  <WindowLabel
-                    w={{
-                      usedPercent: w.usedPercent,
-                      windowMinutes: (w.windowSeconds ?? 86_400) / 60,
-                      resetsAt: w.resetsAt,
-                      resetDescription: null
-                    }}
-                    label={ckitWindowLabel(w).toLowerCase()}
-                    display={display}
-                    showLabel={!compact}
-                  />
+                  {w.kind === 'day' ? <CkitDayBar w={w} display={display} /> : null}
+                  {/* The rolling window has no bar; its number turns amber/red as it nears the block. */}
+                  <span
+                    className={
+                      w.kind === 'day' ? undefined : CKIT_USAGE_TEXT_CLASS[ckitUsageLevel(w)]
+                    }
+                  >
+                    <WindowLabel
+                      w={{
+                        usedPercent: w.usedPercent,
+                        windowMinutes: (w.windowSeconds ?? 86_400) / 60,
+                        resetsAt: w.resetsAt,
+                        resetDescription: null
+                      }}
+                      label={ckitWindowLabel(w).toLowerCase()}
+                      display={display}
+                      showLabel={!compact}
+                    />
+                  </span>
                 </React.Fragment>
               ))}
             </>
@@ -86,14 +97,12 @@ export function CkitQuotaStatusSegment({
                 {ckitResetLabel(w) ? ` · ${ckitResetLabel(w)}` : ''}
               </div>
             ))}
-            {day ? (
-              <div className="max-w-[260px] text-muted-foreground">
-                {translate(
-                  'codezera.ckit.dayHint',
-                  'The rolling window drains back to 0% when idle. The day budget only grows and blocks requests at 100% until it resets.'
-                )}
-              </div>
-            ) : null}
+            <div className="max-w-[260px] text-muted-foreground">
+              {translate(
+                'codezera.ckit.limitsHint',
+                'Each limit blocks requests at 100%. The rolling window drains back to 0% when idle; the day budget only grows until it resets.'
+              )}
+            </div>
           </>
         )}
       </TooltipContent>

@@ -21,17 +21,35 @@ export function CloudgoLogo({ size, className }: { size: number; className?: str
   )
 }
 
-/** Day budget bar: it only fills during the day and blocks at 100%, so it warns as it fills. */
+type CkitUsageLevel = 'ok' | 'warn' | 'full'
+
+/** Both limits block requests at 100%, so they share the warning thresholds. */
+export function ckitUsageLevel(w: CkitQuotaWindow): CkitUsageLevel {
+  return w.exceeded || w.usedPercent >= 90 ? 'full' : w.usedPercent >= 70 ? 'warn' : 'ok'
+}
+
+export const CKIT_USAGE_TEXT_CLASS: Record<CkitUsageLevel, string> = {
+  ok: '',
+  warn: 'text-status-warning-text',
+  full: 'text-destructive'
+}
+
+const BAR_CLASS: Record<CkitUsageLevel, string> = {
+  ok: 'bg-muted-foreground/60',
+  warn: 'bg-status-warning',
+  full: 'bg-destructive'
+}
+
+/** Day budget bar: it only grows during the day, so a filling bar shows how close the block is. */
 export function CkitDayBar({
-  usedPercent,
+  w,
   display
 }: {
-  usedPercent: number
+  w: CkitQuotaWindow
   display: UsagePercentageDisplay
 }): React.JSX.Element {
-  const used = Math.min(100, Math.max(0, usedPercent))
-  const tone =
-    used >= 90 ? 'bg-destructive' : used >= 70 ? 'bg-status-warning' : 'bg-muted-foreground/60'
+  const used = Math.min(100, Math.max(0, w.usedPercent))
+  const tone = BAR_CLASS[ckitUsageLevel(w)]
   return (
     <span
       data-usage-bar
