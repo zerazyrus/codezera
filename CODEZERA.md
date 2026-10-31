@@ -7,7 +7,7 @@ Codezera ships from `zerazyrus/codezera` (branch `codezera`), merged daily from 
 06:00 ICT daily, or **Actions → codezera-release → Run workflow** (`force` rebuilds even without changes).
 
 1. Disables inherited Orca workflows (they target Orca's runners and secrets).
-2. Merges `upstream/main`. A conflict opens an issue and stops; resolve locally (`git fetch upstream main && git merge upstream/main`) and push.
+2. Merges `upstream/main` after `config/scripts/codezera-merge-setup.sh` (brand files keep ours, see below). A conflict opens an issue and stops; resolve locally and push.
 3. Skips when `HEAD` equals the newest `v*` tag.
 4. Builds mac (arm64 + x64 dmg/zip) and Windows (NSIS) into one draft, then publishes it as Latest after checking every asset.
 
@@ -37,7 +37,19 @@ Sources: `resources/icon-source/codezera/*.svg` (Z + terminal cursor from the ze
 
 - `icon-source/icon.icon` (Assets/logo.svg = `glyph.svg`) → `bash resources/icon-source/generate.sh` → `build/icon.{icns,ico,png}`, `icon.png`.
 - `rsvg-convert -w 256 icon-dev.svg -o resources/icon-dev.png`; `alt-gradient.svg` → `app-icons/orca-blue.png`, `alt-stripes.svg` → `app-icons/orca-watercolor.png` (`-w 1024`); `logo-mono.svg` → `resources/logo.svg` (white; UI inverts in light mode).
-- Upstream icon changes conflict on these files: keep ours (`git checkout --ours <file>`).
+- Upstream icon changes resolve to ours automatically via `codezera-merge-setup.sh` (`merge=ours` in `.git/info/attributes`). Run it once per local clone too.
+
+## Keeping upstream merges conflict-free
+
+A conflict only happens where Codezera and Orca edit the same lines of an Orca file. Rules:
+
+- New behavior goes in Codezera-owned files (`src/**/codezera/`, `*codezera*`); Orca files only get a one-line hook (import + call/render). Never reformat, reorder or "clean up" Orca code.
+- In a hook, prefer adding a new line or branch beside Orca's lines over editing them (e.g. an extra `: file.mode === 'codezera-panel' ? GitGraph` arm).
+- UI strings: add keys under `codezera.*` in `en.json`; never edit Orca's keys. Brand names come from `src/shared/codezera-identity.ts`.
+- CSS: append overrides next to the rule they extend; never edit Orca's declarations.
+- Before an Orca file passes its `max-lines` cap, add `/* eslint-disable max-lines -- Why: … */` instead of splitting Orca's file.
+- Locally: `git config rerere.enabled true` (set by the setup script) replays a resolution you already made if the same conflict recurs.
+- Resolving: take Orca's side, then re-apply Codezera's hook where Orca moved the code (see the upstream commit's diff), then `pnpm tc:web` before pushing.
 
 ## Unsigned macOS
 
