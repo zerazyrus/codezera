@@ -3,10 +3,10 @@ import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
-import { MiniBar, WindowLabel } from '@/components/status-bar/StatusBarProviderSegment'
+import { WindowLabel } from '@/components/status-bar/StatusBarProviderSegment'
 import { normalizeUsagePercentageDisplay } from '../../../../shared/usage-percentage-display'
 import { useCkitQuotaPolling, useCkitQuotaStore } from './ckit-quota-store'
-import { CloudgoLogo, ckitResetLabel, ckitWindowLabel } from './ckit-quota-presentation'
+import { CkitDayBar, CloudgoLogo, ckitResetLabel, ckitWindowLabel } from './ckit-quota-presentation'
 
 /** Ckit gateway quota chip, styled like the Claude/Codex usage chips. Hidden until ckit is set up. */
 export function CkitQuotaStatusSegment({
@@ -25,10 +25,7 @@ export function CkitQuotaStatusSegment({
   }
 
   const windows = status.state === 'ok' ? status.windows : []
-  const tightest = windows.reduce<(typeof windows)[number] | null>(
-    (max, w) => (max === null || w.usedPercent > max.usedPercent ? w : max),
-    null
-  )
+  const day = windows.find((w) => w.kind === 'day')
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -50,15 +47,12 @@ export function CkitQuotaStatusSegment({
             </span>
           ) : (
             <>
-              {tightest && !compact ? (
-                <MiniBar
-                  usedPct={Math.min(100, Math.max(0, tightest.usedPercent))}
-                  display={display}
-                />
-              ) : null}
               {windows.map((w, index) => (
                 <React.Fragment key={w.kind}>
                   {index > 0 ? <span className="text-muted-foreground">·</span> : null}
+                  {w.kind === 'day' ? (
+                    <CkitDayBar usedPercent={w.usedPercent} display={display} />
+                  ) : null}
                   <WindowLabel
                     w={{
                       usedPercent: w.usedPercent,
@@ -85,12 +79,22 @@ export function CkitQuotaStatusSegment({
         ) : windows.length === 0 ? (
           <div>{translate('codezera.ckit.unlimitedHint', 'This key has no quota limit.')}</div>
         ) : (
-          windows.map((w) => (
-            <div key={w.kind} className="tabular-nums">
-              {ckitWindowLabel(w)} {Math.round(w.usedPercent)}%
-              {ckitResetLabel(w) ? ` · ${ckitResetLabel(w)}` : ''}
-            </div>
-          ))
+          <>
+            {windows.map((w) => (
+              <div key={w.kind} className="tabular-nums">
+                {ckitWindowLabel(w)} {Math.round(w.usedPercent)}%
+                {ckitResetLabel(w) ? ` · ${ckitResetLabel(w)}` : ''}
+              </div>
+            ))}
+            {day ? (
+              <div className="max-w-[260px] text-muted-foreground">
+                {translate(
+                  'codezera.ckit.dayHint',
+                  'The rolling window drains back to 0% when idle. The day budget only grows and blocks requests at 100% until it resets.'
+                )}
+              </div>
+            ) : null}
+          </>
         )}
       </TooltipContent>
     </Tooltip>

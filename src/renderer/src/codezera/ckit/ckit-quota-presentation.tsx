@@ -1,6 +1,10 @@
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import type { CkitQuotaWindow } from '../../../../shared/codezera/ckit-types'
+import {
+  getDisplayedUsagePercentage,
+  type UsagePercentageDisplay
+} from '../../../../shared/usage-percentage-display'
 import cloudgoLogoUrl from './cloudgo-logo.png?url'
 
 export function CloudgoLogo({ size, className }: { size: number; className?: string }) {
@@ -14,6 +18,30 @@ export function CloudgoLogo({ size, className }: { size: number; className?: str
       className={cn('shrink-0 object-contain', className)}
       draggable={false}
     />
+  )
+}
+
+/** Day budget bar: it only fills during the day and blocks at 100%, so it warns as it fills. */
+export function CkitDayBar({
+  usedPercent,
+  display
+}: {
+  usedPercent: number
+  display: UsagePercentageDisplay
+}): React.JSX.Element {
+  const used = Math.min(100, Math.max(0, usedPercent))
+  const tone =
+    used >= 90 ? 'bg-destructive' : used >= 70 ? 'bg-status-warning' : 'bg-muted-foreground/60'
+  return (
+    <span
+      data-usage-bar
+      className="inline-block w-[48px] h-[6px] rounded-full bg-muted overflow-hidden flex-shrink-0"
+    >
+      <span
+        className={cn('block h-full rounded-full transition-all duration-300', tone)}
+        style={{ width: `${getDisplayedUsagePercentage(used, display)}%` }}
+      />
+    </span>
   )
 }
 
