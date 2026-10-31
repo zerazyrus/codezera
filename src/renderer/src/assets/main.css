@@ -1183,10 +1183,19 @@ html.native-shell .app-layout {
    inherit that panel's contrast instead of the generic titlebar text color. */
 .titlebar-left:not(.titlebar-left-floating) .titlebar-app-name {
   color: var(--worktree-sidebar-foreground);
+  min-width: 0;
+}
+
+/* Why: the open header must not widen the sidebar column; a long app name truncates instead of leaving a gap below. */
+.titlebar-left:not(.titlebar-left-floating) {
+  contain: inline-size;
 }
 
 .titlebar-app-name-main {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .titlebar-icon-button {
