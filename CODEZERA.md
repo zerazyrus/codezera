@@ -37,6 +37,7 @@ Sources: `resources/icon-source/codezera/*.svg` (Z + terminal cursor from the ze
 
 - `icon-source/icon.icon` (Assets/logo.svg = `glyph.svg`) → `bash resources/icon-source/generate.sh` → `build/icon.{icns,ico,png}`, `icon.png`.
 - `rsvg-convert -w 256 icon-dev.svg -o resources/icon-dev.png`; `alt-gradient.svg` → `app-icons/orca-blue.png`, `alt-stripes.svg` → `app-icons/orca-watercolor.png` (`-w 1024`); `logo-mono.svg` → `resources/logo.svg` (white; UI inverts in light mode).
+- macOS menu bar: `tray-template.svg` (black glyph, macOS tints it) → `rsvg-convert -h 13|26` then pad to 22×14 / 44×28 into `resources/tray/orca-menu-barTemplate{,@2x}.png`. Tray labels swap "Orca" for `PACKAGED_APP_NAME` after translation, so every locale is covered without editing Orca's keys.
 - Upstream icon changes resolve to ours automatically via `codezera-merge-setup.sh` (`merge=ours` in `.git/info/attributes`). Run it once per local clone too.
 
 ## Keeping upstream merges conflict-free

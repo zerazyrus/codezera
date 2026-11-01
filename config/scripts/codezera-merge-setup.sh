@@ -15,4 +15,5 @@ resources/build/icon.icns merge=ours
 resources/build/icon.ico merge=ours
 resources/build/icon.png merge=ours
 resources/icon-source/icon.icon/** merge=ours
+resources/tray/* merge=ours
 EOF
