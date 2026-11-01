@@ -52,6 +52,7 @@ export function EditorContent({
   resolvedLanguage,
   isMarkdown,
   isMermaid,
+  isSvg = false,
   isCsv,
   isNotebook,
   customEditor = null,
@@ -81,6 +82,7 @@ export function EditorContent({
   resolvedLanguage: string
   isMarkdown: boolean
   isMermaid: boolean
+  isSvg?: boolean
   isCsv: boolean
   isNotebook: boolean
   customEditor?: ActivePluginCustomEditor | null
@@ -209,6 +211,7 @@ export function EditorContent({
         <EditorFileLoadErrorView
           message={fileContent.loadError}
           code={fileContent.loadErrorCode}
+          worktreeId={activeFile.worktreeId}
           onRetry={() => reloadContent(activeFile, USER_RETRY)}
         />
       )
@@ -263,6 +266,7 @@ export function EditorContent({
         monacoLanguage={monacoLanguage}
         isMarkdown={isMarkdown}
         isMermaid={isMermaid}
+        isSvg={isSvg}
         isCsv={isCsv}
         isNotebook={isNotebook}
         customEditor={customEditor}
