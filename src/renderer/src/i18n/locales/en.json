@@ -23374,6 +23374,17 @@
     "runCommands": "Run these in an Administrator Command Prompt, then relaunch Orca:"
   },
   "codezera": {
+    "branchStatus": {
+      "switch": "Switch branch",
+      "tooltip": "{{branch}} · click to switch branch",
+      "search": "Select a branch to checkout",
+      "empty": "No matching branch",
+      "local": "Branches",
+      "remote": "Remote branches",
+      "checkoutFailed": "Could not switch branch",
+      "pull": "Pull from {{upstream}}",
+      "noUpstream": "This branch has no upstream to pull from"
+    },
     "gitGraph": {
       "branches": {
         "all": "Show all",
@@ -23411,7 +23422,8 @@
         "tag": "Checkout",
         "tagItem": "Checkout tag (detached)",
         "branch": "Checkout",
-        "branchItem": "Checkout branch"
+        "branchItem": "Checkout branch",
+        "doubleClick": "Double-click to checkout"
       },
       "merge": {
         "title": "Merge branch",

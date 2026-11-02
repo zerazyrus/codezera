@@ -40,6 +40,7 @@ import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
 import { CkitQuotaStatusSegment } from '@/codezera/ckit/CkitQuotaStatusSegment'
 import { useCkitQuotaStore } from '@/codezera/ckit/ckit-quota-store'
+import { CodezeraBranchStatusSegment } from '@/codezera/branch-status/CodezeraBranchStatusSegment'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -142,6 +143,7 @@ export function StatusBarSurface({
         data-overflowing={overflowing}
       >
         <div ref={usageRef} className="flex shrink-0 items-center gap-3">
+          {!isPairedWebClientWindow() ? <CodezeraBranchStatusSegment compact={compact} /> : null}
           {!isPairedWebClientWindow() ? <CkitQuotaStatusSegment compact={compact} /> : null}
           {isEmptyUsageState ? (
             showEmptyUsageCta && !ckitActive ? (

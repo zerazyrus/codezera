@@ -199,12 +199,47 @@ export function GitGraphRefBadges({
               ? Cloud
               : GitBranch
         const isCurrent = ref.category === 'branches' && ref.name === currentBranch
+        const remoteSplit =
+          ref.category === 'remote branches' ? splitRemoteBranchName(ref.name) : null
+        // Double-click checks the branch out, like VS Code Git Graph.
+        const checkoutOnDoubleClick =
+          ref.category === 'branches' && !isCurrent
+            ? (): void =>
+                onRequest({
+                  kind: 'run',
+                  label: translate('codezera.gitGraph.checkout.branch', 'Checkout'),
+                  action: { kind: 'checkout', ref: ref.name }
+                })
+            : remoteSplit
+              ? (): void =>
+                  onRequest({
+                    kind: 'run',
+                    label: translate('codezera.gitGraph.checkout.remote', 'Checkout'),
+                    action: {
+                      kind: 'checkoutRemoteBranch',
+                      remoteBranch: ref.name,
+                      localName: remoteSplit.branchName
+                    }
+                  })
+              : undefined
         return (
           <ContextMenu key={ref.id}>
             <ContextMenuTrigger asChild>
               <span
                 data-testid="git-graph-ref"
-                className="inline-flex h-[18px] max-w-[18rem] items-stretch overflow-hidden rounded-[3px] border leading-4"
+                className={cn(
+                  'inline-flex h-[18px] max-w-[18rem] items-stretch overflow-hidden rounded-[3px] border leading-4',
+                  checkoutOnDoubleClick && 'cursor-pointer'
+                )}
+                title={
+                  checkoutOnDoubleClick
+                    ? translate(
+                        'codezera.gitGraph.checkout.doubleClick',
+                        'Double-click to checkout'
+                      )
+                    : undefined
+                }
+                onDoubleClick={checkoutOnDoubleClick}
                 style={{ borderColor: color }}
               >
                 {isCurrent ? (
