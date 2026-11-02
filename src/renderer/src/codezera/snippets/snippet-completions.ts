@@ -3,55 +3,47 @@ import type { CodezeraSnippet } from '../../../../shared/codezera/snippets-types
 import { snippetAppliesTo, snippetReplaceStartColumn } from './snippet-scope-match'
 
 type MonacoApi = typeof Monaco
-type ListSnippets = (filePath: string) => Promise<CodezeraSnippet[]>
+type SnippetSource = {
+  list: () => Promise<CodezeraSnippet[]>
+  onChanged: (callback: () => void) => () => void
+}
 
 // Editor tabs only; prompt boxes and diff/inmemory models would otherwise get global snippets.
 const SNIPPET_SCHEMES: Record<string, true> = { file: true, 'vscode-remote': true }
-// Suggest sessions re-query rarely, so this bounds IPC while keeping VS Code edits near-live.
+// Settings edits invalidate immediately; this window only bounds IPC and picks up hand edits.
 const REFRESH_AFTER_MS = 2000
-const MAX_CACHED_DIRS = 64
-
-type CacheEntry = { fetchedAt: number; snippets: Promise<CodezeraSnippet[]> }
 
 const registered = new WeakSet<MonacoApi>()
 
-function createSnippetCache(
-  listSnippets: ListSnippets
-): (filePath: string) => Promise<CodezeraSnippet[]> {
-  const byDir = new Map<string, CacheEntry>()
-  return (filePath) => {
-    // Workspace snippets depend only on the folder, so siblings share one fetch.
-    const dir = filePath.slice(0, Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\')))
+function createSnippetCache(source: SnippetSource): () => Promise<CodezeraSnippet[]> {
+  let cached: { fetchedAt: number; snippets: Promise<CodezeraSnippet[]> } | null = null
+  source.onChanged(() => {
+    cached = null
+  })
+  return () => {
     const now = Date.now()
-    const cached = byDir.get(dir)
-    if (cached && now - cached.fetchedAt < REFRESH_AFTER_MS) {
-      return cached.snippets
+    if (!cached || now - cached.fetchedAt >= REFRESH_AFTER_MS) {
+      cached = { fetchedAt: now, snippets: source.list().catch(() => []) }
     }
-    const snippets = listSnippets(filePath).catch(() => [])
-    byDir.delete(dir)
-    if (byDir.size >= MAX_CACHED_DIRS) {
-      byDir.delete(byDir.keys().next().value as string)
-    }
-    byDir.set(dir, { fetchedAt: now, snippets })
-    return snippets
+    return cached.snippets
   }
 }
 
-export function registerCodezeraUserSnippets(
+export function registerCodezeraSnippetCompletions(
   monaco: MonacoApi,
-  listSnippets: ListSnippets = (filePath) => window.api.codezera.snippets.list(filePath)
+  source: SnippetSource = window.api.codezera.snippets
 ): Monaco.IDisposable | undefined {
   if (registered.has(monaco)) {
     return undefined
   }
   registered.add(monaco)
-  const loadSnippets = createSnippetCache(listSnippets)
+  const loadSnippets = createSnippetCache(source)
   return monaco.languages.registerCompletionItemProvider('*', {
     async provideCompletionItems(model, position) {
       if (!SNIPPET_SCHEMES[model.uri.scheme]) {
         return undefined
       }
-      const snippets = await loadSnippets(model.uri.fsPath)
+      const snippets = await loadSnippets()
       if (snippets.length === 0 || model.isDisposed()) {
         return undefined
       }

@@ -1,88 +1,60 @@
-import { existsSync } from 'node:fs'
+import type { ChildProcess } from 'node:child_process'
+import type { ConnectConfig } from 'ssh2'
 import type { SshTarget } from '../../../shared/ssh-types'
-import { resolveUserSshConfigHost } from '../../ssh/config/ssh-config-host-picker'
-import type { SftpProfileConfig } from './sftp-config'
+import { resolveWithSshG, type SshResolvedConfig } from '../../ssh/config/ssh-g-config-resolution'
+import {
+  buildConnectConfig,
+  resolveEffectiveSshEndpoint
+} from '../../ssh/connection/ssh-connect-config'
+import { resolveEffectiveProxy, spawnProxyCommand } from '../../ssh/ssh-proxy-command'
 
-/** Where and as whom an sftp.json profile connects once its host alias is resolved. */
+/** An Orca SSH host merged with `ssh -G`, exactly as Orca's own ssh2 transport sees it. */
 export type SftpEndpoint = {
-  host: string
-  port: number
-  username: string
-  /** Key files to try in order; the first readable one is used. */
-  privateKeyPaths: string[]
-  password: string | null
-  passphrase: string | null
-  connectTimeout: number
-  /** Set when `host` is a ~/.ssh/config alias, so a terminal can keep every option of that Host block. */
-  sshConfigAlias: string | null
+  target: SshTarget
+  resolved: SshResolvedConfig | null
+  /** `user@host:port` after alias resolution. */
+  label: string
 }
 
-type AliasRoute = {
-  hostname: string
-  port: number
-  username: string
-  identityFiles: string[]
-  proxied: boolean
-}
-
-function routeFromSshTarget(host: string, targets: readonly SshTarget[]): AliasRoute | null {
-  const alias = host.toLowerCase()
-  const target = targets.find(
-    (entry) => entry.label.toLowerCase() === alias || entry.configHost?.toLowerCase() === alias
-  )
-  if (!target?.host) {
-    return null
-  }
-  return {
-    hostname: target.host,
-    port: target.port,
-    username: target.username,
-    identityFiles: target.identityFile ? [target.identityFile] : [],
-    proxied: Boolean(target.jumpHost || target.proxyCommand)
-  }
-}
-
-/**
- * Resolves `host` like natizyskunk.sftp resolves ~/.ssh/config aliases, falling back to the
- * SSH hosts saved in Orca so aliases that only live there still work. sftp.json fields win.
- */
-export async function resolveSftpEndpoint(
-  profile: SftpProfileConfig,
-  sshTargets: readonly SshTarget[]
-): Promise<SftpEndpoint> {
-  const resolved = await resolveUserSshConfigHost(profile.host)
-  const sshConfigAlias = resolved ? profile.host : null
-  const route: AliasRoute | null = resolved
-    ? {
-        hostname: resolved.hostname,
-        port: resolved.port,
-        username: resolved.username,
-        identityFiles: resolved.identityFiles,
-        proxied: Boolean(resolved.jumpHost || resolved.proxyCommand)
-      }
-    : routeFromSshTarget(profile.host, sshTargets)
-  if (route?.proxied) {
-    throw new Error(`${profile.host} uses ProxyJump/ProxyCommand, which SFTP does not support yet`)
-  }
-  const username = profile.username ?? (route?.username || null)
+export async function resolveSftpEndpoint(target: SshTarget): Promise<SftpEndpoint> {
+  const resolved = await resolveWithSshG(target.configHost || target.label).catch(() => null)
+  const { host, port, username } = resolveEffectiveSshEndpoint(target, resolved)
   if (!username) {
-    throw new Error(`No username for ${profile.host}; set "username" in sftp.json`)
+    throw new Error(`SSH host "${target.label}" has no username; set one in Settings › SSH Hosts`)
   }
-  const keyCandidates = profile.privateKeyPath
-    ? [profile.privateKeyPath]
-    : (route?.identityFiles ?? []).filter((path) => existsSync(path))
-  return {
-    host: route?.hostname ?? profile.host,
-    port: profile.port ?? route?.port ?? 22,
-    username,
-    privateKeyPaths: keyCandidates,
-    password: profile.password,
-    passphrase: profile.passphrase,
-    connectTimeout: profile.connectTimeout,
-    sshConfigAlias
-  }
+  return { target, resolved, label: `${username}@${host}:${port}` }
 }
 
-export function formatSftpEndpoint(endpoint: SftpEndpoint): string {
-  return `${endpoint.username}@${endpoint.host}:${endpoint.port}`
+/** ssh2 config plus the ProxyJump/ProxyCommand process carrying it, if any. */
+export function openSftpConnectConfig(endpoint: SftpEndpoint): {
+  config: ConnectConfig
+  proxyProcess: ChildProcess | null
+} {
+  const config = buildConnectConfig(endpoint.target, endpoint.resolved)
+  // No prompt UI here: password/MFA hosts fail fast instead of hanging on a challenge.
+  config.tryKeyboard = false
+  const proxy = resolveEffectiveProxy(endpoint.target, endpoint.resolved)
+  if (!proxy) {
+    return { config, proxyProcess: null }
+  }
+  const spawned = spawnProxyCommand(proxy, config.host!, config.port!, config.username!)
+  config.sock = spawned.sock
+  return { config, proxyProcess: spawned.process }
+}
+
+/** Key that changes whenever a routing-relevant field of the target changes. */
+export function sftpTargetFingerprint(target: SshTarget): string {
+  return JSON.stringify([
+    target.id,
+    target.configHost,
+    target.host,
+    target.port,
+    target.username,
+    target.identityFile,
+    target.identityAgent,
+    target.identitiesOnly,
+    target.jumpHost,
+    target.proxyCommand,
+    target.source
+  ])
 }

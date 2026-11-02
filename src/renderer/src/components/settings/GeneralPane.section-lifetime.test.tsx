@@ -51,7 +51,16 @@ beforeEach(() => {
   fake.updates = new Map([
     ['synthetic-host', { environmentId: 'synthetic-host', phase: 'current', name: 'Synthetic' }]
   ])
-  Object.assign(window, { api: { updater: { getVersion: fake.getVersion } } })
+  Object.assign(window, {
+    api: {
+      updater: { getVersion: fake.getVersion },
+      // Codezera settings rows mounted in GeneralPane read these on mount.
+      codezera: {
+        orcaImport: { probe: async () => ({ available: false }) },
+        snippets: { listEntries: async () => [], onChanged: () => () => {} }
+      }
+    }
+  })
 })
 afterEach(() => {
   cleanup()

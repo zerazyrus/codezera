@@ -2,15 +2,14 @@ import { useMemo } from 'react'
 import { ServerCog } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
 import type { ActivityBarItem } from '@/components/right-sidebar/activity-bar-buttons'
-import { useSftpState, useSftpWorkspacePath } from './sftp-store'
+import { useSftpWorkspacePath } from './sftp-store'
 
-/** Right-sidebar SFTP tab, present only for local workspaces that have a `.vscode/sftp.json`. */
+/** Right-sidebar SFTP tab, present for every workspace on this computer. */
 export function useSftpActivityItems(worktreeId: string | null): ActivityBarItem[] {
-  const state = useSftpState(useSftpWorkspacePath(worktreeId))
-  const hasConfig = state !== undefined && state.status !== 'missing'
+  const isLocal = useSftpWorkspacePath(worktreeId) !== null
   return useMemo(
     () =>
-      hasConfig
+      isLocal
         ? [
             {
               id: 'sftp',
@@ -20,6 +19,6 @@ export function useSftpActivityItems(worktreeId: string | null): ActivityBarItem
             }
           ]
         : [],
-    [hasConfig]
+    [isLocal]
   )
 }

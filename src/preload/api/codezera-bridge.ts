@@ -31,11 +31,24 @@ export const codezeraApi: CodezeraApi = {
     saveApiKey: (apiKey) => ipcRenderer.invoke('codezera:ckit:saveApiKey', apiKey)
   },
   snippets: {
-    list: (filePath) => ipcRenderer.invoke('codezera:snippets:list', filePath)
+    list: () => ipcRenderer.invoke('codezera:snippets:list'),
+    listEntries: () => ipcRenderer.invoke('codezera:snippets:listEntries'),
+    save: (args) => ipcRenderer.invoke('codezera:snippets:save', args),
+    delete: (args) => ipcRenderer.invoke('codezera:snippets:delete', args),
+    importFromVscode: () => ipcRenderer.invoke('codezera:snippets:importFromVscode'),
+    onChanged: (callback) => {
+      const listener = (): void => callback()
+      ipcRenderer.on('codezera:snippets:changed', listener)
+      return () => ipcRenderer.removeListener('codezera:snippets:changed', listener)
+    }
   },
   sftp: {
     getState: (args) => ipcRenderer.invoke('codezera:sftp:getState', args),
     setProfile: (args) => ipcRenderer.invoke('codezera:sftp:setProfile', args),
+    saveProfile: (args) => ipcRenderer.invoke('codezera:sftp:saveProfile', args),
+    deleteProfile: (args) => ipcRenderer.invoke('codezera:sftp:deleteProfile', args),
+    importFromVsCode: (args) => ipcRenderer.invoke('codezera:sftp:importFromVsCode', args),
+    importAllFromVsCode: () => ipcRenderer.invoke('codezera:sftp:importAllFromVsCode'),
     list: (args) => ipcRenderer.invoke('codezera:sftp:list', args),
     downloadRemote: (args) => ipcRenderer.invoke('codezera:sftp:downloadRemote', args),
     downloadLocal: (args) => ipcRenderer.invoke('codezera:sftp:downloadLocal', args),

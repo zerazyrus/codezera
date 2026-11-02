@@ -13,13 +13,14 @@ export type SftpWorkspace = { worktreeId: string; workspacePath: string }
 type SftpStore = {
   /** Keyed by workspace path. */
   states: Record<string, SftpConfigState | undefined>
-  /** Bumped when sftp.json changes, so open remote trees reload. */
+  /** Bumped when a workspace's config changes, so open remote trees reload. */
   revisions: Record<string, number>
   load: (workspacePath: string) => Promise<SftpConfigState | null>
-  setProfile: (workspacePath: string, profile: string) => Promise<void>
+  /** Stores a state returned by a config mutation. */
+  apply: (workspacePath: string, state: SftpConfigState) => void
 }
 
-// sftp.json and the SSH keys live on this computer; paired web clients cannot reach them.
+// The SFTP config and the SSH keys live on this computer; paired web clients cannot reach them.
 export const sftpAvailable = (): boolean => !isPairedWebClientWindow() && !isWebClientLocation()
 
 let configWatchInstalled = false
@@ -34,35 +35,30 @@ export const useSftpStore = create<SftpStore>()((set, get) => ({
     if (!configWatchInstalled) {
       configWatchInstalled = true
       window.api.codezera.sftp.onConfigChanged((changedPath) => {
-        set((s) => ({
-          revisions: { ...s.revisions, [changedPath]: (s.revisions[changedPath] ?? 0) + 1 }
-        }))
-        void get().load(changedPath)
+        void get()
+          .load(changedPath)
+          .then(() =>
+            set((s) => ({
+              revisions: { ...s.revisions, [changedPath]: (s.revisions[changedPath] ?? 0) + 1 }
+            }))
+          )
       })
     }
     let state: SftpConfigState
     try {
       state = await window.api.codezera.sftp.getState({ workspacePath })
     } catch (error) {
-      state = {
-        status: 'invalid',
-        configPath: workspacePath,
-        error: error instanceof Error ? error.message : String(error)
-      }
+      state = { status: 'invalid', error: error instanceof Error ? error.message : String(error) }
     }
     set((s) => ({ states: { ...s.states, [workspacePath]: state } }))
     return state
   },
-  setProfile: async (workspacePath, profile) => {
-    const state = await window.api.codezera.sftp.setProfile({ workspacePath, profile })
-    set((s) => ({
-      states: { ...s.states, [workspacePath]: state },
-      revisions: { ...s.revisions, [workspacePath]: (s.revisions[workspacePath] ?? 0) + 1 }
-    }))
+  apply: (workspacePath, state) => {
+    set((s) => ({ states: { ...s.states, [workspacePath]: state } }))
   }
 }))
 
-/** Path of a worktree that lives on this computer; SSH/runtime workspaces have no local sftp.json. */
+/** Path of a worktree that lives on this computer; SSH/runtime workspaces cannot use SFTP. */
 function localWorkspacePath(state: AppState, worktreeId: string | null | undefined): string | null {
   if (!worktreeId) {
     return null
@@ -80,10 +76,10 @@ function localWorkspacePath(state: AppState, worktreeId: string | null | undefin
 
 /** Workspace path of a local worktree, or null; primitive so subscribers rerender only on change. */
 export function useSftpWorkspacePath(worktreeId: string | null | undefined): string | null {
-  return useAppStore((s) => localWorkspacePath(s, worktreeId))
+  return useAppStore((s) => (sftpAvailable() ? localWorkspacePath(s, worktreeId) : null))
 }
 
-/** Loads (once per path) and returns the workspace's sftp.json state. */
+/** Loads (once per path) and returns the workspace's SFTP config state. */
 export function useSftpState(workspacePath: string | null): SftpConfigState | undefined {
   const state = useSftpStore((s) => (workspacePath ? s.states[workspacePath] : undefined))
   const known = state !== undefined
@@ -99,7 +95,7 @@ function isInside(root: string, path: string): boolean {
   return path === root || (path.startsWith(root) && /^[\\/]/.test(path.slice(root.length)))
 }
 
-/** Workspace path whose loaded sftp.json covers `path`, or null. */
+/** Workspace path whose loaded SFTP config covers `path`, or null. */
 export function findSftpWorkspacePathFor(states: SftpStore['states'], path: string): string | null {
   for (const [key, state] of Object.entries(states)) {
     if (state?.status === 'ok' && isInside(state.summary.localRoot, path)) {
@@ -109,7 +105,7 @@ export function findSftpWorkspacePathFor(states: SftpStore['states'], path: stri
   return null
 }
 
-/** Loads the worktree's sftp.json once, so menus work before the SFTP tab is opened. */
+/** Loads the worktree's SFTP config once, so menus work before the SFTP tab is opened. */
 export function ensureSftpStateLoaded(worktreeId: string | null | undefined): void {
   const workspacePath = localWorkspacePath(useAppStore.getState(), worktreeId)
   if (workspacePath && sftpAvailable() && !useSftpStore.getState().states[workspacePath]) {

@@ -1,10 +1,13 @@
 // @vitest-environment happy-dom
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js'
 import { SnippetController2 } from 'monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2.js'
 import type * as MonacoApi from 'monaco-editor'
-import type { CodezeraSnippet } from '../../../../shared/codezera/snippets-types'
-import { registerCodezeraUserSnippets } from './user-snippet-completions'
+import { CodezeraSnippetStore } from '../../../../main/codezera/snippets/snippet-store'
+import { registerCodezeraSnippetCompletions } from './snippet-completions'
 
 const HEADER_LINES = [
   ' * @author Thang Nguyen',
@@ -12,49 +15,55 @@ const HEADER_LINES = [
   ' * @purpose ${1:comment purpose here ...}'
 ]
 
-// Same shape the main-process parser yields for the user's Snippet.code-snippets.
-const SNIPPETS: CodezeraSnippet[] = [
-  {
-    name: 'Start Header Comment (PHP)',
-    prefixes: ['headerstart'],
-    body: ['/**', ...HEADER_LINES, ' */'].join('\n'),
-    description: 'PHP docblock with author / auto date / purpose',
-    scopes: ['php', 'javascript', 'typescript', 'css', 'scss', 'less'],
-    include: [],
-    exclude: [],
-    source: 'Snippet.code-snippets'
+// The user's Snippet.code-snippets, as imported into the Codezera snippets folder.
+const SNIPPET_FILE = JSON.stringify({
+  'Start Header Comment (PHP)': {
+    scope: 'php,javascript,typescript,css,scss,less',
+    prefix: 'headerstart',
+    body: ['/**', ...HEADER_LINES, ' */'],
+    description: 'PHP docblock with author / auto date / purpose'
   },
-  {
-    name: 'Start Header Comment (TPL)',
-    prefixes: ['headerstart'],
-    body: ['{**', ...HEADER_LINES, ' *}'].join('\n'),
-    description: 'PHP docblock with author / auto date / purpose',
-    scopes: ['smarty', 'tpl', 'html'],
+  'Start Header Comment (TPL)': {
+    scope: 'smarty,tpl,html',
+    prefix: 'headerstart',
+    body: ['{**', ...HEADER_LINES, ' *}'],
     include: ['**/*.tpl'],
-    exclude: [],
-    source: 'Snippet.code-snippets'
+    description: 'PHP docblock with author / auto date / purpose'
   }
-]
+})
 
 let provider: MonacoApi.languages.CompletionItemProvider
-const listSnippets = vi.fn(async () => SNIPPETS)
+let snippetDir: string
+let store: CodezeraSnippetStore
+let notifyChanged: () => void = () => {}
 
 beforeAll(() => {
+  snippetDir = mkdtempSync(join(tmpdir(), 'codezera-snippets-'))
+  writeFileSync(join(snippetDir, 'Snippet.code-snippets'), SNIPPET_FILE)
+  store = new CodezeraSnippetStore(snippetDir)
   // happy-dom has no 2D canvas; the editor only probes it for pixel ratio and glyph widths.
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
     measureText: () => ({ width: 7 })
   } as unknown as CanvasRenderingContext2D)
+  // Frozen clock also keeps the completion cache from expiring on its own.
   vi.useFakeTimers({ toFake: ['Date'] })
   vi.setSystemTime(new Date(2026, 10, 2, 9, 30))
   monaco.languages.register({ id: 'php' })
   const register = vi.spyOn(monaco.languages, 'registerCompletionItemProvider')
-  registerCodezeraUserSnippets(monaco as unknown as typeof MonacoApi, listSnippets)
+  registerCodezeraSnippetCompletions(monaco as unknown as typeof MonacoApi, {
+    list: () => store.listSnippets(),
+    onChanged: (callback) => {
+      notifyChanged = callback
+      return () => {}
+    }
+  })
   provider = register.mock.calls[0][1]
   register.mockRestore()
 })
 
 afterAll(() => {
   vi.useRealTimers()
+  rmSync(snippetDir, { recursive: true, force: true })
 })
 
 async function expandHeaderStart(
@@ -64,18 +73,19 @@ async function expandHeaderStart(
   labels: string[]
   text: string
 }> {
+  const model = monaco.editor.createModel('headerstart', language, monaco.Uri.file(path))
+  const position = new monaco.Position(1, 'headerstart'.length + 1)
+  const result = await provider.provideCompletionItems(
+    model,
+    position,
+    { triggerKind: monaco.languages.CompletionTriggerKind.Invoke },
+    new monaco.CancellationTokenSource().token
+  )
+  // Created after the store's file I/O and disposed synchronously, so happy-dom never runs a paint frame.
   const container = document.createElement('div')
   document.body.append(container)
-  const model = monaco.editor.createModel('headerstart', language, monaco.Uri.file(path))
   const editor = monaco.editor.create(container, { model })
   try {
-    const position = new monaco.Position(1, 'headerstart'.length + 1)
-    const result = await provider.provideCompletionItems(
-      model,
-      position,
-      { triggerKind: monaco.languages.CompletionTriggerKind.Invoke },
-      new monaco.CancellationTokenSource().token
-    )
     const suggestions = result?.suggestions ?? []
     const item = suggestions[0]
     expect(item.kind).toBe(monaco.languages.CompletionItemKind.Snippet)
@@ -97,7 +107,7 @@ async function expandHeaderStart(
   }
 }
 
-describe('registerCodezeraUserSnippets', () => {
+describe('registerCodezeraSnippetCompletions', () => {
   it('expands the PHP header with Monaco-resolved date variables in a .php file', async () => {
     const { labels, text } = await expandHeaderStart('/repo/modules/Foo.php', 'php')
     expect(labels).toEqual(['Start Header Comment (PHP)'])
@@ -110,7 +120,6 @@ describe('registerCodezeraUserSnippets', () => {
         ' */'
       ].join('\n')
     )
-    expect(listSnippets).toHaveBeenCalledWith('/repo/modules/Foo.php')
   })
 
   it('offers only the {** TPL variant for a plaintext .tpl file via its include glob', async () => {
@@ -131,5 +140,27 @@ describe('registerCodezeraUserSnippets', () => {
     )
     expect(result).toBeUndefined()
     model.dispose()
+  })
+
+  it('refetches as soon as the store reports a change', async () => {
+    await store.save({
+      file: null,
+      originalName: null,
+      snippet: {
+        name: 'Team Header',
+        prefixes: ['headerstart'],
+        languages: ['php'],
+        include: [],
+        exclude: [],
+        description: '',
+        body: ['// team']
+      }
+    })
+    expect((await expandHeaderStart('/repo/a.php', 'php')).labels).toHaveLength(1)
+    notifyChanged()
+    expect((await expandHeaderStart('/repo/a.php', 'php')).labels).toEqual([
+      'Start Header Comment (PHP)',
+      'Team Header'
+    ])
   })
 })

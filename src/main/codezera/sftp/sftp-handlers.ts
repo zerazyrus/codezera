@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { watch, type FSWatcher } from 'node:fs'
 import { isAbsolute, join } from 'node:path'
 import type { Store } from '../../persistence/loading-store/store'
 import type {
@@ -8,10 +7,19 @@ import type {
   SftpRemoteEntry,
   SftpRemoteFile,
   SftpRemotePathRequest,
+  SftpSaveProfileRequest,
   SftpTransferResult,
+  SftpVsCodeImportAllResult,
+  SftpVsCodeImportResult,
   SftpWorkspaceRequest
 } from '../../../shared/codezera/sftp-types'
-import { SftpProfileStore } from './sftp-profile-store'
+import { splitWorktreeIdForFilesystem } from '../../../shared/worktree/id'
+import { resolveUserSshConfigHost } from '../../ssh/config/ssh-config-host-picker'
+import {
+  getRegisteredSshTargetMutations,
+  listRegisteredSshTargets
+} from '../../ssh/targets/ssh-target-registry'
+import { SftpConnectionStore } from './sftp-connection-store'
 import { SftpWorkspaceService } from './sftp-workspace-service'
 
 const CONFIG_CHANGED_CHANNEL = 'codezera:sftp:configChanged'
@@ -23,69 +31,83 @@ function requireAbsolute(path: unknown, field: string): string {
   return path
 }
 
-/** Notifies renderers when a watched workspace's `.vscode` folder changes sftp.json. */
-function createConfigWatchers(service: SftpWorkspaceService): {
-  ensure: (workspacePath: string) => void
-  closeAll: () => void
-} {
-  const watchers = new Map<string, FSWatcher | null>()
-  return {
-    ensure: (workspacePath) => {
-      if (watchers.get(workspacePath)) {
-        return
-      }
-      try {
-        const watcher = watch(join(workspacePath, '.vscode'), (_event, filename) => {
-          if (filename && filename !== 'sftp.json') {
-            return
-          }
-          service.invalidate(workspacePath)
-          for (const window of BrowserWindow.getAllWindows()) {
-            window.webContents.send(CONFIG_CHANGED_CHANNEL, workspacePath)
-          }
-        })
-        watcher.on('error', () => {
-          watcher.close()
-          watchers.delete(workspacePath)
-        })
-        watchers.set(workspacePath, watcher)
-      } catch {
-        // No .vscode folder yet; the panel's refresh picks the file up once it exists.
-        watchers.set(workspacePath, null)
-      }
-    },
-    closeAll: () => {
-      for (const watcher of watchers.values()) {
-        watcher?.close()
-      }
-      watchers.clear()
+/** Local repo, worktree and folder-workspace roots Orca knows about. */
+function knownLocalWorkspacePaths(store: Store): string[] {
+  const localRepos = store
+    .getRepos()
+    .filter(
+      (repo) => !repo.connectionId && (!repo.executionHostId || repo.executionHostId === 'local')
+    )
+  const localRepoIds = new Set(localRepos.map((repo) => repo.id))
+  const paths = new Set(localRepos.map((repo) => repo.path))
+  for (const worktreeId of Object.keys(store.getAllWorktreeMeta())) {
+    const parsed = splitWorktreeIdForFilesystem(worktreeId)
+    if (parsed && localRepoIds.has(parsed.repoId) && isAbsolute(parsed.worktreePath)) {
+      paths.add(parsed.worktreePath)
     }
   }
+  for (const folder of store.getFolderWorkspaces()) {
+    if (!folder.connectionId && isAbsolute(folder.folderPath)) {
+      paths.add(folder.folderPath)
+    }
+  }
+  return [...paths]
 }
 
 export function registerCodezeraSftpHandlers(store: Store): void {
   const service = new SftpWorkspaceService(
-    new SftpProfileStore(join(app.getPath('userData'), 'codezera', 'sftp-profiles.json')),
-    () => store.getSshTargets()
+    new SftpConnectionStore(join(app.getPath('userData'), 'codezera', 'sftp-connections.json')),
+    {
+      listTargets: listRegisteredSshTargets,
+      addTarget: async (input) => (await getRegisteredSshTargetMutations().add(input)).target,
+      resolveAlias: async (alias) => {
+        const resolved = await resolveUserSshConfigHost(alias).catch(() => null)
+        return resolved
+          ? { hostname: resolved.hostname, port: resolved.port, username: resolved.username }
+          : null
+      }
+    },
+    (workspacePath) => {
+      for (const window of BrowserWindow.getAllWindows()) {
+        window.webContents.send(CONFIG_CHANGED_CHANNEL, workspacePath)
+      }
+    }
   )
-  const watchers = createConfigWatchers(service)
-  app.once('will-quit', () => {
-    watchers.closeAll()
-    service.dispose()
-  })
+  app.once('will-quit', () => service.dispose())
 
   ipcMain.handle(
     'codezera:sftp:getState',
-    (_event, args: SftpWorkspaceRequest): Promise<SftpConfigState> => {
-      const workspacePath = requireAbsolute(args.workspacePath, 'workspacePath')
-      watchers.ensure(workspacePath)
-      return service.getState(workspacePath)
-    }
+    (_event, args: SftpWorkspaceRequest): Promise<SftpConfigState> =>
+      service.getState(requireAbsolute(args.workspacePath, 'workspacePath'))
   )
   ipcMain.handle(
     'codezera:sftp:setProfile',
     (_event, args: SftpWorkspaceRequest & { profile: string }): Promise<SftpConfigState> =>
       service.setProfile(requireAbsolute(args.workspacePath, 'workspacePath'), String(args.profile))
+  )
+  ipcMain.handle(
+    'codezera:sftp:saveProfile',
+    (_event, args: SftpSaveProfileRequest): Promise<SftpConfigState> =>
+      service.saveProfile({
+        ...args,
+        workspacePath: requireAbsolute(args.workspacePath, 'workspacePath')
+      })
+  )
+  ipcMain.handle(
+    'codezera:sftp:deleteProfile',
+    (_event, args: SftpWorkspaceRequest & { profile: string }): Promise<SftpConfigState> =>
+      service.deleteProfile(
+        requireAbsolute(args.workspacePath, 'workspacePath'),
+        String(args.profile)
+      )
+  )
+  ipcMain.handle(
+    'codezera:sftp:importFromVsCode',
+    (_event, args: SftpWorkspaceRequest): Promise<SftpVsCodeImportResult> =>
+      service.importFromVsCode(requireAbsolute(args.workspacePath, 'workspacePath'))
+  )
+  ipcMain.handle('codezera:sftp:importAllFromVsCode', (): Promise<SftpVsCodeImportAllResult> =>
+    service.importAllFromVsCode(knownLocalWorkspacePaths(store))
   )
   ipcMain.handle(
     'codezera:sftp:list',

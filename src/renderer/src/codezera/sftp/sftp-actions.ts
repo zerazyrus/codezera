@@ -8,7 +8,7 @@ import { sftpAvailable, useSftpStore, type SftpWorkspace } from './sftp-store'
 
 export const SFTP_COMPARE_PATH_MARKER = '::codezera::sftp-compare::'
 
-function errorText(error: unknown): string {
+export function sftpErrorText(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error)
   // Electron prefixes main-process rejections with the channel name.
   return message.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')
@@ -77,7 +77,7 @@ async function runTransfer(
       kind === 'upload'
         ? translate('codezera.sftp.uploadFailed', 'Upload failed')
         : translate('codezera.sftp.downloadFailed', 'Download failed'),
-      { id: toastId, description: errorText(error) }
+      { id: toastId, description: sftpErrorText(error) }
     )
     return null
   }
@@ -148,7 +148,7 @@ export async function openSftpTerminal(workspace: SftpWorkspace): Promise<void> 
     createNewTerminalTab(workspace.worktreeId, undefined, { command })
   } catch (error) {
     toast.error(translate('codezera.sftp.terminalFailed', 'Cannot open SSH terminal'), {
-      description: errorText(error)
+      description: sftpErrorText(error)
     })
   }
 }
@@ -184,7 +184,7 @@ export function onCodezeraFileSaved(filePath: string, context: RuntimeFileOperat
     })
     .catch((error: unknown) => {
       toast.error(translate('codezera.sftp.uploadOnSaveFailed', 'Upload on save failed'), {
-        description: errorText(error)
+        description: sftpErrorText(error)
       })
     })
 }

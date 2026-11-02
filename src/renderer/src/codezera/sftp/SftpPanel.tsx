@@ -21,9 +21,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import type { SftpWorkspaceSummary } from '../../../../shared/codezera/sftp-types'
-import { openSftpCompare, openSftpTerminal, sftpUpload } from './sftp-actions'
+import type { SftpConfigState } from '../../../../shared/codezera/sftp-types'
+import { openSftpCompare, openSftpTerminal, sftpErrorText, sftpUpload } from './sftp-actions'
 import { SftpRemoteTree } from './sftp-remote-tree'
+import { SftpEmptyState, SftpProfileMenu } from './sftp-profile-controls'
 import { useSftpState, useSftpStore, useSftpWorkspacePath, type SftpWorkspace } from './sftp-store'
 
 function PanelMessage({
@@ -52,11 +53,12 @@ function useActiveLocalFile(worktreeId: string): string | null {
 
 function SftpWorkspaceView({
   workspace,
-  summary
+  state
 }: {
   workspace: SftpWorkspace
-  summary: SftpWorkspaceSummary
+  state: Extract<SftpConfigState, { status: 'ok' }>
 }): React.JSX.Element {
+  const { summary } = state
   const revision = useSftpStore((s) => s.revisions[workspace.workspacePath] ?? 0)
   const [refreshCount, setRefreshCount] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
@@ -81,12 +83,12 @@ function SftpWorkspaceView({
   }
 
   const switchProfile = (profile: string): void => {
-    void useSftpStore
-      .getState()
-      .setProfile(workspace.workspacePath, profile)
+    window.api.codezera.sftp
+      .setProfile({ workspacePath: workspace.workspacePath, profile })
+      .then((next) => useSftpStore.getState().apply(workspace.workspacePath, next))
       .catch((error: unknown) =>
         toast.error(translate('codezera.sftp.profileFailed', 'Cannot switch profile'), {
-          description: error instanceof Error ? error.message : String(error)
+          description: sftpErrorText(error)
         })
       )
   }
@@ -99,11 +101,8 @@ function SftpWorkspaceView({
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex h-8 min-h-8 items-center gap-1 border-b border-border px-2">
-        <span
-          className="min-w-0 flex-1 truncate text-xs font-medium text-foreground"
-          title={summary.configPath}
-        >
-          {summary.name ?? translate('codezera.sftp.title', 'SFTP')}
+        <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
+          {translate('codezera.sftp.title', 'SFTP')}
         </span>
         <ToolbarButton
           label={
@@ -144,35 +143,45 @@ function SftpWorkspaceView({
             <RefreshCw className="size-3" />
           )}
         </ToolbarButton>
+        <SftpProfileMenu
+          workspacePath={workspace.workspacePath}
+          connections={state.connections}
+          hasVsCodeConfig={state.hasVsCodeConfig}
+        />
       </div>
       <div className="flex flex-col gap-1 border-b border-border px-2 py-2 text-xs">
-        {summary.profiles.length > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground">
-              {translate('codezera.sftp.profile', 'Profile')}
-            </span>
-            <Select value={summary.activeProfile ?? undefined} onValueChange={switchProfile}>
-              <SelectTrigger size="sm" className="h-6 min-w-0 flex-1 px-2 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {summary.profiles.map((profile) => (
-                  <SelectItem key={profile} value={profile} className="text-xs">
-                    {profile}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-        <div className="flex items-center gap-1.5 text-muted-foreground" title={summary.host}>
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">
+            {translate('codezera.sftp.profile', 'Profile')}
+          </span>
+          <Select value={summary.activeProfile} onValueChange={switchProfile}>
+            <SelectTrigger size="sm" className="h-6 min-w-0 flex-1 px-2 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {summary.profiles.map((profile) => (
+                <SelectItem key={profile} value={profile} className="text-xs">
+                  {profile}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div
+          className="flex items-center gap-1.5 text-muted-foreground"
+          title={summary.hostLabel ?? undefined}
+        >
           <span
             className={cn(
               'size-1.5 shrink-0 rounded-full',
               summary.endpointError || connectionError ? 'bg-destructive' : 'bg-muted-foreground'
             )}
           />
-          <span className="truncate">{summary.endpoint ?? summary.host}</span>
+          <span className="truncate">
+            {summary.endpoint ??
+              summary.hostLabel ??
+              translate('codezera.sftp.hostMissing', 'SSH host removed')}
+          </span>
           {summary.uploadOnSave && (
             <span className="ml-auto shrink-0">
               {translate('codezera.sftp.uploadOnSave', 'Upload on save')}
@@ -228,21 +237,21 @@ export default function SftpPanel(): React.JSX.Element {
     )
   }
   if (!state) {
-    return <PanelMessage title={translate('codezera.sftp.loadingConfig', 'Reading sftp.json…')} />
+    return (
+      <PanelMessage title={translate('codezera.sftp.loadingConfig', 'Reading SFTP settings…')} />
+    )
   }
   if (state.status === 'missing') {
     return (
-      <PanelMessage title={translate('codezera.sftp.missingTitle', 'No .vscode/sftp.json')}>
-        {translate(
-          'codezera.sftp.missingBody',
-          'Add a .vscode/sftp.json like the VS Code SFTP extension uses (host, username, remotePath, optional profiles) to browse and sync this workspace with a server.'
-        )}
-      </PanelMessage>
+      <SftpEmptyState
+        workspacePath={workspace.workspacePath}
+        hasVsCodeConfig={state.hasVsCodeConfig}
+      />
     )
   }
   if (state.status === 'invalid') {
     return (
-      <PanelMessage title={translate('codezera.sftp.invalidTitle', 'sftp.json cannot be used')}>
+      <PanelMessage title={translate('codezera.sftp.invalidTitle', 'SFTP settings cannot be read')}>
         <p className="mb-2 text-destructive">{state.error}</p>
         <Button type="button" size="xs" variant="outline" onClick={reload}>
           {translate('codezera.sftp.retry', 'Retry')}
@@ -250,5 +259,5 @@ export default function SftpPanel(): React.JSX.Element {
       </PanelMessage>
     )
   }
-  return <SftpWorkspaceView workspace={workspace} summary={state.summary} />
+  return <SftpWorkspaceView workspace={workspace} state={state} />
 }

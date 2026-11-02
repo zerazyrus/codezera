@@ -1,12 +1,8 @@
 import { homedir } from 'node:os'
-import { posix } from 'node:path'
+import { join, posix } from 'node:path'
 import { parse, printParseErrorCode, type ParseError } from 'jsonc-parser'
 import { z } from 'zod'
-
-/** Patterns natizyskunk.sftp users rely on implicitly; merged with the config's own `ignore`. */
-export const DEFAULT_SFTP_IGNORE = ['.vscode', '.git', '.DS_Store']
-
-const DEFAULT_CONNECT_TIMEOUT_MS = 10_000
+import { DEFAULT_SFTP_IGNORE } from '../../../shared/codezera/sftp-types'
 
 // Unknown natizyskunk fields (watcher, remoteExplorer, …) are stripped, not rejected.
 const SftpFieldsSchema = z.object({
@@ -17,11 +13,9 @@ const SftpFieldsSchema = z.object({
   port: z.number().int().positive().optional(),
   username: z.string().optional(),
   password: z.string().optional(),
-  // natizyskunk accepts `true` to prompt; there is no prompt here, so only a string passphrase is used.
   passphrase: z.union([z.string(), z.boolean()]).optional(),
   privateKeyPath: z.string().optional(),
   remotePath: z.string().optional(),
-  connectTimeout: z.number().int().positive().optional(),
   uploadOnSave: z.boolean().optional(),
   sshCustomParams: z.string().optional(),
   ignore: z.array(z.string()).optional()
@@ -32,33 +26,33 @@ const SftpEntrySchema = SftpFieldsSchema.extend({
   defaultProfile: z.string().optional()
 })
 
-export type SftpConfigEntry = z.infer<typeof SftpEntrySchema>
+export type VsCodeSftpEntry = z.infer<typeof SftpEntrySchema>
 
-/** One sftp.json entry with its chosen profile merged over the top-level defaults. */
-export type SftpProfileConfig = {
-  name: string | null
-  profiles: string[]
-  defaultProfile: string | null
-  /** Null when the config has no `profiles`. */
-  profile: string | null
+/** One VS Code sftp.json profile with the top-level defaults merged under it. */
+export type VsCodeSftpProfile = {
+  /** Profile key, or the entry `name` (else `default`) for a config without `profiles`. */
+  name: string
   host: string
   port: number | null
   username: string | null
-  password: string | null
-  passphrase: string | null
+  /** True when sftp.json authenticates with a password or a string passphrase. */
+  usesSecret: boolean
   privateKeyPath: string | null
   /** Posix, no trailing slash except for `/`. */
   remotePath: string
   /** Local subfolder (relative to the workspace) that maps to remotePath; '' for the root. */
   context: string
-  connectTimeout: number
   uploadOnSave: boolean
   sshCustomParams: string | null
   ignore: string[]
 }
 
+export function vsCodeSftpJsonPath(workspacePath: string): string {
+  return join(workspacePath, '.vscode', 'sftp.json')
+}
+
 /** Parses sftp.json (JSONC, object or array) and returns the entry for the workspace root. */
-export function parseSftpConfigText(text: string): SftpConfigEntry {
+export function parseVsCodeSftpJson(text: string): VsCodeSftpEntry {
   const errors: ParseError[] = []
   const value: unknown = parse(text, errors, { allowTrailingComma: true })
   if (errors.length > 0) {
@@ -75,62 +69,57 @@ export function parseSftpConfigText(text: string): SftpConfigEntry {
     throw new Error(`sftp.json: ${path}: ${issue?.message ?? 'invalid'}`)
   }
   const entries = parsed.data
-  // Multi-config files scope extra entries to subfolders via `context`; the root entry drives the panel.
+  // Multi-config files scope extra entries to subfolders via `context`; the root entry is the workspace's.
   return entries.find((entry) => normalizeContext(entry.context) === '') ?? entries[0]!
 }
 
-export function resolveSftpProfile(
-  entry: SftpConfigEntry,
-  requestedProfile: string | null
-): SftpProfileConfig {
-  const { profiles: profileMap = {}, defaultProfile, ...defaults } = entry
-  const profiles = Object.keys(profileMap)
-  const profile =
-    [requestedProfile, defaultProfile].find((name) => name && profiles.includes(name)) ??
-    profiles[0] ??
-    null
-  const merged = { ...defaults, ...(profile ? profileMap[profile] : {}) }
+/** Profile names in file order; a config without `profiles` has one implicit profile. */
+export function vsCodeSftpProfileNames(entry: VsCodeSftpEntry): string[] {
+  const names = Object.keys(entry.profiles ?? {})
+  return names.length > 0 ? names : [entry.name?.trim() || 'default']
+}
+
+export function resolveVsCodeSftpProfile(
+  entry: VsCodeSftpEntry,
+  profileName: string
+): VsCodeSftpProfile {
+  const { profiles: profileMap = {}, defaultProfile: _defaultProfile, ...defaults } = entry
+  const hasProfiles = Object.keys(profileMap).length > 0
+  const merged = { ...defaults, ...(hasProfiles ? profileMap[profileName] : {}) }
 
   if (merged.protocol && merged.protocol !== 'sftp') {
-    throw new Error(`Protocol "${merged.protocol}" is not supported; only sftp is`)
+    throw new Error(`protocol "${merged.protocol}" is not supported; only sftp is`)
   }
   const host = merged.host?.trim()
   if (!host) {
-    throw new Error(profile ? `Profile "${profile}" has no host` : 'sftp.json has no host')
+    throw new Error('no host')
   }
   const remotePath = merged.remotePath?.trim()
   if (!remotePath) {
-    throw new Error(
-      profile ? `Profile "${profile}" has no remotePath` : 'sftp.json has no remotePath'
-    )
+    throw new Error('no remotePath')
   }
-  const normalizedRemote = posix.normalize(remotePath)
   const privateKeyPath = merged.privateKeyPath || null
-
   return {
-    name: merged.name || null,
-    profiles,
-    defaultProfile: defaultProfile || null,
-    profile,
+    name: profileName,
     host,
     port: merged.port ?? null,
     username: merged.username || null,
-    password: merged.password || null,
-    passphrase: typeof merged.passphrase === 'string' ? merged.passphrase : null,
+    usesSecret: Boolean(merged.password) || typeof merged.passphrase === 'string',
     privateKeyPath:
       privateKeyPath === '~' || privateKeyPath?.startsWith('~/')
         ? homedir() + privateKeyPath.slice(1)
         : privateKeyPath,
-    remotePath:
-      normalizedRemote.length > 1 && normalizedRemote.endsWith('/')
-        ? normalizedRemote.slice(0, -1)
-        : normalizedRemote,
+    remotePath: normalizeRemotePath(remotePath),
     context: normalizeContext(merged.context),
-    connectTimeout: merged.connectTimeout ?? DEFAULT_CONNECT_TIMEOUT_MS,
     uploadOnSave: merged.uploadOnSave === true,
     sshCustomParams: merged.sshCustomParams || null,
-    ignore: [...DEFAULT_SFTP_IGNORE, ...(merged.ignore ?? [])]
+    ignore: [...new Set([...DEFAULT_SFTP_IGNORE, ...(merged.ignore ?? [])])]
   }
+}
+
+export function normalizeRemotePath(remotePath: string): string {
+  const normalized = posix.normalize(remotePath)
+  return normalized.length > 1 && normalized.endsWith('/') ? normalized.slice(0, -1) : normalized
 }
 
 function normalizeContext(value: string | undefined): string {
