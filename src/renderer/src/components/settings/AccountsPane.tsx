@@ -79,7 +79,10 @@ export { getAccountsPaneSearchEntries }
 export function AccountsPane({
   settings,
   updateSettings,
+  updateSettingsOrThrow,
   hostScope,
+  nativeAccounts = false,
+  onAccountLocationChange,
   wslSupportedPlatform = false,
   wslAvailable = false,
   wslDistros = EMPTY_WSL_DISTROS,
@@ -98,7 +101,7 @@ export function AccountsPane({
     new Set()
   )
   const localAccountRuntime = getSelectedAccountRuntime(
-    settings,
+    nativeAccounts ? { ...settings, localAccountRuntime: 'host' } : settings,
     wslSupportedPlatform,
     wslAvailable,
     wslDistros,
@@ -285,6 +288,8 @@ export function AccountsPane({
     settings,
     accountOwner,
     updateSettings,
+    updateSettingsOrThrow,
+    onAccountLocationChange,
     searchQuery,
     recordFeatureInteraction,
     wslSupportedPlatform,
