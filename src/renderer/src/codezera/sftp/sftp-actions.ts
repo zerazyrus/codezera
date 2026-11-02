@@ -2,16 +2,52 @@ import { toast } from 'sonner'
 import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
 import { createNewTerminalTab } from '@/components/terminal/terminal-tab-create'
-import type { SftpTransferResult } from '../../../../shared/codezera/sftp-types'
+import {
+  SFTP_SUDO_PASSWORD_REQUIRED,
+  SFTP_SUDO_PASSWORD_WRONG,
+  type SftpTransferResult
+} from '../../../../shared/codezera/sftp-types'
 import type { RuntimeFileOperationArgs } from '@/runtime/runtime-file-client-types'
 import { sftpAvailable, useSftpStore, type SftpWorkspace } from './sftp-store'
+import { promptSudoPassword } from './sftp-sudo-password-dialog'
 
 export const SFTP_COMPARE_PATH_MARKER = '::codezera::sftp-compare::'
 
 export function sftpErrorText(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error)
-  // Electron prefixes main-process rejections with the channel name.
-  return message.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')
+  // Electron prefixes main-process rejections with the channel name; sudo markers are for code.
+  return message
+    .replace(/^Error invoking remote method '[^']+': ([A-Za-z]*Error: )?/, '')
+    .replace(/ \(codezera-sftp-sudo-[a-z-]+\)$/, '')
+}
+
+/** The user closed the sudo password dialog; the upload stops without an error toast. */
+class SftpSudoCancelled extends Error {}
+
+/** Runs an upload; when the server needs the sudo password, asks for it once and retries. */
+async function withSudoPassword<T>(workspacePath: string, run: () => Promise<T>): Promise<T> {
+  try {
+    return await run()
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    const wrong = message.includes(SFTP_SUDO_PASSWORD_WRONG)
+    if (!wrong && !message.includes(SFTP_SUDO_PASSWORD_REQUIRED)) {
+      throw error
+    }
+    const state =
+      useSftpStore.getState().states[workspacePath] ??
+      (await useSftpStore.getState().load(workspacePath))
+    const account =
+      state?.status === 'ok'
+        ? (state.summary.endpoint?.replace(/:\d+$/, '') ?? state.summary.hostLabel ?? '')
+        : ''
+    const password = await promptSudoPassword(account, wrong)
+    if (password === null) {
+      throw new SftpSudoCancelled()
+    }
+    await window.api.codezera.sftp.setSudoPassword({ workspacePath, password })
+    return run()
+  }
 }
 
 function fileName(path: string): string {
@@ -73,6 +109,10 @@ async function runTransfer(
     })
     return result
   } catch (error) {
+    if (error instanceof SftpSudoCancelled) {
+      toast.dismiss(toastId)
+      return null
+    }
     toast.error(
       kind === 'upload'
         ? translate('codezera.sftp.uploadFailed', 'Upload failed')
@@ -87,7 +127,10 @@ export function sftpUpload(workspace: SftpWorkspace, localPath: string): Promise
   return runTransfer(
     workspace,
     'upload',
-    () => window.api.codezera.sftp.upload({ workspacePath: workspace.workspacePath, localPath }),
+    () =>
+      withSudoPassword(workspace.workspacePath, () =>
+        window.api.codezera.sftp.upload({ workspacePath: workspace.workspacePath, localPath })
+      ),
     fileName(localPath)
   )
 }
@@ -170,7 +213,11 @@ export function onCodezeraFileSaved(filePath: string, context: RuntimeFileOperat
   }
   // Started on a microtask so nothing here can throw into Orca's save.
   void Promise.resolve()
-    .then(() => window.api.codezera.sftp.uploadOnSave({ workspacePath, localPath: filePath }))
+    .then(() =>
+      withSudoPassword(workspacePath, () =>
+        window.api.codezera.sftp.uploadOnSave({ workspacePath, localPath: filePath })
+      )
+    )
     .then((result) => {
       if (result) {
         toast.success(
@@ -183,6 +230,9 @@ export function onCodezeraFileSaved(filePath: string, context: RuntimeFileOperat
       }
     })
     .catch((error: unknown) => {
+      if (error instanceof SftpSudoCancelled) {
+        return
+      }
       toast.error(translate('codezera.sftp.uploadOnSaveFailed', 'Upload on save failed'), {
         description: sftpErrorText(error)
       })

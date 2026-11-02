@@ -1,6 +1,5 @@
 import { existsSync } from 'node:fs'
 import { basename, posix } from 'node:path'
-import type { SFTPWrapper } from 'ssh2'
 import type { SshTarget } from '../../../shared/ssh-types'
 import { quotePosixShellUnlessPlain } from '../../../shared/shell-argument-quoting'
 import {
@@ -25,10 +24,12 @@ import {
   remoteRelativePath,
   remoteToLocalPath
 } from './sftp-path-mapping'
-import { SftpConnectionPool } from './sftp-connection-pool'
+import { SftpConnectionPool, type SftpConnection } from './sftp-connection-pool'
+import { SftpSudoPasswords } from './sftp-sudo-upload'
 import {
   downloadPath,
   listRemoteDirectory,
+  planUpload,
   readRemoteFileText,
   uploadPath,
   type SftpIgnoreCheck
@@ -52,6 +53,7 @@ type SftpSession = {
 /** SFTP operations for local workspaces, configured from Codezera's own connection store. */
 export class SftpWorkspaceService {
   private readonly endpoints = new Map<string, Promise<SftpEndpoint>>()
+  private readonly sudoPasswords = new SftpSudoPasswords()
 
   constructor(
     private readonly store: SftpConnectionStore,
@@ -158,7 +160,7 @@ export class SftpWorkspaceService {
   async list(workspacePath: string, remoteDir: string): Promise<SftpRemoteEntry[]> {
     const session = await this.requireSession(workspacePath)
     const relativeDir = remoteRelativePath(session.profile.remotePath, remoteDir)
-    const sftp = await this.connect(session)
+    const { sftp } = await this.connect(session)
     return listRemoteDirectory(sftp, remoteDir, (name, isDirectory) =>
       session.isIgnored(posix.join(relativeDir, name), isDirectory)
     )
@@ -168,7 +170,7 @@ export class SftpWorkspaceService {
     const session = await this.requireSession(workspacePath)
     const relativePath = remoteRelativePath(session.profile.remotePath, remotePath)
     const localPath = remoteToLocalPath(workspacePath, session.profile.remotePath, remotePath)
-    const sftp = await this.connect(session)
+    const { sftp } = await this.connect(session)
     const counts = await downloadPath(sftp, remotePath, localPath, relativePath, session.isIgnored)
     return { ...counts, localPath, remotePath }
   }
@@ -177,7 +179,7 @@ export class SftpWorkspaceService {
     const session = await this.requireSession(workspacePath)
     const remotePath = localToRemotePath(workspacePath, session.profile.remotePath, localPath)
     const relativePath = localRelativePath(workspacePath, localPath)
-    const sftp = await this.connect(session)
+    const { sftp } = await this.connect(session)
     const counts = await downloadPath(sftp, remotePath, localPath, relativePath, session.isIgnored)
     return { ...counts, localPath, remotePath }
   }
@@ -206,7 +208,7 @@ export class SftpWorkspaceService {
   async readRemoteFile(workspacePath: string, localPath: string): Promise<SftpRemoteFile> {
     const session = await this.requireSession(workspacePath)
     const remotePath = localToRemotePath(workspacePath, session.profile.remotePath, localPath)
-    const sftp = await this.connect(session)
+    const { sftp } = await this.connect(session)
     const content = await readRemoteFileText(sftp, remotePath)
     return {
       remotePath,
@@ -228,6 +230,10 @@ export class SftpWorkspaceService {
     return ['ssh', '-t', ...args, remoteCommand].map(quotePosixShellUnlessPlain).join(' ')
   }
 
+  async setSudoPassword(workspacePath: string, password: string): Promise<void> {
+    this.sudoPasswords.set((await this.requireSession(workspacePath)).profile.sshTargetId, password)
+  }
+
   /** Drops cached endpoints and connections, e.g. after the config or an SSH host changed. */
   invalidate(workspacePath: string): void {
     const prefix = `${workspacePath}\0`
@@ -240,6 +246,7 @@ export class SftpWorkspaceService {
   }
 
   dispose(): void {
+    this.sudoPasswords.clear()
     this.pool.closeAll()
   }
 
@@ -263,12 +270,16 @@ export class SftpWorkspaceService {
   ): Promise<SftpTransferResult> {
     const remotePath = localToRemotePath(workspacePath, session.profile.remotePath, localPath)
     const relativePath = localRelativePath(workspacePath, localPath)
-    const sftp = await this.connect(session)
-    const counts = await uploadPath(sftp, localPath, remotePath, relativePath, session.isIgnored)
+    const plan = await planUpload(localPath, remotePath, relativePath, session.isIgnored)
+    const connection = await this.connect(session)
+    const { sudo, sshTargetId } = session.profile
+    const counts = sudo
+      ? await this.sudoPasswords.upload(connection, plan, sshTargetId, session.endpoint.label)
+      : await uploadPath(connection.sftp, plan)
     return { ...counts, localPath, remotePath }
   }
 
-  private async connect(session: SftpSession): Promise<SFTPWrapper> {
+  private async connect(session: SftpSession): Promise<SftpConnection> {
     return this.pool.acquire(session.key, session.endpoint)
   }
 

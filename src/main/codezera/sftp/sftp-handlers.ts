@@ -159,6 +159,14 @@ export function registerCodezeraSftpHandlers(store: Store): void {
     (_event, args: SftpWorkspaceRequest): Promise<string> =>
       service.sshCommand(requireAbsolute(args.workspacePath, 'workspacePath'))
   )
+  ipcMain.handle(
+    'codezera:sftp:setSudoPassword',
+    (_event, args: SftpWorkspaceRequest & { password: string }): Promise<void> =>
+      service.setSudoPassword(
+        requireAbsolute(args.workspacePath, 'workspacePath'),
+        typeof args.password === 'string' ? args.password : ''
+      )
+  )
   ipcMain.handle('codezera:sftp:disconnect', (_event, args: SftpWorkspaceRequest): void => {
     service.invalidate(requireAbsolute(args.workspacePath, 'workspacePath'))
   })

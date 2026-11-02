@@ -11,9 +11,9 @@ const SFTP_NO_SUCH_FILE = 2
 /** Decides by path relative to the SFTP root; true leaves the entry (and a folder's contents) out. */
 export type SftpIgnoreCheck = (relativePath: string, isDirectory: boolean) => boolean
 
-type TransferCounts = Omit<SftpTransferResult, 'localPath' | 'remotePath'>
+export type TransferCounts = Omit<SftpTransferResult, 'localPath' | 'remotePath'>
 
-function call<T>(
+export function call<T>(
   register: (callback: (error: Error | null | undefined, value: T) => void) => void
 ): Promise<T> {
   const { promise, resolve, reject } = Promise.withResolvers<T>()
@@ -114,7 +114,10 @@ async function mkdirRemote(
   known.add(remoteDir)
 }
 
-async function runPool<T>(items: readonly T[], worker: (item: T) => Promise<void>): Promise<void> {
+export async function runPool<T>(
+  items: readonly T[],
+  worker: (item: T) => Promise<void>
+): Promise<void> {
   let next = 0
   const lanes = Array.from({ length: Math.min(TRANSFER_CONCURRENCY, items.length) }, async () => {
     while (next < items.length) {
@@ -126,47 +129,51 @@ async function runPool<T>(items: readonly T[], worker: (item: T) => Promise<void
 
 type FilePair = { local: string; remote: string; size: number }
 
+/** What an upload will write: remote folders (parents first) and files, after ignore matching. */
+export type UploadPlan = { files: FilePair[]; directories: string[]; ignored: number }
+
 /**
- * Uploads a local file or folder to `remotePath`, creating missing remote folders.
+ * Walks a local file or folder that maps to `remotePath`.
  * `relativePath` is the local path relative to the SFTP root, used for ignore matching.
  */
-export async function uploadPath(
-  sftp: SFTPWrapper,
+export async function planUpload(
   localPath: string,
   remotePath: string,
   relativePath: string,
   isIgnored: SftpIgnoreCheck
-): Promise<TransferCounts> {
-  const counts: TransferCounts = { files: 0, directories: 0, ignored: 0, bytes: 0 }
-  const files: FilePair[] = []
-  const directories: string[] = []
-
+): Promise<UploadPlan> {
+  const plan: UploadPlan = { files: [], directories: [], ignored: 0 }
   const collect = async (local: string, remote: string, rel: string): Promise<void> => {
     const stats = await stat(local)
     if (isIgnored(rel, stats.isDirectory())) {
-      counts.ignored++
+      plan.ignored++
       return
     }
     if (stats.isFile()) {
-      files.push({ local, remote, size: stats.size })
+      plan.files.push({ local, remote, size: stats.size })
       return
     }
     if (!stats.isDirectory()) {
       return
     }
-    directories.push(remote)
+    plan.directories.push(remote)
     for (const entry of await readdir(local)) {
       await collect(join(local, entry), posix.join(remote, entry), posix.join(rel, entry))
     }
   }
   await collect(localPath, remotePath, relativePath)
+  return plan
+}
 
+/** Uploads a plan as the login user, creating missing remote folders. */
+export async function uploadPath(sftp: SFTPWrapper, plan: UploadPlan): Promise<TransferCounts> {
+  const counts: TransferCounts = { files: 0, directories: 0, ignored: plan.ignored, bytes: 0 }
   const knownDirectories = new Set<string>()
-  for (const directory of directories) {
+  for (const directory of plan.directories) {
     await mkdirRemote(sftp, directory, knownDirectories)
   }
-  counts.directories = directories.length
-  await runPool(files, async (file) => {
+  counts.directories = plan.directories.length
+  await runPool(plan.files, async (file) => {
     await mkdirRemote(sftp, posix.dirname(file.remote), knownDirectories)
     await call<void>((callback) => sftp.fastPut(file.local, file.remote, callback))
     counts.files++

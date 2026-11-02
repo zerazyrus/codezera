@@ -12,7 +12,8 @@ const ProfileSchema = z.object({
   remotePath: z.string().min(1),
   uploadOnSave: z.boolean(),
   ignore: z.array(z.string()),
-  terminalCommand: z.string().optional()
+  terminalCommand: z.string().optional(),
+  sudo: z.boolean().optional()
 })
 
 const ConnectionsFileSchema = z.record(

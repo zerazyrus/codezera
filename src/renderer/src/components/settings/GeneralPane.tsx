@@ -27,6 +27,8 @@ import { defaultScopeHost } from '@/lib/default-creation-host'
 import { ImportFromOrcaSetting } from '@/codezera/orca-import/import-from-orca'
 import { CodezeraSnippetsSetting } from '@/codezera/snippets/CodezeraSnippetsSetting'
 import { SftpImportAllSetting } from '@/codezera/sftp/sftp-import-all-setting'
+import { getCodezeraSnippetsSearchEntries } from '@/codezera/snippets/snippets-settings-search'
+import { getCodezeraSftpSearchEntries } from '@/codezera/sftp/sftp-settings-search'
 
 export {
   createAutoSaveDelayDraftState,
@@ -271,6 +273,15 @@ export function GeneralPane({
         wslCapabilitiesLoading={wslCapabilitiesLoading}
       />
     ) : null,
+    matchesSettingsSearch(searchQuery, [
+      ...getCodezeraSnippetsSearchEntries(),
+      ...getCodezeraSftpSearchEntries()
+    ]) ? (
+      <div key="codezera" className="space-y-6">
+        <CodezeraSnippetsSetting />
+        <SftpImportAllSetting />
+      </div>
+    ) : null,
     matchesSettingsSearch(searchQuery, getGeneralUpdateSearchEntries()) ? (
       <GeneralUpdateSettingsSection key="updates" />
     ) : null
@@ -280,8 +291,6 @@ export function GeneralPane({
   return (
     <div className="space-y-6">
       <SettingsSectionStack sections={visibleSections} spacing="section" />
-      <CodezeraSnippetsSetting />
-      <SftpImportAllSetting />
       <ImportFromOrcaSetting />
       {matchesSettingsSearch(searchQuery, getGeneralSupportSearchEntries()) ? (
         <GeneralSupportSection

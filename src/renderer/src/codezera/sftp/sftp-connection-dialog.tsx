@@ -31,6 +31,7 @@ type FormState = {
   uploadOnSave: boolean
   ignore: string
   terminalCommand: string
+  sudo: boolean
 }
 
 function initialForm(profile: SftpConnectionProfile | null): FormState {
@@ -40,7 +41,8 @@ function initialForm(profile: SftpConnectionProfile | null): FormState {
     remotePath: profile?.remotePath ?? '',
     uploadOnSave: profile?.uploadOnSave ?? false,
     ignore: (profile?.ignore ?? DEFAULT_SFTP_IGNORE).join('\n'),
-    terminalCommand: profile?.terminalCommand ?? ''
+    terminalCommand: profile?.terminalCommand ?? '',
+    sudo: profile?.sudo ?? false
   }
 }
 
@@ -129,7 +131,8 @@ export function SftpConnectionDialog({
           remotePath: form.remotePath.trim(),
           uploadOnSave: form.uploadOnSave,
           ignore: form.ignore.split('\n'),
-          ...(terminalCommand ? { terminalCommand } : {})
+          ...(terminalCommand ? { terminalCommand } : {}),
+          ...(form.sudo ? { sudo: true } : {})
         }
       })
       useSftpStore.getState().apply(workspacePath, state)
@@ -190,11 +193,20 @@ export function SftpConnectionDialog({
               id="sftp-profile-host"
               value={form.sshTargetId}
               onChange={(sshTargetId) => update({ sshTargetId })}
-              options={targets.map((target) => ({
-                id: target.id,
-                label: target.label,
-                detail: `${target.username ? `${target.username}@` : ''}${target.host}:${target.port}`
-              }))}
+              options={targets.map((target) => {
+                const address = `${target.username ? `${target.username}@` : ''}${target.host}:${target.port}`
+                return {
+                  id: target.id,
+                  label: target.label,
+                  // Two lines: long bastion addresses would otherwise truncate the host name.
+                  content: (
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate">{target.label}</span>
+                      <span className="truncate text-xs text-muted-foreground">{address}</span>
+                    </span>
+                  )
+                }
+              })}
               placeholder={translate(
                 'codezera.sftp.formHostPlaceholder',
                 'Choose a saved SSH host'
@@ -220,6 +232,24 @@ export function SftpConnectionDialog({
               id="sftp-profile-upload-on-save"
               checked={form.uploadOnSave}
               onCheckedChange={(uploadOnSave) => update({ uploadOnSave })}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <Label htmlFor="sftp-profile-sudo">
+                {translate('codezera.sftp.formSudo', 'Upload as root (sudo)')}
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {translate(
+                  'codezera.sftp.formSudoHint',
+                  'For logins like devops that need sudo su; asks for the login password once per session'
+                )}
+              </p>
+            </div>
+            <Switch
+              id="sftp-profile-sudo"
+              checked={form.sudo}
+              onCheckedChange={(sudo) => update({ sudo })}
             />
           </div>
           <div className="flex flex-col gap-1.5">

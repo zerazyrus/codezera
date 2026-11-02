@@ -58,7 +58,8 @@ export function withSavedSftpProfile(
     remotePath: normalizeRemotePath(remotePath),
     uploadOnSave: profile.uploadOnSave,
     ignore: [...new Set(profile.ignore.map((pattern) => pattern.trim()).filter(Boolean))],
-    ...(terminalCommand ? { terminalCommand } : {})
+    ...(terminalCommand ? { terminalCommand } : {}),
+    ...(profile.sudo === true ? { sudo: true } : {})
   }
   return {
     profiles:

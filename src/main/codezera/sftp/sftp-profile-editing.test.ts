@@ -22,6 +22,14 @@ describe('SFTP profile editing', () => {
     })
   })
 
+  it('keeps sudo only when on', () => {
+    const saved = (sudo: boolean | undefined): SftpConnectionProfile =>
+      withSavedSftpProfile(null, null, { ...profile('dev'), sudo }, targets).profiles[0]!
+    expect(saved(true).sudo).toBe(true)
+    expect('sudo' in saved(false)).toBe(false)
+    expect('sudo' in saved(undefined)).toBe(false)
+  })
+
   it('rejects duplicate names, unknown hosts and relative paths', () => {
     expect(() => withSavedSftpProfile(two, null, profile('prod'), targets)).toThrow('already')
     expect(() =>

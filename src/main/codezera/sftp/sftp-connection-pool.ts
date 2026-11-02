@@ -5,8 +5,11 @@ import { openSftpConnectConfig, type SftpEndpoint } from './sftp-endpoint'
 
 const IDLE_CLOSE_MS = 10 * 60_000
 
+/** The SFTP channel plus its SSH client, which root writes need for `exec`. */
+export type SftpConnection = { client: Client; sftp: SFTPWrapper }
+
 type PooledConnection = {
-  ready: Promise<SFTPWrapper>
+  ready: Promise<SftpConnection>
   client: Client
   proxyProcess: ChildProcess | null
   idleTimer: NodeJS.Timeout | undefined
@@ -17,7 +20,7 @@ type PooledConnection = {
 export class SftpConnectionPool {
   private readonly connections = new Map<string, PooledConnection>()
 
-  async acquire(key: string, endpoint: SftpEndpoint): Promise<SFTPWrapper> {
+  async acquire(key: string, endpoint: SftpEndpoint): Promise<SftpConnection> {
     let entry = this.connections.get(key)
     if (!entry) {
       entry = this.open(key, endpoint)
@@ -46,7 +49,7 @@ export class SftpConnectionPool {
   private open(key: string, endpoint: SftpEndpoint): PooledConnection {
     const { Client: SshClient } = loadSsh2()
     const client = new SshClient()
-    const { promise, resolve, reject } = Promise.withResolvers<SFTPWrapper>()
+    const { promise, resolve, reject } = Promise.withResolvers<SftpConnection>()
     // Callers that never await (pool eviction) must not surface an unhandled rejection.
     promise.catch(() => {})
     const entry: PooledConnection = {
@@ -61,7 +64,7 @@ export class SftpConnectionPool {
       reject(new Error(`${endpoint.label}: ${error.message}`))
     }
     client.once('ready', () => {
-      client.sftp((error, sftp) => (error ? fail(error) : resolve(sftp)))
+      client.sftp((error, sftp) => (error ? fail(error) : resolve({ client, sftp })))
     })
     client.on('error', fail)
     client.once('close', () => fail(new Error(`Connection to ${endpoint.label} closed`)))

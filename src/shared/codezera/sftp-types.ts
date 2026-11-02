@@ -14,6 +14,8 @@ export type SftpConnectionProfile = {
   /** Globs relative to the workspace root, natizyskunk.sftp style. */
   ignore: string[]
   terminalCommand?: string
+  /** Writes go through `sudo su root` with the login user's password (logins like `devops`). */
+  sudo?: boolean
 }
 
 export type SftpWorkspaceConnections = {
@@ -23,6 +25,10 @@ export type SftpWorkspaceConnections = {
 
 /** `sftp-connections.json` in Codezera's userData, keyed by local workspace root path. */
 export type SftpConnectionsFile = Record<string, SftpWorkspaceConnections>
+
+/** Markers in a rejected upload's message: the sudo password must be (re-)entered, then retried. */
+export const SFTP_SUDO_PASSWORD_REQUIRED = 'codezera-sftp-sudo-password-required'
+export const SFTP_SUDO_PASSWORD_WRONG = 'codezera-sftp-sudo-password-wrong'
 
 /** The active profile of a workspace, as the panel shows it. */
 export type SftpWorkspaceSummary = {
@@ -124,6 +130,8 @@ export type SftpApi = {
   readRemoteFile: (args: SftpLocalPathRequest) => Promise<SftpRemoteFile>
   /** Shell command that opens an interactive SSH session in remotePath. */
   sshCommand: (args: SftpWorkspaceRequest) => Promise<string>
+  /** Keeps the active profile's sudo password in main-process memory until Codezera quits. */
+  setSudoPassword: (args: SftpWorkspaceRequest & { password: string }) => Promise<void>
   disconnect: (args: SftpWorkspaceRequest) => Promise<void>
   /** Fires with the workspace path when its Codezera SFTP config changes. */
   onConfigChanged: (callback: (workspacePath: string) => void) => () => void

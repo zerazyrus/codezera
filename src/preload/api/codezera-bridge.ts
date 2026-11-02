@@ -56,6 +56,7 @@ export const codezeraApi: CodezeraApi = {
     uploadOnSave: (args) => ipcRenderer.invoke('codezera:sftp:uploadOnSave', args),
     readRemoteFile: (args) => ipcRenderer.invoke('codezera:sftp:readRemoteFile', args),
     sshCommand: (args) => ipcRenderer.invoke('codezera:sftp:sshCommand', args),
+    setSudoPassword: (args) => ipcRenderer.invoke('codezera:sftp:setSudoPassword', args),
     disconnect: (args) => ipcRenderer.invoke('codezera:sftp:disconnect', args),
     onConfigChanged: (callback) => {
       const listener = (_event: Electron.IpcRendererEvent, workspacePath: string): void =>
