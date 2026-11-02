@@ -5,6 +5,7 @@ import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/worktree-g
 import type { OpenFile } from '@/store/slices/editor'
 import { isFolderRepo } from '../../../shared/repo-kind'
 import { GitGraphView } from './git-graph/git-graph-view'
+import { SftpCompareTab } from './sftp/sftp-compare-view'
 
 function PanelMessage({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
@@ -24,6 +25,9 @@ export function CodezeraPanelContent({ file }: { file: OpenFile }): React.JSX.El
     return (
       <PanelMessage>{translate('codezera.panel.noWorktree', 'Workspace not found.')}</PanelMessage>
     )
+  }
+  if (file.codezeraPanel === 'sftp-compare') {
+    return <SftpCompareTab file={file} />
   }
   if (repo && isFolderRepo(repo)) {
     return (

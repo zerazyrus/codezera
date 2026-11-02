@@ -26,6 +26,7 @@ import {
   waitForModelBaselineRestamps
 } from './editor-save-rebaseline'
 import type { FileWriteResult } from '../../../../shared/file-write-disk-precondition'
+import { onCodezeraFileSaved } from '@/codezera/sftp/sftp-actions'
 import {
   editorSavePrecondition,
   editorSaveGrant,
@@ -214,6 +215,7 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     if (writeResult.unchanged) {
       clearSelfWrite(liveFile.filePath, liveFile.runtimeEnvironmentId)
     }
+    onCodezeraFileSaved(liveFile.filePath, fileContext)
     const settledViewIds = settleEditorRecordAfterWrite(
       store,
       recordViewIds,

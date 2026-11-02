@@ -30,6 +30,7 @@ import { installMonacoPeekReferencesPreviewOptions } from './monaco-peek-preview
 import { installMonacoContextMenuPaste } from '@/components/editor/install-monaco-context-menu-paste'
 import { runMonacoSetupSteps } from './monaco-setup-steps'
 import { installMonacoTsWorkerIdleStop } from './monaco-ts-worker-idle-stop'
+import { registerCodezeraUserSnippets } from '@/codezera/snippets/user-snippet-completions'
 
 globalThis.MonacoEnvironment = {
   getWorker(_workerId, label) {
@@ -94,6 +95,7 @@ runMonacoSetupSteps([
   ['peek references preview options', installMonacoPeekReferencesPreviewOptions],
   // Sandboxed navigator.clipboard blocks Monaco Paste; use trusted IPC as native Cmd+V does.
   ['context-menu paste', () => installMonacoContextMenuPaste(monaco)],
+  ['Codezera VS Code user snippets', () => registerCodezeraUserSnippets(monaco)],
   ['TS worker idle stop', () => installMonacoTsWorkerIdleStop(monaco)]
 ])
 

@@ -22,6 +22,7 @@ import { translate } from '@/i18n/i18n'
 import { useUiLanguageRevision } from '@/i18n/use-ui-language-revision'
 import { AgentSessionHistoryIcon } from './agent-session-history-icon'
 import type { ActivityBarItem } from './activity-bar-buttons'
+import { useSftpActivityItems } from '@/codezera/sftp/use-sftp-activity-items'
 
 export type RightSidebarActivityItems = {
   visibleItems: ActivityBarItem[]
@@ -70,6 +71,7 @@ export function useRightSidebarActivityItems({
     () => collectInstalledPluginTabKeys(installedPlugins),
     [installedPlugins]
   )
+  const sftpItems = useSftpActivityItems(activeWorktreeId)
 
   const activityItems = useMemo<ActivityBarItem[]>(
     () => [
@@ -123,6 +125,7 @@ export function useRightSidebarActivityItems({
         shortcut: portsShortcut === 'Unassigned' ? '' : portsShortcut,
         sshOnly: true
       },
+      ...sftpItems,
       // Append plugin tabs to preserve built-in navigation positions.
       ...getPluginPanelActivityItems(visiblePluginPanels, pluginPanelErrors)
     ],
@@ -134,7 +137,8 @@ export function useRightSidebarActivityItems({
       visiblePluginPanels,
       portsShortcut,
       sourceControlShortcut,
-      languageRevision
+      languageRevision,
+      sftpItems
     ]
   )
 

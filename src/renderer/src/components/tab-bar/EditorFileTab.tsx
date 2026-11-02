@@ -114,7 +114,9 @@ export default function EditorFileTab({
           : file.language === 'simulator'
             ? Smartphone
             : file.mode === 'codezera-panel'
-              ? GitGraph
+              ? file.codezeraPanel === 'sftp-compare'
+                ? GitCompareArrows
+                : GitGraph
               : null
   const tabIcon = (className: string): React.ReactNode => (
     <PluginContributionIcon

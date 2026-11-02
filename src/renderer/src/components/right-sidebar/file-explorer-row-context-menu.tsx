@@ -48,6 +48,7 @@ import {
 } from './file-explorer-row-action-visibility'
 import { copyFileToOsClipboard, downloadRemoteFile } from './file-explorer-row-file-transfer'
 import { fileExplorerNodeTabRelativePath } from './file-explorer-directory-listing'
+import { CodezeraSftpExplorerMenuItems } from '@/codezera/sftp/sftp-explorer-menu-items'
 
 const isMac = navigator.userAgent.includes('Mac')
 
@@ -285,6 +286,11 @@ export function FileExplorerRowContextMenu({
         {getRevealInFileManagerLabel()}
         {revealBlocked ? <LocalOnlyMenuHint /> : null}
       </ContextMenuItem>
+      <CodezeraSftpExplorerMenuItems
+        path={node.path}
+        isDirectory={node.isDirectory}
+        worktreeId={activeWorktreeId}
+      />
       <ContextMenuSeparator />
       <ContextMenuItem disabled={writesBlocked} onSelect={() => onStartRename(node)}>
         <Pencil />
