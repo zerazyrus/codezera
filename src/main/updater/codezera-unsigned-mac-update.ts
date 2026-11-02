@@ -76,8 +76,14 @@ export async function downloadUnsignedMacUpdate(
   const manifest = await (await fetchOk(`${releaseBase}/latest-mac.yml`)).text()
   const zip = selectMacZip(manifest, process.arch)
 
-  const stagingDir = join(app.getPath('temp'), `codezera-update-${version}`)
-  await rm(stagingDir, { recursive: true, force: true })
+  const tempDir = app.getPath('temp')
+  // A newer release supersedes any staged-but-uninstalled one (~650 MB extracted); drop them all.
+  for (const name of await readdir(tempDir)) {
+    if (name.startsWith('codezera-update-')) {
+      await rm(join(tempDir, name), { recursive: true, force: true })
+    }
+  }
+  const stagingDir = join(tempDir, `codezera-update-${version}`)
   await mkdir(stagingDir, { recursive: true })
   const zipPath = join(stagingDir, 'update.zip')
 
@@ -143,6 +149,7 @@ if mv "$target" "$backup"; then
   fi
 fi
 xattr -dr com.apple.quarantine "$target" 2>/dev/null
+rm -f "$0"
 open "$target"
 `
 
