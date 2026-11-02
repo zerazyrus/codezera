@@ -23382,8 +23382,9 @@
       "local": "Branches",
       "remote": "Remote branches",
       "checkoutFailed": "Could not switch branch",
-      "pull": "Pull from {{upstream}}",
-      "noUpstream": "This branch has no upstream to pull from"
+      "sync": "Synchronize changes with {{upstream}}",
+      "needsForcePush": "History was rewritten; force push from Source Control",
+      "noUpstream": "This branch has no upstream to sync with"
     },
     "gitGraph": {
       "branches": {

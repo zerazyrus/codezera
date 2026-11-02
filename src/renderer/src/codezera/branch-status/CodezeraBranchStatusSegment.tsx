@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowDown, ArrowUp, Check, GitBranch, Loader2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Check, GitBranch, Loader2, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -21,6 +21,7 @@ import {
 import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/worktree-git-owner-target'
 import { splitRemoteBranchName } from '../../../../shared/git-remote-branch-name'
 import { isFolderRepo } from '../../../../shared/repo-kind'
+import { shouldForcePushWithLeaseForUpstream } from '../../../../shared/git-upstream-status'
 import {
   DEFAULT_GIT_GRAPH_REPO_SETTINGS,
   type GitGraphAction,
@@ -29,7 +30,7 @@ import {
 
 const MAX_LISTED_BRANCHES = 300
 
-/** VS Code-style status bar branch: shows the current branch, switches it, and pulls. Local git workspaces only. */
+/** VS Code-style status bar branch: shows the current branch, switches it, and syncs (pull then push). Local git workspaces only. */
 export function CodezeraBranchStatusSegment({
   compact
 }: {
@@ -41,9 +42,7 @@ export function CodezeraBranchStatusSegment({
   const worktreeId = worktree?.id ?? null
   const worktreePath = worktree?.path ?? null
   const upstream = useAppStore((s) => (worktreeId ? s.remoteStatusesByWorktree[worktreeId] : null))
-  const pulling = useAppStore((s) =>
-    s.remoteOperations.some((op) => op.worktreeId === worktreeId && op.kind === 'pull')
-  )
+  const syncing = useAppStore((s) => s.remoteOperations.some((op) => op.worktreeId === worktreeId))
   // Orca's status poller notices checkouts made elsewhere (terminal, agents).
   const statusHead = useAppStore((s) => (worktreeId ? s.gitStatusHeadByWorktree[worktreeId] : null))
   const [currentBranch, setCurrentBranch] = useState<string | null>(null)
@@ -134,21 +133,28 @@ export function CodezeraBranchStatusSegment({
     }
   }
 
-  const pull = (): void => {
-    // The store toasts pull failures itself.
+  const sync = (): void => {
+    // The store toasts sync failures itself.
     useAppStore
       .getState()
-      .pullBranch(worktreeId, worktreePath, connectionId, worktree.pushTarget)
+      .syncBranch(worktreeId, worktreePath, connectionId, worktree.pushTarget)
       .catch(() => {})
   }
 
   const behind = upstream?.hasUpstream ? upstream.behind : 0
   const ahead = upstream?.hasUpstream ? upstream.ahead : 0
-  const pullLabel = upstream?.hasUpstream
-    ? translate('codezera.branchStatus.pull', 'Pull from {{upstream}}', {
-        upstream: upstream.upstreamName ?? 'upstream'
-      })
-    : translate('codezera.branchStatus.noUpstream', 'This branch has no upstream to pull from')
+  // Rewritten history needs a force push; like Orca's Sync menu item, leave that to Source Control.
+  const needsForcePush = Boolean(upstream && shouldForcePushWithLeaseForUpstream(upstream))
+  const syncLabel = !upstream?.hasUpstream
+    ? translate('codezera.branchStatus.noUpstream', 'This branch has no upstream to sync with')
+    : needsForcePush
+      ? translate(
+          'codezera.branchStatus.needsForcePush',
+          'History was rewritten; force push from Source Control'
+        )
+      : translate('codezera.branchStatus.sync', 'Synchronize changes with {{upstream}}', {
+          upstream: upstream.upstreamName ?? 'upstream'
+        })
 
   return (
     <span className="inline-flex shrink-0 items-center">
@@ -244,16 +250,21 @@ export function CodezeraBranchStatusSegment({
           <button
             type="button"
             className="inline-flex items-center gap-0.5 rounded px-1 py-0.5 tabular-nums hover:bg-accent/70 disabled:opacity-50 disabled:hover:bg-transparent"
-            aria-label={pullLabel}
-            disabled={!upstream?.hasUpstream || pulling}
-            onClick={pull}
+            aria-label={syncLabel}
+            disabled={!upstream?.hasUpstream || needsForcePush || syncing}
+            onClick={sync}
           >
-            {pulling ? (
+            {syncing ? (
               <Loader2 className="size-3 animate-spin" />
-            ) : (
-              <ArrowDown className="size-3" />
-            )}
-            {behind > 0 ? <span>{behind}</span> : null}
+            ) : behind === 0 && ahead === 0 ? (
+              <RefreshCw className="size-3" />
+            ) : null}
+            {behind > 0 ? (
+              <>
+                <ArrowDown className="size-3" />
+                <span>{behind}</span>
+              </>
+            ) : null}
             {ahead > 0 ? (
               <>
                 <ArrowUp className="size-3" />
@@ -263,7 +274,7 @@ export function CodezeraBranchStatusSegment({
           </button>
         </TooltipTrigger>
         <TooltipContent side="top" sideOffset={6}>
-          {pullLabel}
+          {syncLabel}
         </TooltipContent>
       </Tooltip>
     </span>
