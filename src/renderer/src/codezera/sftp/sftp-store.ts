@@ -94,3 +94,25 @@ export function useSftpState(workspacePath: string | null): SftpConfigState | un
   }, [workspacePath, known])
   return state
 }
+
+function isInside(root: string, path: string): boolean {
+  return path === root || (path.startsWith(root) && /^[\\/]/.test(path.slice(root.length)))
+}
+
+/** Workspace path whose loaded sftp.json covers `path`, or null. */
+export function findSftpWorkspacePathFor(states: SftpStore['states'], path: string): string | null {
+  for (const [key, state] of Object.entries(states)) {
+    if (state?.status === 'ok' && isInside(state.summary.localRoot, path)) {
+      return key
+    }
+  }
+  return null
+}
+
+/** Loads the worktree's sftp.json once, so menus work before the SFTP tab is opened. */
+export function ensureSftpStateLoaded(worktreeId: string | null | undefined): void {
+  const workspacePath = localWorkspacePath(useAppStore.getState(), worktreeId)
+  if (workspacePath && sftpAvailable() && !useSftpStore.getState().states[workspacePath]) {
+    void useSftpStore.getState().load(workspacePath)
+  }
+}

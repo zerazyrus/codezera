@@ -25,6 +25,7 @@ import {
   requestStaleCacheReload,
   settleStaleCacheReload
 } from './editor-stale-mount-guard'
+import { installSftpEditorActions } from '@/codezera/sftp/sftp-editor-actions'
 
 function ignoreCursorLine(): void {}
 
@@ -175,6 +176,7 @@ export function useMonacoEditorMount(params: MonacoEditorMountParams): OnMount {
         setCommentPopover,
         setSelectionAnnotationTarget
       })
+      installSftpEditorActions(editorInstance, worktreeId)
 
       const { cursorPositionSub, scrollStateSub } = installMonacoViewStateTracking({
         editorInstance,

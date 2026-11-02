@@ -23393,6 +23393,8 @@
       "loadingCompare": "Reading server and local copies…",
       "loadingConfig": "Reading sftp.json…",
       "localOnly": "SFTP works with workspaces on this computer only.",
+      "editorDownload": "SFTP: Download File",
+      "editorUpload": "SFTP: Upload File",
       "menuDiff": "SFTP: Diff with Remote",
       "menuDownload": "SFTP: Download",
       "menuUpload": "SFTP: Upload",

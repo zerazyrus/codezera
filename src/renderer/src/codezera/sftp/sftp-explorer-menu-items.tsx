@@ -1,18 +1,11 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { CloudDownload, CloudUpload, GitCompareArrows } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu'
 import { openSftpCompare, sftpDownloadLocal, sftpUpload } from './sftp-actions'
-import { useSftpStore } from './sftp-store'
+import { ensureSftpStateLoaded, findSftpWorkspacePathFor, useSftpStore } from './sftp-store'
 
-function isInside(root: string, path: string): boolean {
-  return path === root || (path.startsWith(root) && /^[\\/]/.test(path.slice(root.length)))
-}
-
-/**
- * SFTP entries for Orca's file explorer row menu; renders nothing unless the row lies under a
- * workspace whose sftp.json the SFTP tab already loaded (it loads for the active local workspace).
- */
+/** SFTP entries for Orca's file explorer row menu; renders nothing unless the row's workspace has an SFTP config. */
 export function CodezeraSftpExplorerMenuItems({
   path,
   isDirectory,
@@ -22,14 +15,8 @@ export function CodezeraSftpExplorerMenuItems({
   isDirectory: boolean
   worktreeId: string | null
 }): React.JSX.Element | null {
-  const workspacePath = useSftpStore((s) => {
-    for (const [key, state] of Object.entries(s.states)) {
-      if (state?.status === 'ok' && isInside(state.summary.localRoot, path)) {
-        return key
-      }
-    }
-    return null
-  })
+  useEffect(() => ensureSftpStateLoaded(worktreeId), [worktreeId])
+  const workspacePath = useSftpStore((s) => findSftpWorkspacePathFor(s.states, path))
   const workspace = useMemo(
     () => (worktreeId && workspacePath ? { worktreeId, workspacePath } : null),
     [worktreeId, workspacePath]
