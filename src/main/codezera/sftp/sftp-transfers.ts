@@ -32,9 +32,9 @@ export async function statRemote(sftp: SFTPWrapper, remotePath: string): Promise
   }
 }
 
-/** Folder entries, folders first then by name; symlinks report what they point at. */
 const REMOTE_NAME_COLLATOR = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
+/** Folder entries, folders first then by name; symlinks report what they point at. */
 export async function listRemoteDirectory(
   sftp: SFTPWrapper,
   remoteDir: string,
