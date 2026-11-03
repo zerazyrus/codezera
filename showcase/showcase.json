@@ -1,0 +1,64 @@
+{
+  "shots": [
+    {
+      "image": "01-worktrees.webp",
+      "title": { "vi": "Mỗi việc một worktree riêng", "en": "One worktree per task" },
+      "text": {
+        "vi": "Thanh bên liệt kê các worktree của dự án, mỗi cái có nhánh và terminal riêng. Chạy test ở ô này, bật dev server ở ô bên cạnh mà không đụng tới việc khác.",
+        "en": "The sidebar lists the project's worktrees, each with its own branch and terminals. Run tests in one pane and a dev server in the next without touching other tasks."
+      },
+      "alt": {
+        "vi": "Cửa sổ Codezera với danh sách sáu worktree ở thanh bên, hai terminal chia đôi đang chạy vitest và vite, bảng Source Control liệt kê bốn tệp thay đổi",
+        "en": "Codezera window with six worktrees in the sidebar, two split terminals running vitest and vite, and a Source Control panel listing four changed files"
+      }
+    },
+    {
+      "image": "02-new-worktree.webp",
+      "title": { "vi": "Tạo worktree và chọn agent", "en": "Create a worktree and pick an agent" },
+      "text": {
+        "vi": "Gõ mô tả việc cần làm, chọn nhánh gốc và agent AI sẽ làm việc đó. Codezera tạo nhánh, thư mục worktree và mở terminal cho agent.",
+        "en": "Type what needs doing, choose the base branch and the AI agent that will work on it. Codezera creates the branch and worktree folder and opens a terminal for the agent."
+      },
+      "alt": {
+        "vi": "Hộp thoại Create worktree với dự án so-tay-viec, nhánh gốc main, tên việc Thêm chế độ tối cho giao diện và ô chọn agent",
+        "en": "Create worktree dialog with project so-tay-viec, base branch main, the task name Thêm chế độ tối cho giao diện and an agent picker"
+      }
+    },
+    {
+      "image": "03-diff-review.webp",
+      "title": { "vi": "Xem lại thay đổi trước khi gộp", "en": "Review changes before merging" },
+      "text": {
+        "vi": "Tab Changes gom mọi tệp đã sửa trong worktree thành một bản diff, xem từng dòng hoặc hai cột. Stage và viết commit ngay bên cạnh.",
+        "en": "The Changes tab shows every edited file in the worktree as one diff, inline or side by side. Stage files and write the commit right next to it."
+      },
+      "alt": {
+        "vi": "Tab Changes hiển thị diff của src/main.js với các dòng thêm mới cho tính năng kéo thả, bên phải là danh sách bốn tệp thay đổi",
+        "en": "Changes tab showing the diff of src/main.js with added lines for drag and drop, with four changed files listed on the right"
+      }
+    },
+    {
+      "image": "04-git-graph.webp",
+      "title": { "vi": "Git Graph cho cả dự án", "en": "Git Graph for the whole project" },
+      "text": {
+        "vi": "Xem nhánh, tag và commit của mọi worktree trên một đồ thị. Bấm vào commit để xem tác giả, commit cha và các tệp đã đổi.",
+        "en": "See branches, tags and commits from every worktree on one graph. Click a commit to see its author, parent commit and changed files."
+      },
+      "alt": {
+        "vi": "Tab Git Graph với đồ thị nhánh nhiều màu, các nhãn nhánh và tag v0.2.0, v0.3.0, một commit đang mở chi tiết tác giả và tệp src/main.js",
+        "en": "Git Graph tab with a multicolored branch graph, branch labels and tags v0.2.0 and v0.3.0, and one commit expanded with its author and the file src/main.js"
+      }
+    },
+    {
+      "image": "05-workspace-board.webp",
+      "title": { "vi": "Theo dõi tiến độ trên bảng", "en": "Track progress on a board" },
+      "text": {
+        "vi": "Bảng workspace xếp các worktree theo cột Todo, In progress, In review và Done. Kéo thẻ sang cột khác để đổi trạng thái.",
+        "en": "The workspace board sorts worktrees into Todo, In progress, In review and Done columns. Drag a card to another column to change its status."
+      },
+      "alt": {
+        "vi": "Bảng Workspace board với bốn cột trạng thái, mỗi cột chứa thẻ worktree như Kéo thả để sắp xếp việc và Sửa lỗi lưu khi danh sách trống",
+        "en": "Workspace board with four status columns, each holding worktree cards such as Kéo thả để sắp xếp việc and Sửa lỗi lưu khi danh sách trống"
+      }
+    }
+  ]
+}

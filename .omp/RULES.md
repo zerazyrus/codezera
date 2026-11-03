@@ -5,3 +5,4 @@
 - **Có thể có phiên khác đang sửa cùng repo.** `git status` trước khi sửa; chỉ `git add <file>` của mình, không `git add -A`.
 - Nhánh `codezera` nhận merge Orca tự động mỗi sáng: `git fetch` + rebase lên `origin/codezera` trước khi push, không force-push.
 - Tránh conflict với Orca: theo mục "Keeping upstream merges conflict-free" trong `CODEZERA.md` (logic mới ở file của Codezera, file Orca chỉ thêm một dòng hook).
+- `showcase/` (showcase.json + ảnh) được thezera.net đọc lúc build cho trang giới thiệu; cập nhật khi UI thay đổi đáng kể; schema ở `docs/platform.md` của repo thezera.
