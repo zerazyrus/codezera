@@ -7,7 +7,10 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js'
 import { SnippetController2 } from 'monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2.js'
 import type * as MonacoApi from 'monaco-editor'
 import { CodezeraSnippetStore } from '../../../../main/codezera/snippets/snippet-store'
-import { registerCodezeraSnippetCompletions } from './snippet-completions'
+import {
+  registerCodezeraSnippetCompletions,
+  setCodezeraSnippetEditorPath
+} from './snippet-completions'
 
 const HEADER_LINES = [
   ' * @author Thang Nguyen',
@@ -140,6 +143,45 @@ describe('registerCodezeraSnippetCompletions', () => {
     )
     expect(result).toBeUndefined()
     model.dispose()
+  })
+
+  it('offers snippets in a diff-model editor by its registered file path', async () => {
+    // Diff panes are plain code editors over synthetic `diff:` models; the real diff widget needs canvas.
+    const modified = monaco.editor.createModel(
+      'headerstart',
+      'plaintext',
+      monaco.Uri.parse('diff:modified:t')
+    )
+    const unregistered = monaco.editor.createModel(
+      'headerstart',
+      'plaintext',
+      monaco.Uri.parse('diff:original:t')
+    )
+    const complete = async (model: MonacoApi.editor.ITextModel): Promise<string[] | undefined> => {
+      const result = await provider.provideCompletionItems(
+        model,
+        new monaco.Position(1, 12),
+        { triggerKind: monaco.languages.CompletionTriggerKind.Invoke },
+        new monaco.CancellationTokenSource().token
+      )
+      return result?.suggestions.map((s) =>
+        typeof s.label === 'string' ? s.label : (s.label.description ?? '')
+      )
+    }
+    expect(await complete(modified)).toBeUndefined()
+    const container = document.createElement('div')
+    document.body.append(container)
+    const editor = monaco.editor.create(container, { model: modified })
+    try {
+      setCodezeraSnippetEditorPath(editor, '/repo/layouts/Detail.tpl')
+      expect(await complete(modified)).toEqual(['Start Header Comment (TPL)'])
+      expect(await complete(unregistered)).toBeUndefined()
+    } finally {
+      editor.dispose()
+      modified.dispose()
+      unregistered.dispose()
+      container.remove()
+    }
   })
 
   it('refetches as soon as the store reports a change', async () => {

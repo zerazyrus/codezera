@@ -8,12 +8,36 @@ type SnippetSource = {
   onChanged: (callback: () => void) => () => void
 }
 
-// Editor tabs only; prompt boxes and diff/inmemory models would otherwise get global snippets.
+// Editor tabs only; prompt boxes and other inmemory models would otherwise get global snippets.
 const SNIPPET_SCHEMES: Record<string, true> = { file: true, 'vscode-remote': true }
 // Settings edits invalidate immediately; this window only bounds IPC and picks up hand edits.
 const REFRESH_AFTER_MS = 2000
 
 const registered = new WeakSet<MonacoApi>()
+// Diff models use synthetic URIs; diff views register their modified editor's real file path.
+const diffEditorPaths = new WeakMap<Monaco.editor.ICodeEditor, string>()
+
+export function setCodezeraSnippetEditorPath(
+  editor: Monaco.editor.ICodeEditor | null,
+  path: string | undefined
+): void {
+  if (editor && path) {
+    diffEditorPaths.set(editor, path)
+  }
+}
+
+function snippetPathFor(monaco: MonacoApi, model: Monaco.editor.ITextModel): string | undefined {
+  if (SNIPPET_SCHEMES[model.uri.scheme]) {
+    return model.uri.path
+  }
+  for (const editor of monaco.editor.getEditors()) {
+    const path = diffEditorPaths.get(editor)
+    if (path && editor.getModel() === model) {
+      return path
+    }
+  }
+  return undefined
+}
 
 function createSnippetCache(source: SnippetSource): () => Promise<CodezeraSnippet[]> {
   let cached: { fetchedAt: number; snippets: Promise<CodezeraSnippet[]> } | null = null
@@ -40,7 +64,8 @@ export function registerCodezeraSnippetCompletions(
   const loadSnippets = createSnippetCache(source)
   return monaco.languages.registerCompletionItemProvider('*', {
     async provideCompletionItems(model, position) {
-      if (!SNIPPET_SCHEMES[model.uri.scheme]) {
+      const path = snippetPathFor(monaco, model)
+      if (path === undefined) {
         return undefined
       }
       const snippets = await loadSnippets()
@@ -48,7 +73,6 @@ export function registerCodezeraSnippetCompletions(
         return undefined
       }
       const languageId = model.getLanguageId()
-      const path = model.uri.path
       const linePrefix = model.getLineContent(position.lineNumber).slice(0, position.column - 1)
       const wordStartColumn = model.getWordUntilPosition(position).startColumn
       const suggestions: Monaco.languages.CompletionItem[] = []

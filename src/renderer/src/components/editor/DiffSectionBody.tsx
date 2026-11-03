@@ -27,6 +27,7 @@ import {
 } from '@/lib/monaco-languages/plugin-syntax-editor-options'
 import { useMonacoTheme } from '@/hooks/use-monaco-theme'
 import { monacoTypographyOptions, type EditorTypography } from '@/lib/editor-typography'
+import { setCodezeraSnippetEditorPath } from '@/codezera/snippets/snippet-completions'
 
 const ImageDiffViewer = lazy(() => import('./ImageDiffViewer'))
 
@@ -110,6 +111,7 @@ export function DiffSectionBody({
   const handleEditorMount: DiffOnMount = (diffEditor, monaco) => {
     diffEditorRef.current = diffEditor
     applyModelLanguage([diffEditor.getModel()?.original, diffEditor.getModel()?.modified], language)
+    setCodezeraSnippetEditorPath(diffEditor.getModifiedEditor(), section.path)
     const cleanupShiftWheelScroll = installDiffEditorShiftWheelScroll(diffEditor)
     const cleanupCursorReveal = installCombinedDiffCursorReveal(diffEditor)
     diffEditor.getModifiedEditor().onDidDispose(() => {

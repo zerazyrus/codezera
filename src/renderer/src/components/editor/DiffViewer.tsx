@@ -36,6 +36,7 @@ import {
   applyModelLanguage
 } from '@/lib/monaco-languages/plugin-syntax-editor-options'
 import { useMonacoTheme } from '@/hooks/use-monaco-theme'
+import { setCodezeraSnippetEditorPath } from '@/codezera/snippets/snippet-completions'
 
 export default function DiffViewer({
   modelKey,
@@ -93,6 +94,10 @@ export default function DiffViewer({
     const models = diffEditorRef.current?.getModel()
     applyModelLanguage([models?.original, models?.modified], language)
   }, [modifiedEditor, language])
+  useEffect(
+    () => setCodezeraSnippetEditorPath(modifiedEditor, filePath),
+    [modifiedEditor, filePath]
+  )
 
   const renderLimit = useMemo(
     () => largeDiffRenderLimit ?? getLargeDiffRenderLimit({ originalContent, modifiedContent }),
