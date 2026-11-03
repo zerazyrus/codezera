@@ -7,6 +7,7 @@ import { getGeneralProjectRuntimeSearchEntries } from './general-project-runtime
 import { getGeneralSupportSearchEntries } from './general-support-search'
 import { getCodezeraSnippetsSearchEntries } from '@/codezera/snippets/snippets-settings-search'
 import { getCodezeraSftpSearchEntries } from '@/codezera/sftp/sftp-settings-search'
+import { getUpdateDelayDescription, getUpdateDelayTitle } from './update-delay-copy'
 
 export { getGeneralEditorSearchEntries } from './general-editor-search'
 export { getGeneralSupportSearchEntries } from './general-support-search'
@@ -257,6 +258,15 @@ export const getGeneralUpdateSearchEntries = createLocalizedCatalog(() => [
         'release notes'
       ),
       ...translateSearchKeyword('auto.components.settings.general.search.e49e739a59', 'download')
+    ]
+  },
+  {
+    title: getUpdateDelayTitle(),
+    description: getUpdateDelayDescription(),
+    keywords: [
+      ...translateSearchKeyword('settings.updateDelay.keywordDelay', 'delay'),
+      ...translateSearchKeyword('settings.updateDelay.keywordCooldown', 'cooldown'),
+      ...translateSearchKeyword('settings.updateDelay.keywordSecurity', 'security')
     ]
   }
 ])

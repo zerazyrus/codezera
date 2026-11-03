@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js'
+// @ts-expect-error monaco ships this internal module with an empty .d.ts
 import { SnippetController2 } from 'monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2.js'
 import type * as MonacoApi from 'monaco-editor'
 import { CodezeraSnippetStore } from '../../../../main/codezera/snippets/snippet-store'
