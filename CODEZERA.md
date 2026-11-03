@@ -17,7 +17,7 @@ Requires repo secret `CODEZERA_SYNC_TOKEN`: a fine-grained PAT on this repo with
 
 Generated from commit subjects by `node config/scripts/codezera-package.mjs notes`:
 
-- **Codezera**: commits since the previous `v*` tag that are not in Orca, so write user-readable subjects (`feat(codezera): Git Graph hiện stash`).
+- **Codezera**: commits since the previous `v*` tag that are not in Orca. Write subjects in English only, user-readable (`feat(codezera): show stashes in Git Graph`).
 - **Orca**: commits merged from upstream since the previous release, with PR links (collapsed list + compare link).
 - To add context, edit the release on GitHub after it publishes. Later runs never rewrite old notes.
 
