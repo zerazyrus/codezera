@@ -11,8 +11,8 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { SearchableSetting } from '@/components/settings/SearchableSetting'
-import { SettingsSubsectionHeader } from '@/components/settings/SettingsFormControls'
+import { SearchableSetting } from '@/components/settings/section-layout/SearchableSetting'
+import { SettingsSubsectionHeader } from '@/components/settings/form-controls/SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 import {
   CODEZERA_MANAGED_SNIPPET_FILE,

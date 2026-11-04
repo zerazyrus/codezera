@@ -3,7 +3,7 @@ import { Download, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { SearchableSetting } from '@/components/settings/SearchableSetting'
+import { SearchableSetting } from '@/components/settings/section-layout/SearchableSetting'
 import { translate } from '@/i18n/i18n'
 import type { OrcaImportProbe } from '../../../../shared/codezera/orca-import-types'
 

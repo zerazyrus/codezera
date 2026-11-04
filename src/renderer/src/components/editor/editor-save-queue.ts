@@ -1,4 +1,4 @@
-import { createEditorAutoSaveScan } from './editor-autosave-scan'
+import { clearScheduledEditorAutoSave, createEditorAutoSaveScan } from './editor-autosave-scan'
 import type { StoreApi } from 'zustand'
 import type { AppState } from '@/store'
 import type { OpenFile } from '@/store/slices/editor'
@@ -39,11 +39,12 @@ import { withEditorFileWriteLock } from './editor-file-write-lock'
 import {
   liveEditorSaveWriter,
   sameEditorSaveResource,
-  captureEditorSave
+  captureEditorSaveRequest
 } from './editor-save-writer-view'
 import { createEditorSaveSlots, type EditorSaveRequest } from './editor-save-slots'
 import { EditorSaveDiscardedError, editorDiscardEpoch } from './editor-discard-epoch'
 import { hasEditorBytesDraft, saveEditorBytesDraft } from './editor-bytes-documents'
+import { insertFinalNewlineBeforeSave } from './editor-final-newline'
 
 export type AppStoreApi = Pick<StoreApi<AppState>, 'getState' | 'setState' | 'subscribe'>
 
@@ -68,14 +69,8 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
 
   const recordKeyOf = (fileId: string): string => editorBufferIdOfView(store.getState(), fileId)
 
-  const clearScheduledAutoSave = (key: string): void => {
-    const timerId = autoSaveTimers.get(key)
-    if (timerId !== undefined) {
-      window.clearTimeout(timerId)
-      autoSaveTimers.delete(key)
-    }
-    autoSaveScheduledContent.delete(key)
-  }
+  const clearScheduledAutoSave = (key: string): void =>
+    clearScheduledEditorAutoSave(autoSaveTimers, autoSaveScheduledContent, key)
 
   const holds = createAutoSaveHolds(store.getState, () => syncAutoSave())
 
@@ -84,7 +79,7 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     writerViewIds: readonly string[],
     request: EditorSaveRequest
   ): Promise<EditorSaveResult> => {
-    const { trigger } = request
+    const { trigger, requestedFromCodeView } = request
     if (!('operation' in request.invocation)) {
       throw request.invocation.error
     }
@@ -134,22 +129,30 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     }
     const buffered = store.getState().editorDrafts[fileId] ?? request.fallbackContent
     const transformed = editorSaveTransform(store, liveFile, request, buffered)
-    const contentToSave = transformed ? await transformed : buffered
+    const transformedContent = transformed ? await transformed : buffered
     if (
       trigger === 'autosave' &&
       hasPendingEditorBufferChange(store.getState(), fileId) &&
-      liveFile.lastKnownDiskSignature === getDiskBaselineSignature(contentToSave)
+      liveFile.lastKnownDiskSignature === getDiskBaselineSignature(transformedContent)
     ) {
       return 'failed'
     }
     operation.assertAuthorityCurrent()
     const fileContext = operation.mutationContext()
     const connectionId = fileContext.connectionId
-    const assertWriterCurrent = (): void => {
+    const assertWriterCurrent = (): OpenFile => {
       operation.assertAuthorityCurrent()
-      if (!liveEditorSaveWriter(store.getState(), fileId, recordViewIds, trigger, operation.file)) {
+      const current = liveEditorSaveWriter(
+        store.getState(),
+        fileId,
+        recordViewIds,
+        trigger,
+        operation.file
+      )
+      if (!current) {
         throw new Error('This file is no longer open for saving.')
       }
+      return current
     }
     if (hasEditorBytesDraft(fileId)) {
       return saveEditorBytesDraft(
@@ -165,6 +168,18 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     if (precondition.kind === 'blocked') {
       setModelExternalMutation(store.getState(), fileId, 'changed')
       return 'blocked-stale'
+    }
+    let contentToSave = transformedContent
+    if (store.getState().settings?.editorInsertFinalNewline === true && requestedFromCodeView) {
+      if (discarded()) {
+        return nothingToWrite
+      }
+      contentToSave = insertFinalNewlineBeforeSave(
+        store.getState(),
+        assertWriterCurrent(),
+        transformedContent,
+        buffered
+      )
     }
     // Stamp before writing so watcher echoes cannot reload the editor’s own save.
     recordSelfWrite(
@@ -262,8 +277,7 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     if (asked) {
       await waitForModelBaselineRestamps(store.getState(), asked)
     }
-    const current = askedView()
-    const view = current
+    const view = askedView()
     if (!view) {
       return 'failed'
     }
@@ -278,22 +292,7 @@ export function createEditorSaveQueue(store: AppStoreApi): EditorSaveQueue {
     file: OpenFile,
     fallbackContent: string,
     trigger: EditorSaveTrigger
-  ): EditorSaveRequest => {
-    const invocation = captureEditorSave(store, file, trigger)
-    const captured = 'operation' in invocation ? invocation.operation.file : file
-    const state = store.getState()
-    const key = recordKeyOf(captured.id)
-    return {
-      fileId: captured.id,
-      fallbackContent,
-      trigger,
-      invocation,
-      viewIds: editorBufferSiblingViewIds(state, captured.id),
-      requestedDirty: state.openFiles.some((tab) => tab.id === captured.id && tab.isDirty),
-      recordId: key,
-      discardEpoch: editorDiscardEpoch(key)
-    }
-  }
+  ): EditorSaveRequest => captureEditorSaveRequest(store, file, fallbackContent, trigger)
   const enqueueSave = (request: EditorSaveRequest): Promise<EditorSaveResult> => {
     clearScheduledAutoSave(request.recordId)
     return slots.enqueue(request.recordId, request)

@@ -1,6 +1,6 @@
 import { translate } from '@/i18n/i18n'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
-import { translateSearchKeyword } from '@/components/settings/settings-search-keywords'
+import { translateSearchKeyword } from '@/components/settings/search/settings-search-keywords'
 
 export const getCodezeraSftpSearchEntries = createLocalizedCatalog(() => [
   {
