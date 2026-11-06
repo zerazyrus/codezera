@@ -1,4 +1,4 @@
-import type { GitHistoryItem } from '../../../../shared/git-history'
+import type { GitHistoryItem } from '../../../../shared/git/history/git-history-types'
 
 /** VS Code Git Graph's default branch palette, so lanes read the same as the extension. */
 export const GIT_GRAPH_COLORS = [

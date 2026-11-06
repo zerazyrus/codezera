@@ -1,8 +1,11 @@
 import {
   GIT_HISTORY_COMMIT_FORMAT,
   parseGitHistoryLog
-} from '../../../shared/git-history-log-parser'
-import type { GitHistoryExecutor, GitHistoryItem } from '../../../shared/git-history-types'
+} from '../../../shared/git/history/git-history-log-parser'
+import type {
+  GitHistoryExecutor,
+  GitHistoryItem
+} from '../../../shared/git/history/git-history-types'
 import {
   GIT_GRAPH_MAX_LIMIT,
   GIT_GRAPH_PAGE_SIZE,

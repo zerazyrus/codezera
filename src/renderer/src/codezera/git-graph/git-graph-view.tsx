@@ -13,7 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useGitHistoryCommitActions } from '@/components/right-sidebar/source-control/sync/use-git-history-commit-actions'
 import type { GitHistoryCommitFilesState } from '@/components/right-sidebar/source-control/sync/git-history-commit-files'
 import type { RuntimeClientTarget } from '../../../../shared/runtime-client-target'
-import type { GitHistoryItem } from '../../../../shared/git-history'
+import type { GitHistoryItem } from '../../../../shared/git/history/git-history-types'
 import type { GitGraphAction } from '../../../../shared/codezera/git-graph-types'
 import {
   GIT_GRAPH_GRID_COLUMNS,

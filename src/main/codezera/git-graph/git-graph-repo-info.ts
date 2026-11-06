@@ -1,4 +1,4 @@
-import type { GitHistoryExecutor } from '../../../shared/git-history-types'
+import type { GitHistoryExecutor } from '../../../shared/git/history/git-history-types'
 import type { GitGraphRemote, GitGraphRepoInfo } from '../../../shared/codezera/git-graph-types'
 
 async function configValue(

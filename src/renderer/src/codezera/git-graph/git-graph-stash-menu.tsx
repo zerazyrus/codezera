@@ -5,7 +5,7 @@ import {
   ContextMenuItem,
   ContextMenuSeparator
 } from '@/components/ui/context-menu'
-import type { GitHistoryItem } from '../../../../shared/git-history'
+import type { GitHistoryItem } from '../../../../shared/git/history/git-history-types'
 import { GIT_GRAPH_STASH_REF_PREFIX } from '../../../../shared/codezera/git-graph-types'
 import type { GitGraphRequest } from './git-graph-request'
 

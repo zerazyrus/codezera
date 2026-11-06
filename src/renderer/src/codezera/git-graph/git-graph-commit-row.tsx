@@ -14,7 +14,7 @@ import {
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
 import type { GitHistoryCommitAction } from '@/components/right-sidebar/source-control/sync/git-history-commit-context-menu'
-import type { GitHistoryItem } from '../../../../shared/git-history'
+import type { GitHistoryItem } from '../../../../shared/git/history/git-history-types'
 import { GitGraphRefBadges } from './git-graph-ref-badges'
 import type { GitGraphRequest } from './git-graph-request'
 import type { GitGraphRow } from './git-graph-layout'

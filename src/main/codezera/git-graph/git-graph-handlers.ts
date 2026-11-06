@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import type { Store } from '../../persistence/loading-store/store'
 import type { LocalProjectWorktreeGitOptions } from '../../workspaces/execution-host/project-runtime-git-options'
-import type { GitHistoryExecutor } from '../../../shared/git-history-types'
+import type { GitHistoryExecutor } from '../../../shared/git/history/git-history-types'
 import type {
   GitGraphActionRequest,
   GitGraphLogRequest,

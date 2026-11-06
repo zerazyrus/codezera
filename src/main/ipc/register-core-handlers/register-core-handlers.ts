@@ -100,7 +100,7 @@ import type { KeybindingService } from '../../keybindings/keybinding-service'
 import type {
   AiVaultPrepareSessionResumeArgs,
   AiVaultPrepareSessionResumeResult
-} from '../../../shared/ai-vault-resume-preparation'
+} from '../../../shared/ai-vault/resume/ai-vault-resume-preparation'
 import {
   getSavedRuntimeAiVaultHostInfos,
   deleteRuntimeAiVaultSession,
@@ -246,7 +246,7 @@ export function registerCoreHandlers(
     onBeforeSignOut: lifecycleOptions.onBeforeOrcaProfileSignOut,
     onAfterSignOut: lifecycleOptions.onAfterOrcaProfileSignOut
   })
-  registerBrowserHandlers()
+  registerBrowserHandlers(store)
   registerShellHandlers(store)
   registerPetHandlers()
   registerSessionHandlers(store, runtime)

@@ -1,4 +1,4 @@
-import { quotePosixShell } from '../../../shared/shell-argument-quoting'
+import { quotePosixShell } from '../../../shared/shell/launch/shell-argument-quoting'
 import {
   SFTP_SUDO_PASSWORD_REQUIRED,
   SFTP_SUDO_PASSWORD_WRONG

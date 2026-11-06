@@ -9,8 +9,8 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger
 } from '@/components/ui/context-menu'
-import { splitRemoteBranchName } from '../../../../shared/git-remote-branch-name'
-import type { GitHistoryItemRef } from '../../../../shared/git-history'
+import { splitRemoteBranchName } from '../../../../shared/git/remotes/git-remote-branch-name'
+import type { GitHistoryItemRef } from '../../../../shared/git/history/git-history-types'
 import type { GitGraphRequest } from './git-graph-request'
 import { GitGraphStashMenuContent } from './git-graph-stash-menu'
 import { GIT_GRAPH_STASH_REF_PREFIX } from '../../../../shared/codezera/git-graph-types'

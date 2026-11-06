@@ -1,4 +1,4 @@
-import type { GitHistoryExecutor } from '../../../shared/git-history-types'
+import type { GitHistoryExecutor } from '../../../shared/git/history/git-history-types'
 import type { GitGraphAction, GitGraphConfigScope } from '../../../shared/codezera/git-graph-types'
 
 const COMMIT_OID = /^[0-9a-f]{7,64}$/i

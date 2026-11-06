@@ -1,7 +1,7 @@
 import type React from 'react'
 import { translate } from '@/i18n/i18n'
 import { useRepoById, useWorktreeById } from '@/store/selectors'
-import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/worktree-git-owner-target'
+import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/source-control/sync/worktree-git-owner-target'
 import type { OpenFile } from '@/store/slices/editor'
 import { isFolderRepo } from '../../../shared/repo-kind'
 import { GitGraphView } from './git-graph/git-graph-view'

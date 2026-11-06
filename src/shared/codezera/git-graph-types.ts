@@ -1,4 +1,4 @@
-import type { GitHistoryItem } from '../git-history'
+import type { GitHistoryItem } from '../git/history/git-history-types'
 
 export const GIT_GRAPH_PAGE_SIZE = 300
 export const GIT_GRAPH_MAX_LIMIT = 5000

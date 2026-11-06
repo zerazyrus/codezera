@@ -17,7 +17,7 @@ import {
 } from './sftp-actions'
 import { useSftpWorkspacePath, type SftpWorkspace } from './sftp-store'
 
-const DiffViewer = lazy(() => import('@/components/editor/DiffViewer'))
+const DiffViewer = lazy(() => import('@/components/editor/diff/monaco-view/DiffViewer'))
 
 type CompareContent =
   | { kind: 'loading' }
