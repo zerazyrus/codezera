@@ -197,14 +197,18 @@ function packageApp(platform) {
       'node',
       [
         '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
-        'config/scripts/pinned-node-downloads.mjs',
+        'config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs',
         'darwin-arm64',
         'darwin-x64'
       ],
       env
     )
   }
-  run('node', ['config/scripts/ensure-native-runtime.mjs', '--runtime=electron'], env)
+  run(
+    'node',
+    ['config/scripts/native-build/node-addons/ensure-native-runtime.mjs', '--runtime=electron'],
+    env
+  )
   run(
     'pnpm',
     [
