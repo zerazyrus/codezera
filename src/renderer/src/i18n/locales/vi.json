@@ -1341,7 +1341,6 @@
       "df1d56bf87": "Giao diện workspace gặp lỗi.",
       "9e0b441a91": "Bật/tắt thanh bên phải",
       "e81217c1b7": "Ẩn tên ứng dụng",
-      "5096cbbc86": "Orca",
       "8b0b8eb54f": "Menu ứng dụng",
       "caea5b51b9": "Khởi động lại ngay",
       "0a9e810705": "Thay đổi sẽ không được lưu cho đến khi khởi động lại. Các tab trước đó của bạn vẫn an toàn trên ổ đĩa.",
@@ -24259,8 +24258,6 @@
         "solution": "Giải pháp"
       },
       "statusFailed": "Không đổi được trạng thái",
-      "back": "Quay lại danh sách",
-      "task": "Tác vụ",
       "copyPrompt": "Sao chép prompt cho agent",
       "promptCopied": "Đã sao chép prompt cho agent",
       "openInPms": "Mở trong PMS",
@@ -24277,7 +24274,6 @@
         "high": "Cao",
         "urgent": "Khẩn cấp"
       },
-      "hoursLogged": "Đã log",
       "tickets": "Ticket",
       "tasks": "Tác vụ",
       "allStatuses": "Mọi trạng thái",
@@ -24313,8 +24309,6 @@
       "taskType": "Loại tác vụ",
       "start": "Bắt đầu",
       "startWork": "Bắt đầu: nhận việc và mở agent",
-      "finishWork": "Hoàn tất: nguyên nhân, giải pháp, trạng thái tiếp theo",
-      "moveTo": "Chuyển sang {{status}}",
       "role": {
         "processing": "Tôi xử lý",
         "verification": "Tôi xác minh",
@@ -24359,9 +24353,6 @@
         "golive": "Lên lịch golive",
         "waitClose": "Chờ khách hàng xác nhận"
       },
-      "lateBy": "Trễ {{days}} ngày · {{due}}",
-      "dueOn": "Hạn {{due}}",
-      "stale": "Không hoạt động {{days}} ngày",
       "missing": "Thiếu: {{fields}}",
       "prevPage": "Trang trước",
       "nextPage": "Trang sau",

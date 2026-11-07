@@ -55,9 +55,6 @@
     }
   },
   "auto": {
-    "App": {
-      "5096cbbc86": "Orca"
-    },
     "components": {
       "GitHubItemDialog": {
         "filesViewed_one": "{{viewed}} / {{count}} file viewed",
@@ -1442,18 +1439,6 @@
       },
       "remoteRefMissing": "Remote ref {{ref}} does not exist after fetch.",
       "repoNotFound": "Repo not found"
-    }
-  },
-  "codezera": {
-    "pms": {
-      "back": "Back to list",
-      "dueOn": "Due {{due}}",
-      "finishWork": "Finish: cause, solution, next status",
-      "hoursLogged": "Logged",
-      "lateBy": "Late {{days}}d · {{due}}",
-      "moveTo": "Move to {{status}}",
-      "stale": "Idle {{days}}d",
-      "task": "Task"
     }
   },
   "components": {
