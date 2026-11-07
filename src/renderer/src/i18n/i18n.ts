@@ -2,6 +2,7 @@ import type { TOptions } from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 import enRuntimeRequired from './en-runtime-required.json'
+import viCatalogUrl from './locales/vi.json?url'
 import deCatalogUrl from './locales/de.json?url'
 import esCatalogUrl from './locales/es.json?url'
 import frCatalogUrl from './locales/fr.json?url'
@@ -35,7 +36,8 @@ const NON_DEFAULT_LOCALE_URLS: Record<Exclude<SupportedUiLocale, 'en'>, string> 
   ru: ruCatalogUrl,
   tr: trCatalogUrl,
   zh: zhCatalogUrl,
-  'zh-Hant': zhHantCatalogUrl
+  'zh-Hant': zhHantCatalogUrl,
+  vi: viCatalogUrl
 }
 
 const LOCALE_CATALOG_URLS = new Map<string, string>(Object.entries(NON_DEFAULT_LOCALE_URLS))

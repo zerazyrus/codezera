@@ -1,5 +1,6 @@
 import React from 'react'
 import { EyeOff, Github, Gitlab, List } from 'lucide-react'
+import { PmsSidebarShortcut } from '@/codezera/pms/pms-sidebar-shortcut'
 import { JiraIcon } from '@/components/icons/JiraIcon'
 import { LinearIcon } from '@/components/icons/LinearIcon'
 import {
@@ -228,6 +229,7 @@ export function SidebarTaskNavButton(): React.JSX.Element | null {
                 <JiraIcon className="size-3.5" />
               </TaskProviderShortcut>
             ) : null}
+            <PmsSidebarShortcut Shortcut={TaskProviderShortcut} />
           </span>
         </div>
       </ContextMenuTrigger>

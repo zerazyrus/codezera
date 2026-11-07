@@ -1,11 +1,16 @@
 import type { TaskPageComposerActionsModel } from './use-task-page-composer-actions'
 import { TaskPageListChrome } from './ListChrome'
 import { TaskPageContent } from './Content'
+import { useCodezeraTaskPage } from '@/codezera/pms/PmsTaskPage'
 export function TaskPageFrame({
   model
 }: {
   model: TaskPageComposerActionsModel
 }): React.JSX.Element | null {
+  const codezeraTaskPage = useCodezeraTaskPage(model)
+  if (codezeraTaskPage) {
+    return codezeraTaskPage
+  }
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
       {/* Why: pt-1.5 (6px) aligns this 32px icon cluster's center with the sidebar Tasks row, 22px below the titlebar. */}

@@ -14,6 +14,7 @@ import {
   SelectItem
 } from '@/components/ui/select'
 import { openAppHttpLink } from '@/lib/app-http-link-open'
+import { PmsTaskSourceButton } from '@/codezera/pms/PmsTaskPage'
 export function TaskPageSourceBar({
   model
 }: {
@@ -126,6 +127,7 @@ export function TaskPageSourceBar({
             </Tooltip>
           )
         })}
+        <PmsTaskSourceButton />
         <div
           className="hidden min-w-0 max-w-[min(420px,40vw)] items-center rounded-md border border-border/50 bg-muted/35 px-2 py-1 text-xs text-muted-foreground sm:flex"
           title={taskSourceContextSummary.title}

@@ -1,6 +1,7 @@
 import type { TaskPageJiraSummaryGenerationModel } from './jira/use-task-page-jira-summary-generation'
 import { useEffect } from 'react'
 import { addAppKeyListener, removeAppKeyListener } from '@/lib/app-keyboard-router'
+import { isCodezeraOverlayOpen } from '@/codezera/codezera-overlay'
 export function useTaskPageGlobalEffects(model: TaskPageJiraSummaryGenerationModel) {
   const {
     closeTaskPage,
@@ -56,6 +57,9 @@ export function useTaskPageGlobalEffects(model: TaskPageJiraSummaryGenerationMod
           '[data-slot="dropdown-menu-content"], [data-slot="popover-content"], [data-slot="select-content"], [role="menu"]'
         )
       ) {
+        return
+      }
+      if (isCodezeraOverlayOpen()) {
         return
       }
 

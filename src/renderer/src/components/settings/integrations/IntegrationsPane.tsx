@@ -10,6 +10,7 @@ import {
 import { JiraIntegrationCard } from '../../integrations/task-trackers/jira-integration-card'
 import { LinearIntegrationCard } from '../../integrations/task-trackers/linear-integration-card'
 import { useIntegrationProviderStatusRefresh } from '../../../hooks/use-integration-provider-status-refresh'
+import { PmsIntegrationCard } from '@/codezera/pms/PmsIntegrationCard'
 import { translate } from '@/i18n/i18n'
 
 export function IntegrationsPane(): React.JSX.Element {
@@ -53,6 +54,7 @@ export function IntegrationsPane(): React.JSX.Element {
         <div className="space-y-3">
           <LinearIntegrationCard />
           <JiraIntegrationCard />
+          <PmsIntegrationCard />
         </div>
       </section>
     </div>

@@ -4,6 +4,7 @@ import type { OrcaImportApi } from '../../shared/codezera/orca-import-types'
 import type { CkitApi } from '../../shared/codezera/ckit-types'
 import type { SnippetsApi } from '../../shared/codezera/snippets-types'
 import type { SftpApi } from '../../shared/codezera/sftp-types'
+import type { PmsApi } from '../../shared/codezera/pms-types'
 
 export type CodezeraApi = {
   gitGraph: GitGraphApi
@@ -11,6 +12,7 @@ export type CodezeraApi = {
   ckit: CkitApi
   snippets: SnippetsApi
   sftp: SftpApi
+  pms: PmsApi
 }
 
 export const codezeraApi: CodezeraApi = {
@@ -64,5 +66,30 @@ export const codezeraApi: CodezeraApi = {
       ipcRenderer.on('codezera:sftp:configChanged', listener)
       return () => ipcRenderer.removeListener('codezera:sftp:configChanged', listener)
     }
+  },
+  pms: {
+    getStatus: () => ipcRenderer.invoke('codezera:pms:getStatus'),
+    connect: (input) => ipcRenderer.invoke('codezera:pms:connect', input),
+    connectFromSkillConfig: () => ipcRenderer.invoke('codezera:pms:connectFromSkillConfig'),
+    disconnect: () => ipcRenderer.invoke('codezera:pms:disconnect'),
+    list: (args) => ipcRenderer.invoke('codezera:pms:list', args),
+    queue: (args) => ipcRenderer.invoke('codezera:pms:queue', args),
+    getItem: (args) => ipcRenderer.invoke('codezera:pms:getItem', args),
+    statusOptions: (kind) => ipcRenderer.invoke('codezera:pms:statusOptions', kind),
+    logTimeCategories: () => ipcRenderer.invoke('codezera:pms:logTimeCategories'),
+    setStatus: (args) => ipcRenderer.invoke('codezera:pms:setStatus', args),
+    saveTicket: (args) => ipcRenderer.invoke('codezera:pms:saveTicket', args),
+    takeTicket: (args) => ipcRenderer.invoke('codezera:pms:takeTicket', args),
+    finishTicket: (args) => ipcRenderer.invoke('codezera:pms:finishTicket', args),
+    ticketTasks: (ticketId) => ipcRenderer.invoke('codezera:pms:ticketTasks', ticketId),
+    createTicketTask: (args) => ipcRenderer.invoke('codezera:pms:createTicketTask', args),
+    users: () => ipcRenderer.invoke('codezera:pms:users'),
+    ticketFieldOptions: (field) => ipcRenderer.invoke('codezera:pms:ticketFieldOptions', field),
+    logTime: (args) => ipcRenderer.invoke('codezera:pms:logTime', args),
+    loggedHours: (date) => ipcRenderer.invoke('codezera:pms:loggedHours', date),
+    reportPreview: (args) => ipcRenderer.invoke('codezera:pms:reportPreview', args),
+    submitReport: (args) => ipcRenderer.invoke('codezera:pms:submitReport', args),
+    writeReport: (args) => ipcRenderer.invoke('codezera:pms:writeReport', args),
+    cancelWriteReport: () => ipcRenderer.invoke('codezera:pms:cancelWriteReport')
   }
 }

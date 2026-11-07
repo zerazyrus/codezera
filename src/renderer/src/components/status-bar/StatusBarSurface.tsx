@@ -42,6 +42,7 @@ import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
 import { CkitQuotaStatusSegment } from '@/codezera/ckit/CkitQuotaStatusSegment'
 import { useCkitQuotaStore } from '@/codezera/ckit/ckit-quota-store'
 import { CodezeraBranchStatusSegment } from '@/codezera/branch-status/CodezeraBranchStatusSegment'
+import { PmsStatusSegment } from '@/codezera/pms/pms-status-segment'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -146,6 +147,7 @@ export function StatusBarSurface({
       >
         <div ref={usageRef} className="flex shrink-0 items-center gap-3">
           {!isPairedWebClientWindow() ? <CodezeraBranchStatusSegment compact={compact} /> : null}
+          <PmsStatusSegment compact={compact} />
           {!isPairedWebClientWindow() ? <CkitQuotaStatusSegment compact={compact} /> : null}
           {isEmptyUsageState ? (
             showEmptyUsageCta && !ckitActive ? (

@@ -1,5 +1,6 @@
 import type { BrowserWindow } from 'electron'
 import { registerCoreHandlers } from '../ipc/register-core-handlers/register-core-handlers'
+import { registerCodezeraHandlers } from '../codezera/codezera-handlers'
 import { attachMainWindowServices } from '../window/attach-main-window-services'
 import { initTccPromptNotice } from '../macos-permissions/macos-tcc-prompt-notice'
 import { resolveUpdateInstallMode } from '../updater/updater-service'
@@ -130,6 +131,12 @@ export function attachMainWindowCoreServices(
         }
       : undefined
   )
+  // Codezera hook: register-core-handlers.ts is at Orca's max-lines limit, so Codezera IPC registers here.
+  registerCodezeraHandlers(store, {
+    prepareForCodexLaunch: prepareCodexRuntimeHomeForLaunch,
+    prepareForClaudeLaunch: (target) => claudeRuntimeAuth.prepareForClaudeLaunch(target),
+    resolveBaseEnvironment: () => resolveHostAgentBaseEnvironment(store.getSettings())
+  })
   automations.setWebContents(window.webContents)
   automations.start()
   attachMainWindowServices(
