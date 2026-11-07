@@ -4400,7 +4400,10 @@
             "fallbackServerName": "server",
             "connectionLostTitle": "Đang kết nối lại đến {{server}}",
             "connectionLostBody": "Kết nối đến server bị gián đoạn. Orca đang tự động thử lại, và terminal sẽ tiếp tục khi kết nối trở lại.",
-            "reattachingBody": "Orca đang tự động gắn lại terminal này vào {{server}}."
+            "reattachingBody": "Orca đang tự động gắn lại terminal này vào {{server}}.",
+            "serverReplacedTitle": "Máy chủ này đang chạy một Orca server khác",
+            "serverReplacedBody": "Orca kết nối tới máy chủ bằng một user SSH khác, hoặc server đã được cài lại, nên kết nối lại không khôi phục được terminal này. Hãy quên server này trong Cài đặt, rồi kết nối lại máy chủ SSH để ghép cặp với server hiện tại.",
+            "serverReplacedButton": "Mở cài đặt server"
           },
           "TerminalQuickCommandsSubmenu": {
             "3ccc7981bb": "Host không khả dụng",
@@ -5163,7 +5166,11 @@
             "update_required": "Cần cập nhật",
             "update_required_summary": "Các phiên bản Orca không tương thích",
             "update_required_explanation": "Cập nhật Orca trên máy tính này hoặc trên server, rồi kết nối lại.",
-            "repair": "Ghép nối lại…"
+            "repair": "Ghép nối lại…",
+            "open_settings": "Mở cài đặt…",
+            "server_replaced": "Server khác",
+            "server_replaced_summary": "Máy chủ này giờ chạy một Orca server khác với server mà máy tính này đã ghép cặp",
+            "server_replaced_explanation": "Orca kết nối tới máy chủ bằng một user SSH khác, hoặc server đã được cài lại. Trong Cài đặt › Orca server từ xa, mở menu ⋯ của server này, chọn Quên…, rồi kết nối lại máy chủ SSH để ghép cặp với server hiện tại."
           },
           "NativeChatResumeStatusSegment": {
             "tooltip": "Mở các cuộc chat bị gián đoạn có thể tiếp tục",
@@ -6810,7 +6817,8 @@
           "projectGroupRefreshSuccess_one": "Đã thêm {{count}} dự án vào {{group}}",
           "projectGroupRefreshSuccess_other": "Đã thêm {{count}} dự án vào {{group}}",
           "projectGroupRefreshing": "Đang làm mới {{group}}…",
-          "refreshProjectGroup": "Làm mới dự án"
+          "refreshProjectGroup": "Làm mới dự án",
+          "hostServerReplaced": "Server khác: quên server này rồi kết nối lại"
         },
         "WorktreeMetaDialog": {
           "3db0a2a593": "Hủy",
@@ -9079,7 +9087,8 @@
           "pairedTwice": "Cùng máy chủ với {{value0}}, đã ghép nối hai lần. Xóa một cái để có thể chỉnh sửa các dự án của nó.",
           "removeDefaultServerDescription": "Máy chủ này là host mặc định cho dự án mới. Chọn máy chủ khác trong mục Dự án mới mở trên trước khi xóa nó. Các phiên host hiện có không bị ảnh hưởng.",
           "connectedNewProjectsHint": "Đã kết nối tới {{value0}}. Để tạo dự án mới ở đó theo mặc định, hãy chọn nó trong mục Dự án mới mở trên.",
-          "removeDefaultServerBlocked": "Máy chủ này là host mặc định cho dự án mới. Hãy chọn máy chủ khác trong mục Dự án mới mở trên trước khi xóa."
+          "removeDefaultServerBlocked": "Máy chủ này là host mặc định cho dự án mới. Hãy chọn máy chủ khác trong mục Dự án mới mở trên trước khi xóa.",
+          "serverReplaced": "{{value0}} không phải Orca server mà máy tính này đã ghép cặp: Orca kết nối tới máy chủ bằng một user SSH khác, hoặc server đã được cài lại. Mở menu ⋯ tại đây, chọn Quên…, rồi kết nối lại máy chủ SSH để ghép cặp với server hiện tại."
         },
         "RuntimePairingGeneratedUrlRows": {
           "0495f68959": "Sao chép {{value0}}"
@@ -23353,7 +23362,8 @@
       "disconnected": "Mất kết nối",
       "error": "Cần chú ý",
       "repair": "Cần ghép nối lại",
-      "update": "Cần cập nhật"
+      "update": "Cần cập nhật",
+      "serverReplaced": "Server khác"
     },
     "compat": {
       "compatible": "Client và server runtime tương thích.",
@@ -24544,5 +24554,25 @@
   },
   "checks": {
     "rerunUnsuccessful": "Chạy lại không thành công"
+  },
+  "macosUpdateRequirement": {
+    "title": "Bản cập nhật Orca giờ cần macOS {{macos}}",
+    "description": "Orca {{version}} cần macOS {{macos}} trở lên. Phiên bản này vẫn dùng bình thường nhưng sẽ không nhận bản cập nhật mới trên máy Mac này.",
+    "checking": "Đang kiểm tra máy Mac này có nâng cấp được không…",
+    "upgradeDescription": "Máy Mac của bạn nâng cấp được. Hãy cập nhật macOS để dùng Orca mới nhất.",
+    "unsupportedDescription": "Apple không hỗ trợ macOS {{macos}} trên máy Mac này.",
+    "unknownDescription": "Chưa xác nhận được máy Mac này có nâng cấp được không. Hướng dẫn tương thích của Apple có thể giúp bạn.",
+    "whyTitle": "Vì sao có thay đổi này?",
+    "whyIntro": "Chúng tôi đã cập nhật Electron, nền tảng Orca chạy trên đó, để mang lại:",
+    "whySecurity": "Các bản vá bảo mật liên tục từ Electron và Chromium.",
+    "whyPerformance": "Khởi động nhanh hơn và gọi API hệ thống hiệu quả hơn.",
+    "whySystemApis": "Hỗ trợ API thông báo mới của macOS và lưu trữ an toàn bằng Keychain.",
+    "whyRequirement": "Nền tảng mới này cần macOS {{macos}} trở lên.",
+    "dismiss": "Đã hiểu",
+    "checkingAction": "Đang kiểm tra máy Mac…",
+    "updateAction": "Cách cập nhật macOS",
+    "discussionAction": "Tham gia thảo luận",
+    "checkAction": "Kiểm tra tương thích",
+    "settingsStatus": "Orca {{version}} cần macOS {{macos}} trở lên. Đây là phiên bản mới nhất cho máy Mac này."
   }
 }
