@@ -1,3 +1,4 @@
+import type * as RuntimeCapabilityProofModule from '@/runtime/rpc/compatibility/runtime-capability-proof'
 // @vitest-environment happy-dom
 
 // Exercise the real attention path from completion stream to indicators/OS delivery; mock only transport and preload.
@@ -16,7 +17,6 @@ import type { NotificationDispatchRequest } from '../../../../shared/notificatio
 import { structuredAgentSessionPaneKey } from '../../../../shared/agent-session/view/structured-agent-session-projection'
 import type { Tab } from '../../../../shared/tab-types'
 import type { AppState } from '@/store/types'
-import type * as RuntimeRpcClientModule from '@/runtime/runtime-rpc-client'
 
 type TestStore = {
   getState: () => AppState
@@ -45,14 +45,14 @@ const mocks = vi.hoisted<BridgeMocks>(() => ({
 }))
 
 vi.mock('@/store', async () => {
-  const { createTestStore } = await import('@/store/slices/store-test-helpers')
+  const { createTestStore } = await import('@/store/testing/app-store-test-fixture')
   const useAppStore = createTestStore()
   mocks.store = useAppStore
   return { useAppStore }
 })
 
-vi.mock('@/runtime/runtime-rpc-client', async (importOriginal) => ({
-  ...(await importOriginal<typeof RuntimeRpcClientModule>()),
+vi.mock('@/runtime/rpc/compatibility/runtime-capability-proof', async (importOriginal) => ({
+  ...(await importOriginal<typeof RuntimeCapabilityProofModule>()),
   runtimeEnvironmentSupportsCapability: mocks.supportsCapability
 }))
 
@@ -71,8 +71,9 @@ import {
 
 import { resetStructuredAgentSessionTurnCompletionFeedsForTests } from '@/runtime/structured-agent-session-turn-completion-feed'
 import { resetStructuredAgentSessionStatusFeedsForTests } from '@/runtime/structured-agent-session-status-feed'
-import { makeTabGroup, makeUnifiedTab } from '../../store/slices/store-session-test-harness'
-import { makeWorktree, TEST_REPO } from '../../store/slices/worktrees-slice-test-fixtures'
+import { makeTabGroup, makeUnifiedTab } from '../../store/slices/tabs/tab-group.test-fixture'
+import { makeWorktree } from '../../store/slices/worktrees/worktree.test-fixture'
+import { TEST_REPO } from '../../store/repos/repo.test-fixture'
 import { getDefaultSettings } from '../../../../shared/constants'
 
 // Worktree ids encode their repo (`repoId::path`); the unread reducer buckets by that prefix.

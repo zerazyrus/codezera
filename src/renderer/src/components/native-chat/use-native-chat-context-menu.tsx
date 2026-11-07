@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useRef,
   useState,
   type MouseEventHandler,
@@ -38,8 +37,8 @@ import {
 import { NativeChatPaneMenuItems } from './NativeChatPaneMenuItems'
 import { NativeChatStructuredPaneMenuItems } from './NativeChatStructuredPaneMenuItems'
 import type { NativeChatComposerHandle } from './native-chat-composer-types'
-import { AgentSessionContinuationMenuItem } from '@/components/terminal-pane/AgentSessionContinuationMenuItem'
-import { AgentSessionContextCopyMenuItem } from '@/components/terminal-pane/AgentSessionContextCopyMenuItem'
+import { AgentSessionContinuationMenuItem } from '@/components/agent-session-continuation/AgentSessionContinuationMenuItem'
+import { AgentSessionContextCopyMenuItem } from '@/components/terminal-pane/clipboard/AgentSessionContextCopyMenuItem'
 import {
   noNativeChatContextMenuTarget,
   readNativeChatContextMenuTarget,
@@ -180,13 +179,9 @@ export function useNativeChatContextMenu({
   const hasItems =
     hasEditItems || hasSessionItems || chatPane !== undefined || resolveOrcaSessionId !== undefined
 
-  useEffect(() => {
-    if (!enabled) {
-      setState((current) =>
-        current.open ? { ...current, open: false, image: undefined } : current
-      )
-    }
-  }, [enabled])
+  if (!enabled && state.open) {
+    setState({ ...state, open: false, image: undefined })
+  }
 
   const onContextMenuCapture = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {

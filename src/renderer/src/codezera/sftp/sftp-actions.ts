@@ -7,7 +7,7 @@ import {
   SFTP_SUDO_PASSWORD_WRONG,
   type SftpTransferResult
 } from '../../../../shared/codezera/sftp-types'
-import type { RuntimeFileOperationArgs } from '@/runtime/runtime-file-client-types'
+import type { RuntimeFileOperationArgs } from '@/runtime/files/runtime-file-client-types'
 import { sftpAvailable, useSftpStore, type SftpWorkspace } from './sftp-store'
 import { promptSudoPassword } from './sftp-sudo-password-dialog'
 

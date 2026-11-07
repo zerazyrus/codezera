@@ -3,8 +3,8 @@ import type { Tab, TabGroup } from '../../../../shared/tab-types'
 import type { AppState } from '../../store/types'
 import { getActiveTabNavOrder, getGroupVisibleTabOrder } from './group-tab-order'
 import { buildOrderedTabItems } from './tab-bar-item-model'
-import { makeOpenFile } from '../../store/slices/store-session-test-harness'
-import { makeTerminalTab } from '../../store/slices/worktrees-slice-test-fixtures'
+import { makeOpenFile } from '../../store/slices/editor/types/open-file.test-fixture'
+import { makeTerminalTab } from '../../store/terminals/terminal-row.test-fixture'
 
 function terminalTab(id: string, groupId: string, entityId: string, sortOrder: number): Tab {
   return {
@@ -392,7 +392,9 @@ describe('getActiveTabNavOrder', () => {
   it('falls back to the legacy reconciled order when no active group exists', () => {
     const state = makeState({
       tabBarOrderByWorktree: { wt: ['term-1', 'sim-1', 'e1', 'term-2'] },
-      unifiedTabsByWorktree: { wt: [simulatorTab('sim-1', 'g1', 3)] },
+      unifiedTabsByWorktree: {
+        wt: [simulatorTab('sim-1', 'g1', 3), editorTab('e1', 'g1', 'e1', 2)]
+      },
       tabsByWorktree: {
         wt: [
           makeTerminalTab({ id: 'term-1', worktreeId: 'wt' }),

@@ -29,13 +29,13 @@ const mocks = vi.hoisted(() => {
 })
 
 vi.mock('@/store', async () => {
-  const { createTestStore } = await import('@/store/slices/store-test-helpers')
+  const { createTestStore } = await import('@/store/testing/app-store-test-fixture')
   const useAppStore = createTestStore()
   mocks.store = useAppStore
   return { useAppStore }
 })
 
-vi.mock('@/lib/worktree-runtime-owner', () => ({
+vi.mock('@/lib/workspace/ownership/worktree-runtime-owner', () => ({
   getExecutionHostIdForWorktree: (state: { testRuntimeOwner?: string | null }) =>
     state.testRuntimeOwner ? `runtime:${state.testRuntimeOwner}` : 'local'
 }))

@@ -4,7 +4,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js'
-import { SnippetController2 } from 'monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2.js'
+// Side-effect import registers the snippet engine; its typings vary across Monaco releases.
+import 'monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2.js'
 import type * as MonacoApi from 'monaco-editor'
 import { CodezeraSnippetStore } from '../../../../main/codezera/snippets/snippet-store'
 import {
@@ -96,7 +97,11 @@ async function expandHeaderStart(
     // Insert exactly as the suggest widget does: replace the item range through the snippet engine.
     const range = item.range as MonacoApi.IRange
     editor.setSelection(range)
-    SnippetController2.get(editor)?.insert(item.insertText)
+    editor
+      .getContribution<MonacoApi.editor.IEditorContribution & { insert(template: string): void }>(
+        'snippetController2'
+      )
+      ?.insert(item.insertText)
     return {
       labels: suggestions.map((s) =>
         typeof s.label === 'string' ? s.label : (s.label.description ?? '')

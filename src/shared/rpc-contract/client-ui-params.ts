@@ -1,3 +1,4 @@
+import { GitHistoryRefName } from './git-params'
 import { z } from 'zod'
 import { isFeatureTipId } from '../feature-tips'
 import {
@@ -71,6 +72,7 @@ export const StatusBarItem = z.enum([
   'grok',
   'cursor',
   'zcode',
+  'muse',
   'ssh',
   'resource-usage',
   'ports'
@@ -167,6 +169,12 @@ export const UiUpdateFields = z
     ...ClientUiWorkspaceFilterFields,
     // Part of App.tsx’s debounced writer; missing fields reject the whole paired-client payload.
     explorerDisplayRootByWorktree: z.record(z.string(), z.string()).optional(),
+    gitGraphFiltersByWorktree: z
+      .record(
+        z.string(),
+        z.union([z.literal('head'), z.literal('all'), z.array(GitHistoryRefName).max(1000)])
+      )
+      .optional(),
     showDotfilesByWorktree: z.record(z.string(), z.boolean()).optional(),
     collapsedGroups: StringArray.optional(),
     uiZoomLevel: z.number().finite().optional(),
@@ -191,6 +199,7 @@ export const UiUpdateFields = z
     _grokStatusBarDefaultAdded: z.boolean().optional(),
     _cursorStatusBarDefaultAdded: z.boolean().optional(),
     _zcodeStatusBarDefaultAdded: z.boolean().optional(),
+    _museStatusBarDefaultAdded: z.boolean().optional(),
     statusBarVisible: z.boolean().optional(),
     usagePercentageDisplay: z.enum(['used', 'remaining']).optional(),
     statusBarUsageMode: z.enum(['verbose', 'compact']).optional(),

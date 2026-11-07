@@ -14,15 +14,18 @@ import {
   getLocalProjectExecutionRuntimeContext,
   getWslDistroFromPath
 } from '@/lib/local-preflight-context'
-import { discoverRuntimeCommitMessageModels } from '@/runtime/runtime-git-generation-client'
-import { getRuntimeGitScope, type RuntimeGitContext } from '@/runtime/runtime-git-client-context'
+import { discoverRuntimeCommitMessageModels } from '@/runtime/source-control/git/runtime-git-generation-client'
+import {
+  getRuntimeGitScope,
+  type RuntimeGitContext
+} from '@/runtime/source-control/git/runtime-git-client-context'
 import { callStructuredAgentSession } from '@/runtime/structured-agent-session-client'
 import type {
   AgentSessionModelCatalogResult,
   AgentSessionModelOption
 } from '../../../../shared/agent-session/agent-session-wire'
 import { useAppStore } from '@/store/index'
-import { selectFileListWorktree } from '@/store/selectors'
+import { selectFileListWorktree } from '@/store/workspaces/selection/known-worktree-selection'
 
 export type NativeChatModelDiscoveryContext = {
   hostKey: string

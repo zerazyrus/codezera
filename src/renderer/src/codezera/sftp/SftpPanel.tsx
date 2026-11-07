@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAppStore } from '@/store'
-import { useActiveWorktreeId } from '@/store/selectors'
+import { useActiveWorktreeId } from '@/store/workspaces/selection/use-selected-worktree'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'

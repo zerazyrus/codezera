@@ -457,7 +457,8 @@
         "importFailedWithLog": "Không thể nhập cookie từ {{browser}}: {{detail}}. Chi tiết đã được ghi vào {{logPath}}.",
         "safariFullDiskAccess": "macOS đã từ chối truy cập cookie của Safari. Hãy cấp Full Disk Access cho Orca trong System Settings → Privacy & Security → Full Disk Access.",
         "connectionEnded": "Kết nối tới máy chủ này đã kết thúc trong khi nhập. Hãy kết nối lại và thử lại.",
-        "serverRepaired": "Máy chủ này đã được ghép nối lại trong khi nhập. Hãy thử lại."
+        "serverRepaired": "Máy chủ này đã được ghép nối lại trong khi nhập. Hãy thử lại.",
+        "macFullDiskAccess": "macOS đã từ chối quyền truy cập cookie của {{browser}}. Hãy cấp Quyền truy cập toàn bộ ổ đĩa cho Orca trong Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Quyền truy cập toàn bộ ổ đĩa, sau đó khởi động lại Orca."
       },
       "notice": {
         "importedMore_one": "Đã nhập {{count}} cookie cho {{domains}} và {{more}} miền khác. Tải lại trang để sử dụng.",
@@ -666,7 +667,8 @@
         "antigravityToggleDescription": "Hiện mức dùng gói đăng ký Antigravity cho workspace đang hoạt động.",
         "grokToggleDescription": "Hiện mức dùng credit gói đăng ký Grok khi đăng nhập qua Grok CLI.",
         "cursorToggleDescription": "Hiện mức dùng gói Cursor khi đăng nhập qua cursor-agent hoặc Cursor IDE.",
-        "zcodeToggleDescription": "Hiện mức dùng hạn mức ZCode Coding Plan."
+        "zcodeToggleDescription": "Hiện mức dùng hạn mức ZCode Coding Plan.",
+        "museToggleDescription": "Hiển thị hạn mức gói đăng ký Muse từ Muse CLI."
       },
       "menuBarIcon": {
         "title": "Hiện biểu tượng trên thanh menu",
@@ -1015,7 +1017,9 @@
       "defaultSurfaceKeptChat_other": "{{agents}} vẫn ở dạng chat, theo thiết lập của bạn.",
       "defaultSurfaceSetAllChat": "Đặt tất cả thành Chat",
       "defaultSurfaceSetAllTerminal": "Đặt tất cả thành Terminal",
-      "sameAsChoice": "Giống {{agent}} · {{choice}}"
+      "sameAsChoice": "Giống {{agent}} · {{choice}}",
+      "chatUnavailableOnWindows": "{{value0}} Chat chưa khả dụng trên Windows, nên {{value0}} sẽ mở trong terminal trên host này. Chat trên host macOS hoặc Linux vẫn hoạt động.",
+      "undetectedCommandHint": "Nếu {{agent}} CLI được cài đặt ngoài PATH, hãy nhập đường dẫn đầy đủ đến tệp thực thi của nó trên host này."
     },
     "followSymlinkedDirectoriesKeywords": {
       "symlink": "symlink",
@@ -1102,13 +1106,15 @@
         "keyword": {
           "windsurf": "windsurf",
           "devin": "devin",
-          "devinDesktop": "devin desktop"
+          "devinDesktop": "devin desktop",
+          "antigravity": "antigravity"
         }
       }
     },
     "openInApp": {
       "preset": {
-        "devinDesktop": "Devin Desktop"
+        "devinDesktop": "Devin Desktop",
+        "antigravityIde": "Antigravity IDE"
       }
     },
     "network": {
@@ -1125,14 +1131,14 @@
         "parakeetV2": "Chỉ tiếng Anh. Nhanh hơn v3 với độ chính xác tương đương. Có dấu câu và viết hoa.",
         "zipformerBilingual": "Tiếng Trung + tiếng Anh, hỗ trợ chuyển đổi ngôn ngữ. Streaming thời gian thực, độ trễ thấp.",
         "paraformerBilingual": "Tiếng Trung (phổ thông + phương ngữ) + tiếng Anh. Tốt với giọng địa phương và tiếng Trung vùng miền.",
-        "zipformerStreamingEn": "Chỉ tiếng Anh. Mô hình nhẹ 20M tham số, cân bằng tốt giữa tốc độ và kích thước.",
         "zipformerStreamingZh": "Chỉ tiếng Trung. Mô hình siêu nhẹ 14M tham số, lý tưởng cho thiết bị cấu hình thấp.",
         "zipformerStreamingKo": "Chỉ tiếng Hàn. Streaming thời gian thực, độ trễ thấp.",
         "parakeetJa": "Chỉ tiếng Nhật. Huấn luyện trên hơn 35k giờ hội thoại tự nhiên. Có dấu câu.",
         "whisperTiny": "Hơn 90 ngôn ngữ. Độ chính xác thấp hơn Parakeet nhưng hỗ trợ nhiều ngôn ngữ nhất.",
         "senseVoice": "Tiếng Trung, Anh, Nhật, Hàn và Quảng Đông với tự động nhận diện ngôn ngữ.",
         "gpt4oMiniTranscribe": "Chuyển giọng nói trên cloud, chính xác cao và chi phí thấp. Cần OpenAI API key.",
-        "gpt4oTranscribe": "Chuyển giọng nói trên cloud với độ chính xác cao hơn. Cần OpenAI API key."
+        "gpt4oTranscribe": "Chuyển giọng nói trên cloud với độ chính xác cao hơn. Cần OpenAI API key.",
+        "zipformerStreamingEnRetired": "Không còn được cung cấp: mô hình này bỏ sót phần đầu câu. Hãy xóa để giải phóng dung lượng."
       }
     },
     "diagnostics": {
@@ -1368,7 +1374,9 @@
         "cb4d287238": "Tên server",
         "3affe7de3a": "Dán URL ghép nối từ một server Orca mà trình duyệt này truy cập được.",
         "e3bcd082ac": "Kết nối với Orca",
-        "mobileScopeRejected": "Mã QR này chỉ cấp quyền truy cập giới hạn (mobile). Để dùng ứng dụng web đầy đủ, hãy mở liên kết truy cập trình duyệt từ Cài đặt → Môi trường runtime → Chia sẻ server Orca này → Liên kết mới."
+        "mobileScopeRejected": "Mã QR này chỉ cấp quyền truy cập giới hạn (mobile). Để dùng ứng dụng web đầy đủ, hãy mở liên kết truy cập trình duyệt từ Cài đặt → Môi trường runtime → Chia sẻ server Orca này → Liên kết mới.",
+        "replaceSavedServer": "Liên kết này kết nối đến một máy chủ khác với \"{{name}}\" ({{endpoint}}). Chỉ kết nối nếu bạn tin tưởng endpoint bên dưới.",
+        "keepSavedServer": "Giữ máy chủ đã lưu"
       },
       "webPreloadApi": {
         "aiVaultUnavailableForHost": "Lịch sử phiên agent không khả dụng cho host thực thi này.",
@@ -1407,7 +1415,8 @@
       "runtimeAuth": {
         "insecureOrigin": "Orca từ chối ghép nối từ trang này: trang dùng http thường trên một máy khác, nên bất kỳ ai trên đường truyền mạng đều có thể thay thế trang và lấy mã ghép nối. Hãy mở web client qua https, qua localhost trên máy này, hoặc qua SSH tunnel. Nếu vẫn muốn cho phép, người vận hành server có thể khởi động lại Orca với ORCA_ALLOW_INSECURE_WEB_PAIRING=1.",
         "deviceDowngraded": "Server Orca này không còn hỗ trợ khóa đăng nhập của trình duyệt này (có thể server đã bị hạ phiên bản). Hãy cập nhật server hoặc ghép nối lại trình duyệt này.",
-        "unauthorized": "Không có quyền truy cập. Hãy ghép nối lại web client này."
+        "unauthorized": "Không có quyền truy cập. Hãy ghép nối lại web client này.",
+        "unauthorizedLinkUsedOrExpired": "Không được phép. Liên kết ghép nối này có thể đã hết hạn hoặc đã được sử dụng. Hãy tạo liên kết ghép nối mới trong Orca và mở nó."
       }
     },
     "store": {
@@ -2115,13 +2124,6 @@
       }
     },
     "hooks": {
-      "useAutomationDispatchEvents": {
-        "59718b120b": "Workspace đích không còn khả dụng.",
-        "16a21d6413": "Kết nối lại SSH cần nhập thông tin xác thực tương tác.",
-        "386db94f3e": "Dự án đích không còn khả dụng.",
-        "3ad7d77f57": "Workspace đích nằm trên host khác với đích chạy tự động hóa này.",
-        "workspaceHostUnresolved": "Workspace đích trải trên nhiều host, nên lần chạy này không có host duy nhất để dùng."
-      },
       "useComposerState": {
         "b2ead86962": "Không xác định được PR base.",
         "3db83fc58a": "Không có đường dẫn dự án trên host này cho tệp đính kèm.",
@@ -2564,7 +2566,8 @@
         "approvalsRemainingOfRequired_one": "Còn thiếu {{count}} phê duyệt trong {{required}} phê duyệt bắt buộc",
         "approvalsRemainingOfRequired_other": "Còn thiếu {{count}} phê duyệt trong {{required}} phê duyệt bắt buộc",
         "approvalsRemaining_one": "Còn thiếu {{count}} phê duyệt",
-        "approvalsRemaining_other": "Còn thiếu {{count}} phê duyệt"
+        "approvalsRemaining_other": "Còn thiếu {{count}} phê duyệt",
+        "itemLoadFailed": "Không thể tải mục này. Hãy làm mới để thử lại."
       },
       "JiraIssueWorkspace": {
         "b0b92666c9": "Bình luận",
@@ -3251,7 +3254,6 @@
         "9cd11ba218": "Jira",
         "11a828abf8": "GitLab",
         "acef77f7ca": "GitHub",
-        "524f095d55": "Cần review",
         "7698af5263": "Của tôi",
         "94f0339621": "Giao cho tôi",
         "c2268a9982": "Tất cả",
@@ -3367,7 +3369,9 @@
           "linearViewNotFound": "Không tìm thấy chế độ xem Linear đã lưu.",
           "linearViewRestoreFailed": "Không khôi phục được chế độ xem Linear đã lưu."
         },
-        "shownCount_one": "Đang hiển thị {{count}}"
+        "shownCount_one": "Đang hiển thị {{count}}",
+        "gitlabInvolvementEveryone": "Mọi người",
+        "gitlabInvolvementReviewing": "Đang review"
       },
       "Terminal": {
         "73768427cf": "Đóng",
@@ -4499,7 +4503,8 @@
             "chatUnavailableAfterSelection": "Không thể bắt đầu chat với {{value0}}.",
             "startChat": "Bắt đầu chat với {{value0}}",
             "cliTag": "(CLI)",
-            "agentsLoading": "Đang tải agent"
+            "agentsLoading": "Đang tải agent",
+            "chatNotOnWindows": "Chưa có chat trên Windows"
           },
           "RecentTabSwitcher": {
             "329638ff6f": "Chuyển tab",
@@ -4839,7 +4844,8 @@
             "signedOutAccounts": "Đã đăng xuất",
             "addAnotherAccount": "Thêm tài khoản khác…",
             "staleCodexSessions_one": "{{count}} phiên Codex vẫn đang dùng tài khoản cũ.",
-            "staleCodexSessions_other": "{{count}} phiên Codex vẫn đang dùng tài khoản cũ."
+            "staleCodexSessions_other": "{{count}} phiên Codex vẫn đang dùng tài khoản cũ.",
+            "museUsageMenu": "Mức sử dụng Muse"
           },
           "StatusBarUsageEmptyCta": {
             "828c764a79": "Kết nối tài khoản",
@@ -5278,6 +5284,12 @@
             },
             "mainWorktree": "worktree chính",
             "detached": "detached"
+          },
+          "antigravity": {
+            "unknownAccount": "Tài khoản Google",
+            "accounts": "Tài khoản Antigravity đã lưu",
+            "readAgo": "Đã đọc {{time}}",
+            "notRead": "Chưa rõ mức sử dụng: chưa đọc"
           }
         }
       },
@@ -6417,7 +6429,6 @@
           "savedInProjectSettings": "Đã lưu trong <settings>cài đặt của dự án này</settings>"
         },
         "SetupScriptPromptCardViews": {
-          "96a7f4198c": "Lưu setup cục bộ",
           "3933401d28": "Cấu hình",
           "31b8b01a45": "Cài đặt",
           "4a98f907ae": "Thử lại",
@@ -6432,7 +6443,8 @@
           "5bfd5c8779": "Bỏ qua script setup",
           "detectedFromSource": "Phát hiện từ <source>{{source}}</source>",
           "ignoresSharedSetup": "Repo này bỏ qua script setup dùng chung trong <yaml>orca.yaml</yaml>. Hãy thêm lệnh cục bộ hoặc đổi nguồn trong Cài đặt.",
-          "foundSetupCommandIn": "Đã tìm thấy lệnh setup trong <source>{{source}}</source>. Lưu lại để chạy cho các worktree mới."
+          "foundSetupCommandIn": "Đã tìm thấy lệnh setup trong <source>{{source}}</source>. Lưu lại để chạy cho các worktree mới.",
+          "reviewSetupScript": "Xem lại script thiết lập"
         },
         "SidebarFeedbackDialog": {
           "8bf619e4cf": "Hủy",
@@ -7547,6 +7559,13 @@
           "needsInput": "Cần nhập liệu",
           "running": "Đang chạy",
           "idle": "Rảnh"
+        },
+        "SetupScriptReviewDialog": {
+          "title": "Xem lại script thiết lập",
+          "description": "Sau khi lưu, script này sẽ chạy mỗi khi Orca tạo worktree cho {{repo}}.",
+          "setupScript": "Script thiết lập",
+          "archiveScript": "Script lưu trữ",
+          "save": "Lưu thiết lập cục bộ"
         }
       },
       "shared": {
@@ -8573,7 +8592,6 @@
         "MobileEmulatorSettingsPane": {
           "19d39113b6": "Cho phép coding agent điều khiển trình giả lập di động đang hoạt động bằng lệnh Orca CLI.",
           "f2f8d97bb6": "Agent điều khiển trình giả lập di động",
-          "143961d031": "Thiết bị mặc định",
           "8aec2f99a0": "Làm mới trạng thái khả dụng của trình giả lập",
           "ae1612c58c": "Khả dụng",
           "f9af91ea26": "Hiển thị thao tác Trình giả lập di động mới và cho phép agent gắn vào trình giả lập đang hoạt động.",
@@ -8586,9 +8604,7 @@
           "d704fb5023": "Cần thiết lập",
           "06b06429c6": "Đang kiểm tra hỗ trợ Android SDK và iOS Simulator.",
           "6d1483d4a0": "Đã phát hiện 1 thiết bị giả lập.",
-          "0a452d4d3b": "Đã phát hiện {{value0}} thiết bị giả lập.",
-          "f62a1bb759": "Orca sẽ tự chọn thiết bị giả lập sau khi phát hiện thiết bị.",
-          "b2fd62ea75": "Thiết bị mặc định cho tab trình giả lập mới và lệnh gắn agent. Tự chọn sẽ ưu tiên thiết bị đang chạy."
+          "0a452d4d3b": "Đã phát hiện {{value0}} thiết bị giả lập."
         },
         "MobileNetworkInterfaceSection": {
           "b2c384cfd6": "Không tìm thấy giao diện mạng"
@@ -8619,7 +8635,10 @@
           "copyPairingCode": "Sao chép mã ghép nối",
           "diagnosticsCopied": "Đã sao chép thông tin chẩn đoán",
           "diagnosticsCopyFailed": "Không thể sao chép thông tin chẩn đoán",
-          "5e2c7a1f84": "Khi bạn dùng terminal trên điện thoại, Orca thu nhỏ nó để vừa màn hình điện thoại. Khi bạn đóng ứng dụng hoặc chuyển đi, tùy chọn này quyết định nó giữ kích thước điện thoại (để các công cụ CLI tương tác không bị dàn lại) hay trở lại kích thước desktop. Bạn luôn có thể dùng Khôi phục hoặc Khôi phục tất cả trên banner để đổi kích thước thủ công."
+          "5e2c7a1f84": "Khi bạn dùng terminal trên điện thoại, Orca thu nhỏ nó để vừa màn hình điện thoại. Khi bạn đóng ứng dụng hoặc chuyển đi, tùy chọn này quyết định nó giữ kích thước điện thoại (để các công cụ CLI tương tác không bị dàn lại) hay trở lại kích thước desktop. Bạn luôn có thể dùng Khôi phục hoặc Khôi phục tất cả trên banner để đổi kích thước thủ công.",
+          "codeRefreshesAutomatically": "Mã tự động làm mới. Mã đã sao chép có hiệu lực tối đa 10 phút.",
+          "legacyEncryption": "Đang dùng mã hóa cũ. Hãy cập nhật ứng dụng Orca trên thiết bị này.",
+          "olderPairingMethod": "Đang dùng phương thức ghép nối cũ. Hãy cập nhật ứng dụng Orca trên điện thoại này."
         },
         "MobileSettingsPane": {
           "b5a2ed83ff": "App Store",
@@ -9033,7 +9052,9 @@
           "activeLinks": "Liên kết đang hoạt động",
           "noActiveLinks": "Không có liên kết nào đang hoạt động.",
           "createdAt": "Đã tạo {{value0}}",
-          "revoke": "Thu hồi"
+          "revoke": "Thu hồi",
+          "olderPairingMethod": "Đang dùng phương thức ghép nối cũ. Hãy cập nhật Orca trên thiết bị sử dụng liên kết này.",
+          "legacyEncryption": "Lần dùng gần nhất với mã hóa cũ. Hãy cập nhật Orca ở nơi sử dụng liên kết này."
         },
         "RuntimeEnvironmentsPane": {
           "af53761f31": "Hủy",
@@ -9136,7 +9157,9 @@
           "browserLinkLabel": "Liên kết trình duyệt",
           "accessLinkLabel": "Liên kết truy cập",
           "accessLinkHelp": "Dán liên kết này vào Thêm máy chủ trên Orca kia.",
-          "staleAddressCreate": "Địa chỉ kết nối đã thay đổi. Hãy tạo liên kết mới cho {{address}}."
+          "staleAddressCreate": "Địa chỉ kết nối đã thay đổi. Hãy tạo liên kết mới cho {{address}}.",
+          "linkExpired": "Liên kết đã hết hạn",
+          "unusedLinkExpires": "Liên kết chưa dùng sẽ hết hạn lúc {{time}}"
         },
         "Settings": {
           "3bf149e873": "Cài đặt dự án > {{value0}}",
@@ -10129,7 +10152,11 @@
                 "cursor": "cursor"
               }
             },
-            "matchTerminal": "khớp terminal"
+            "matchTerminal": "khớp terminal",
+            "museUsageTitle": "Mức sử dụng Muse",
+            "museUsageDescription": "Hiển thị hạn mức gói đăng ký Muse trên thanh trạng thái.",
+            "muse": "muse",
+            "meta": "meta"
           }
         },
         "auto": {
@@ -11565,7 +11592,14 @@
               "micInput": "đầu vào",
               "micDevice": "thiết bị",
               "micAirpods": "airpods",
-              "micDefault": "mặc định hệ thống"
+              "micDefault": "mặc định hệ thống",
+              "dictationLanguageTitle": "Ngôn ngữ đọc chính tả",
+              "dictationLanguageDescription": "Cho mô hình giọng nói biết bạn nói ngôn ngữ nào.",
+              "dictationLanguageKeyword": "ngôn ngữ",
+              "modelUnloadTitle": "Gỡ mô hình giọng nói khỏi bộ nhớ",
+              "modelUnloadDescription": "Chọn thời điểm gỡ mô hình giọng nói trên thiết bị khỏi bộ nhớ.",
+              "modelUnloadKeyword": "gỡ tải",
+              "modelMemoryKeyword": "bộ nhớ"
             }
           }
         },
@@ -12380,7 +12414,8 @@
           "installedManifestUnloadable": "Phiên bản này không thể tải trong Orca hiện tại. Hãy cập nhật hoặc cài lại.",
           "invalidArtifact": "Tệp worker hoặc panel bị thiếu hoặc không an toàn. Hãy sửa, rồi làm mới.",
           "consentChanged": "Plugin này đã thay đổi trong lúc bạn xem xét. Hãy xem xét lại.",
-          "installGitMoved": "Repo đã thay đổi sau khi Orca kiểm tra. Hãy thử lại."
+          "installGitMoved": "Repo đã thay đổi sau khi Orca kiểm tra. Hãy thử lại.",
+          "installReservedIdentity": "Plugin này dùng tên dành riêng cho các plugin Orca chính thức, vốn chỉ được cài từ danh mục của Orca. Với bản sao hoặc bản fork của riêng bạn, hãy đổi \"id\" trong orca-plugin.json để không bắt đầu bằng \"orca-\", và đặt \"publisher\" thành tên của bạn."
         },
         "plugins": {
           "search": {
@@ -13401,7 +13436,8 @@
           "newerBody": "Danh mục đã thay đổi trong lúc bạn ở đây.",
           "showNewer": "Hiện bản mới hơn",
           "stoppedDataBody": "Không tải được các tệp của plugin. Khởi động lại để thử lại.",
-          "alsoListedBy": "Cũng có trong {{value0}}. Cập nhật chỉ đến từ danh mục đã dùng để cài plugin; để đổi, hãy xóa rồi cài lại."
+          "alsoListedBy": "Cũng có trong {{value0}}. Cập nhật chỉ đến từ danh mục đã dùng để cài plugin; để đổi, hãy xóa rồi cài lại.",
+          "backToPlugin": "Quay lại"
         },
         "PluginDetailSections": {
           "typeLanguagePack": "Ngôn ngữ giao diện",
@@ -13521,7 +13557,8 @@
           "newFileMenu": "Thêm vào menu +",
           "editorReplacesViewer": "Mở {{value0}} thay cho trình xem của Orca",
           "editorMayReplaceViewer": "Có thể mở {{value0}} thay cho trình xem của Orca",
-          "statusBar": "Thanh trạng thái"
+          "statusBar": "Thanh trạng thái",
+          "font": "Phông chữ cho terminal, trình soạn thảo hoặc giao diện"
         },
         "PluginCardAction": {
           "installed": "Đã cài",
@@ -13683,7 +13720,8 @@
           "oneDescription": "Phát hành bởi {{value0}}. Plugin sẽ không cập nhật cho đến khi bạn xem xét.",
           "manyDescription": "Các plugin sẽ không cập nhật cho đến khi bạn xem xét.",
           "review": "Xem xét",
-          "dismiss": "Bỏ qua"
+          "dismiss": "Bỏ qua",
+          "movedInstalled": "Plugin sẽ tắt cho đến khi bạn xem xét."
         },
         "PluginInstallTrustDialog": {
           "titleFolder": "Hãy chắc chắn bạn tin tưởng thư mục này",
@@ -13750,6 +13788,20 @@
         },
         "SettingsSearchableSelect": {
           "noMatches": "Không có kết quả."
+        },
+        "PluginAuthor": {
+          "publisher": "Nhà phát hành",
+          "catalogByline": "Được {{catalog}} liệt kê là {{publisher}}",
+          "publisherByline": "Nhà phát hành: {{publisher}}",
+          "declaredByline": "Nhà phát hành tự khai báo: {{publisher}}",
+          "catalogClaim": "Nhà phát hành do {{catalog}} liệt kê. Quyền tác giả chưa được xác minh.",
+          "unnamedCatalogClaim": "Nhà phát hành do danh mục liệt kê. Quyền tác giả chưa được xác minh.",
+          "gitClaim": "Nhà phát hành do Orca suy ra từ URL kho lưu trữ. Quyền tác giả chưa được xác minh.",
+          "unknownClaim": "Không rõ nguồn của nhà phát hành. Quyền tác giả chưa được xác minh.",
+          "manifestClaim": "Nhà phát hành do plugin tự khai báo. Quyền tác giả chưa được xác minh.",
+          "shownPluginCount_one": "Đang hiển thị {{count}} plugin khớp, bao gồm plugin này",
+          "shownPluginCount_other": "Đang hiển thị {{count}} plugin khớp, bao gồm plugin này",
+          "samePublisher": "Thêm plugin được liệt kê là {{value0}}"
         }
       },
       "right": {
@@ -13870,7 +13922,6 @@
           },
           "GitHistoryPanel": {
             "cf7cad58d2": "Chưa có commit nào",
-            "781a8bcf7b": "Đang tải đồ thị...",
             "d0fb0f4bf2": "Làm mới commit",
             "9f7535d22b": "Ref là tên nhánh hoặc tag trỏ đến đúng commit đó. Chúng chỉ xuất hiện khi Git có ref được đặt tên cho commit.",
             "9289ba0cb9": "Ref là gì?",
@@ -14248,7 +14299,8 @@
             "clearNotesFromFile_other": "Xóa {{count}} ghi chú khỏi {{path}}?",
             "markResolved": "Đánh dấu đã giải quyết",
             "keepFile": "Giữ tệp",
-            "keepDeletion": "Giữ việc xóa"
+            "keepDeletion": "Giữ việc xóa",
+            "refreshAll": "Làm mới tất cả"
           },
           "SourceControlAgentActionDialog": {
             "8e856842d1": "Không thể khởi chạy agent đã chọn.",
@@ -14548,6 +14600,13 @@
                   "title": "{{reviewLabelCap}} không được hỗ trợ ở đây",
                   "body": "Nhà cung cấp repo này không hỗ trợ tạo {{reviewLabel}} từ Orca."
                 }
+              },
+              "runTime": {
+                "justNow": "vừa xong",
+                "started": "Bắt đầu {{time}}",
+                "finished": "Hoàn tất {{time}}",
+                "notLatestCommitDetail": "Đã chạy trên commit {{sha}}, không phải commit mới nhất",
+                "notLatestCommit": "Commit cũ hơn"
               }
             }
           },
@@ -15070,7 +15129,8 @@
             "resumeInNewNativeChat": "Tiếp tục trong chat mới",
             "resumeInNewCli": "Tiếp tục trong terminal mới",
             "resumeInNewCliTooltipFork": "Bắt đầu phiên agent mới trong terminal với bản sao của cuộc hội thoại này.",
-            "resumeInNewCliTooltipChat": "Chat này vẫn giữ nguyên."
+            "resumeInNewCliTooltipChat": "Chat này vẫn giữ nguyên.",
+            "revealArtifactsFolder": "Hiện thư mục Artifacts"
           },
           "AiVaultSessionDeleteDialog": {
             "title": "Xóa phiên này?",
@@ -15089,7 +15149,6 @@
             "f8a2c4d1e0": "Chế độ tìm kiếm của Explorer"
           },
           "GitHistoryCommitFiles": {
-            "a1b2c3d4e5": "Đang tải tệp…",
             "b2c3d4e5f6": "Commit này không có thay đổi tệp",
             "c3d4e5f6a7": "Mở tất cả thay đổi cùng lúc"
           },
@@ -16295,7 +16354,6 @@
                 "06e10d7356": "Tắt trình giả lập",
                 "e7a0d1897e": "Màn hình chính",
                 "6bd8dff42a": "Xoay",
-                "3d836b879c": "Chọn trình giả lập",
                 "81b3571a07": "Kết nối",
                 "868c0f2938": "Đang xử lý…"
               }
@@ -17293,13 +17351,18 @@
       "dictation": {
         "DictationController": {
           "de136f1199": "Lỗi giọng nói: {{value0}}",
-          "7afff43472": "Đã đọc chính tả xong, nhưng không có ô văn bản nào được focus.",
           "55127a3706": "Đọc chính tả thất bại: {{value0}}",
           "bb7f599ee7": "Mở Cài đặt",
           "2d5b9fabf9": "Quyền truy cập micro bị từ chối. Hãy cấp quyền trong cài đặt hệ thống, rồi khởi động lại Orca.",
           "5d2c3e7ae3": "Không phát hiện giọng nói.",
           "micFallback": "Micro đã chọn không khả dụng. Đang dùng micro mặc định của hệ thống.",
-          "micDisconnected": "Micro đã ngắt kết nối. Đã dừng đọc chính tả."
+          "micDisconnected": "Micro đã ngắt kết nối. Đã dừng đọc chính tả.",
+          "noModel": "Chưa chọn mô hình giọng nói. Hãy tải một mô hình trong Cài đặt > Giọng nói.",
+          "disabled": "Đọc chính tả bằng giọng nói đang tắt. Hãy bật trong Cài đặt > Giọng nói.",
+          "notReady": "Mô hình giọng nói chưa sẵn sàng. Hãy tải xuống trong Cài đặt > Giọng nói.",
+          "unknownModel": "Mô hình đã chọn không còn khả dụng. Vui lòng chọn mô hình khác trong Cài đặt > Giọng nói.",
+          "cloudLimitReached": "Đọc chính tả đã dừng do đạt giới hạn đám mây 10 phút.",
+          "stoppedAfterSilence": "Đã dừng sau một phút im lặng"
         },
         "DictationIndicator": {
           "335e1bc6cb": "Dừng đọc chính tả",
@@ -17307,7 +17370,13 @@
           "f082d0cb9d": "Đang xử lý…",
           "3de5a129e7": "Đang nghe",
           "4977162383": "Quá to",
-          "25f2b7a6a5": "Đang nói"
+          "25f2b7a6a5": "Đang nói",
+          "loadingModel": "Đang tải mô hình giọng nói…"
+        },
+        "dictation-transcript-delivery": {
+          "copiedAfterFailedInsert": "Không thể chèn nội dung đọc chính tả nên đã sao chép vào bộ nhớ tạm.",
+          "copiedWithoutTarget": "Không có ô nhập văn bản nào được chọn nên nội dung đọc chính tả đã được sao chép vào bộ nhớ tạm.",
+          "lost": "Không thể chèn hoặc sao chép nội dung đọc chính tả."
         }
       },
       "dashboard": {
@@ -17883,7 +17952,10 @@
           "reuseLiveSession": "Dùng lại phiên đang chạy",
           "freshEachRun": "Phiên mới mỗi lần chạy",
           "precheckEnabled": "Đã bật, {{timeout}}",
-          "precheckNone": "Không"
+          "precheckNone": "Không",
+          "migrate": "Di chuyển",
+          "migrateNotice": "{{host}} đã được nâng cấp lên host từ xa mới. Hãy di chuyển tự động hóa này để tiếp tục chạy.",
+          "needsMigration": "Cần di chuyển"
         },
         "AutomationEditorDialog": {
           "fb1896a5e7": "Hủy",
@@ -18041,7 +18113,10 @@
           "deleteAutomationDescription": "Xóa <name/> và lịch sử chạy của nó. Các workspace do những lần chạy trước tạo ra sẽ không bị xóa.",
           "deleteExternalAutomationDescription": "Xóa <name/> khỏi <provider/> trên <host/>.",
           "runUsageSummaryTokens_one": "{{cost}} ước tính · {{tokens}} token",
-          "runUsageSummaryTokens_other": "{{cost}} ước tính · {{tokens}} token"
+          "runUsageSummaryTokens_other": "{{cost}} ước tính · {{tokens}} token",
+          "fullOutputUnavailable": "Không thể tải toàn bộ đầu ra.",
+          "retryFullOutput": "Thử lại",
+          "setupSkippedChanged": "Thiết lập không chạy: nhánh của lần chạy này có lệnh thiết lập orca.yaml khác với các lệnh đã được phê duyệt khi lưu tự động hóa. Hãy lưu lại tự động hóa để xem xét các lệnh hiện tại."
         },
         "AutomationsPageSkeleton": {
           "55527b7bcf": "Đang tải automation"
@@ -18629,6 +18704,10 @@
           "loadFailedKeptLastGood": "{{value0}} tải thất bại. Đang hiển thị phiên bản tải được gần nhất.",
           "pluginMessage": "Tin nhắn từ {{value0}}: {{value1}}",
           "reloaded": "Đã tải lại"
+        },
+        "FolderWorkspaceSourceControl": {
+          "openWorktree": "Mở worktree này",
+          "reconnect": "Kết nối lại để xem các thay đổi của worktree này."
         }
       },
       "link": {
@@ -19346,7 +19425,23 @@
           "conflict": "Không dùng: {{value0}} được cài trước và đã thay thế nó",
           "detail": "Từ phím tắt, bảng lệnh và menu. Nếu plugin lỗi, lệnh của Orca sẽ chạy.",
           "switch": "Dùng {{value0}} thay cho {{value1}} của Orca"
+        },
+        "pluginNameDisambiguation": {
+          "nameWithPublisher": "{{value0}} ({{value1}})"
         }
+      },
+      "agent-workspace-trust-decision": {
+        "prompt-title": "Tin cậy {{repo}} cho agent?",
+        "prompt-description": "Các agent như Claude Code và Codex sẽ hỏi \"Bạn có tin cậy thư mục này không?\" trước khi tải cài đặt agent và hook riêng của dự án, vốn có thể chạy lệnh. Orca có thể tự động trả lời đồng ý cho bạn trong mọi worktree của repository này.",
+        "prompt-remembered": "Orca sẽ ghi nhớ câu trả lời của bạn cho repository này. Bạn có thể thay đổi trong cài đặt của repository.",
+        "trust-repository": "Tin cậy repository",
+        "let-agents-ask": "Để agent tự hỏi",
+        "setting-title": "Tin cậy thư mục cho agent",
+        "setting-description": "Liệu các agent do Orca khởi chạy trong worktree của repository này có bỏ qua lời nhắc \"Bạn có tin cậy thư mục này không?\" và tải ngay cài đặt agent cùng hook của dự án hay không.",
+        "setting-undecided": "Chưa quyết định. Orca sẽ hỏi vào lần tới bạn khởi chạy agent tại đây.",
+        "setting-global-off": "Tính năng tin cậy thư mục đang tắt trong cài đặt Agent, vì vậy agent sẽ luôn hỏi.",
+        "keyword-trust": "tin cậy",
+        "keyword-hooks": "hook"
       }
     },
     "i18n": {
@@ -19740,7 +19835,11 @@
         "agentNotSignedIn": "Đăng nhập {{agent}}.",
         "thenSendAgain": "Sau đó gửi lại tin nhắn.",
         "runCommandWhenDone": "Chạy /{{command}} khi hoàn tất.",
-        "commandAfterAnswer": "Trả lời câu hỏi hoặc yêu cầu phê duyệt của agent, rồi chạy /{{command}}."
+        "commandAfterAnswer": "Trả lời câu hỏi hoặc yêu cầu phê duyệt của agent, rồi chạy /{{command}}.",
+        "antigravitySystemNotSignedIn": "Antigravity chưa đăng nhập. Hãy đăng nhập bằng cách chạy `agy` trên máy tính đang chạy cuộc trò chuyện này, rồi gửi lại tin nhắn.",
+        "modelUnavailableUpdate": "{{agent}} không thể dùng {{detail}}. Hãy cập nhật {{agent}} lên {{minimumVersion}} trở lên để giữ lựa chọn này sau khi khởi động lại, hoặc chọn mô hình khác rồi gửi lại.",
+        "modelNotSelected": "{{agent}} chưa chọn mô hình. Hãy kiểm tra lựa chọn mô hình và trạng thái đăng nhập {{agent}}, rồi gửi lại.",
+        "pluginInputRequired": "{{agent}} đã dừng vì plugin \"{{plugin}}\" đang chờ nhập liệu trong một ô terminal. Hãy tắt plugin cho các phiên trò chuyện, hoặc chạy tác vụ trong terminal {{agent}}."
       },
       "writeNotice": {
         "notDoneReadHistory": "Không thể tải lịch sử của chat này.",
@@ -19842,7 +19941,9 @@
         "partial": "Diff một phần",
         "changedFiles_one": "{{count}} tệp đã thay đổi",
         "changedFiles_other": "{{count}} tệp đã thay đổi",
-        "showMoreFiles": "Hiện thêm {{count}}"
+        "showMoreFiles": "Hiện thêm {{count}}",
+        "hide": "Ẩn",
+        "hidden": "Orca sẽ không hiển thị diff theo lượt nữa"
       },
       "receipt": {
         "unavailable": "Câu trả lời đã chọn không khả dụng",
@@ -19876,7 +19977,8 @@
         "permissionDenied": "{{agent}} đã từ chối quyền. Xem chi tiết.",
         "safetyReview": "{{agent}} đã báo cảnh báo xem xét an toàn. Xem chi tiết.",
         "truncatedResponse": "Phản hồi của nhà cung cấp đã bị cắt bớt (kích thước gốc: {{bytes}} byte).",
-        "modelFallback": "Claude đã đổi mô hình: {{from}} → {{to}}."
+        "modelFallback": "Claude đã đổi mô hình: {{from}} → {{to}}.",
+        "forkedFrom": "Phân nhánh từ"
       },
       "composer": {
         "send": "Gửi",
@@ -19992,7 +20094,13 @@
           "medium": "TB",
           "xhigh": "Rất cao"
         },
-        "imageUnavailable": "Không có bản xem trước"
+        "imageUnavailable": "Không có bản xem trước",
+        "planMode": "Lập kế hoạch",
+        "moreControls": "Thêm điều khiển trò chuyện",
+        "exitPlanMode": "Thoát chế độ lập kế hoạch",
+        "previewQueue": "Xếp hàng",
+        "previewSteer": "Điều hướng",
+        "previewSteerQueued": "Đã xếp hàng điều hướng"
       },
       "tool": {
         "exitCode": "exit {{value0}}",
@@ -20159,7 +20267,8 @@
         "stateIdleCount_one": "{{value0}} đã dừng",
         "stateIdleCount_other": "{{value0}} đã dừng",
         "stateUnverifiableCount_one": "{{value0}} không rõ trạng thái",
-        "stateUnverifiableCount_other": "{{value0}} không rõ trạng thái"
+        "stateUnverifiableCount_other": "{{value0}} không rõ trạng thái",
+        "showAgent": "Hiển thị {{value0}} trong cuộc trò chuyện"
       },
       "jumpToLatest": "Đi tới mới nhất",
       "find": {
@@ -20639,7 +20748,38 @@
           "noCredit": "Tài khoản này không còn lượt đặt lại Codex.",
           "alreadyRedeemed": "Lượt đặt lại đó đã được dùng."
         }
-      }
+      },
+      "composerWorkspace": {
+        "copyFailed": "Sao chép thất bại",
+        "copyIdentity": "Sao chép {{value0}}",
+        "folder": "Thư mục",
+        "mainCheckout": "Checkout chính",
+        "worktree": "Worktree"
+      },
+      "fork": {
+        "action": "Phân nhánh từ phản hồi này",
+        "pending": "Đang phân nhánh cuộc trò chuyện…",
+        "checking": "Đang kiểm tra xem có thể phân nhánh cuộc trò chuyện này không…",
+        "tooltip": "Phân nhánh từ phản hồi này. Cuộc trò chuyện mới sẽ bao gồm toàn bộ phản hồi này, đến hết lượt của nó.",
+        "unconfirmed": "{{agent}} không thể xác nhận việc phân nhánh",
+        "unconfirmedDetail": "Có thể nó vẫn đã được mở. Hãy kiểm tra Lịch sử phiên trước khi fork lại.",
+        "failed": "{{agent}} không thể fork cuộc trò chuyện này",
+        "hostUnsupported": "Host này đang chạy phiên bản Orca cũ. Hãy cập nhật Orca trên host rồi thử lại.",
+        "failedDetail": "Cuộc trò chuyện của bạn không bị thay đổi. Hãy thử lại."
+      },
+      "cardKindHidden": {
+        "description": "Bạn có thể thay đổi điều này bất cứ lúc nào trong",
+        "settingsLink": "Cài đặt > Chat UI > Hoạt động lượt",
+        "failed": "Không thể lưu. Bạn có thể tắt mục này trong Cài đặt > Chat UI > Hoạt động lượt."
+      },
+      "openedPullRequests": {
+        "one": "Đã mở {{name}}",
+        "hide": "Không hiển thị pull request đã mở",
+        "hidden": "Orca sẽ không hiển thị pull request đã mở nữa",
+        "many_one": "Đã mở {{count}} pull request",
+        "many_other": "Đã mở {{count}} pull request"
+      },
+      "explicitChatWindows": "Chat của agent này chưa khả dụng trên Windows. Hãy mở nó trong terminal."
     },
     "tab": {
       "bar": {
@@ -21078,7 +21218,32 @@
         "idleStopSearchIdle": "không hoạt động",
         "idleStopSearchTimeout": "hết thời gian",
         "idleStopSearchKeepAlive": "giữ hoạt động",
-        "idleStopNever": "Không bao giờ"
+        "idleStopNever": "Không bao giờ",
+        "openedPullRequestsTitle": "Pull request đã mở",
+        "openedPullRequestsCopy": "Hiển thị các pull request mà mỗi lượt đã mở, kèm tiêu đề và số dòng, bên dưới câu trả lời.",
+        "openedPullRequestsSearchPr": "PR",
+        "openedPullRequestsSearchCard": "thẻ pull request",
+        "turnActivityTitle": "Hoạt động lượt",
+        "turnDiffsTitle": "Diff theo lượt",
+        "turnDiffsCopy": "Hiển thị các tệp mà mỗi lượt đã thay đổi, kèm số dòng, bên dưới câu trả lời.",
+        "turnDiffsSearchChangedFiles": "tệp đã thay đổi",
+        "turnDiffsSearchEdits": "chỉnh sửa"
+      },
+      "voice": {
+        "dictationLanguage": {
+          "ignored": "{{model}} chỉ phiên âm các ngôn ngữ mà nó được xây dựng cho, nên sẽ bỏ qua cài đặt này.",
+          "unsupported": "{{model}} không hỗ trợ {{language}}, nên sẽ tự nhận diện ngôn ngữ.",
+          "description": "Ngôn ngữ bạn nói. Tự động nhận diện cho phép mô hình tự xác định mỗi lần.",
+          "title": "Ngôn ngữ đọc chính tả",
+          "auto": "Tự động nhận diện"
+        },
+        "modelUnload": {
+          "title": "Giải phóng mô hình giọng nói",
+          "description": "Thời gian mô hình trên thiết bị được giữ trong bộ nhớ sau khi bạn ngừng đọc chính tả. Khi mô hình đã được tải, việc đọc chính tả bắt đầu ngay; “Ngay lập tức” sẽ giải phóng bộ nhớ, nên mỗi lần đọc chính tả phải chờ mô hình tải.",
+          "cloud": "Mô hình đám mây chạy trên máy chủ của nhà cung cấp, nên không có gì được giữ tải ở đây.",
+          "never": "Không bao giờ",
+          "immediately": "Ngay lập tức"
+        }
       }
     },
     "agentChildRow": {
@@ -21485,7 +21650,10 @@
       "demoSession": "Phiên",
       "demoApp": "Ứng dụng",
       "demoPassword": "mật khẩu",
-      "demoCookie": "cookie"
+      "demoCookie": "cookie",
+      "switchedNoteTitle": "Agent mới sẽ mở trong Chat UI",
+      "switchedNoteBody": "Thích dùng terminal hơn? Chuyển lại bất cứ lúc nào: tìm <term>Chat UI</term> trong Cài đặt.",
+      "openSettings": "Mở Cài đặt"
     }
   },
   "quickOpen": {
@@ -21769,7 +21937,8 @@
       "loading": "Đang tải thay đổi của submodule…",
       "empty": "Không có thay đổi trong submodule",
       "loadFailed": "Không thể tải thay đổi của submodule"
-    }
+    },
+    "sectionAgentStarted": "Bắt đầu trong {{value0}}"
   },
   "agentsSidebarIntro": {
     "migrated": {
@@ -22188,7 +22357,21 @@
         "accounts": "tài khoản"
       },
       "windowsChanged": "Tài khoản mặc định của host đã thay đổi. Hãy chọn một tài khoản đã lưu để áp dụng lại.",
-      "windowsSessions": "Chọn sẽ áp dụng và xác minh thông tin xác thực agy mặc định của host. Lựa chọn lệnh và các thay đổi tài khoản sau đó do agy xử lý. Các phiên hiện có có thể giữ tài khoản cũ."
+      "windowsSessions": "Chọn sẽ áp dụng và xác minh thông tin xác thực agy mặc định của host. Lựa chọn lệnh và các thay đổi tài khoản sau đó do agy xử lý. Các phiên hiện có có thể giữ tài khoản cũ.",
+      "authMethod": "Đăng nhập bằng",
+      "personal": "Tài khoản Google",
+      "enterprise": "Gemini Enterprise",
+      "gcpProject": "Dự án Google Cloud",
+      "gcpLocation": "Vị trí Google Cloud",
+      "projectPlaceholder": "my-project-id",
+      "locationPlaceholder": "us-central1",
+      "signInAgainWith": "Đăng nhập lại để dùng {{method}}.",
+      "settingsIncomplete": "Chọn loại tài khoản Antigravity và nhập dự án cùng vị trí Google Cloud của tài khoản đó.",
+      "settingsLoadFailed": "Orca không thể tải cài đặt đăng nhập Antigravity của bạn. Hãy thử lại.",
+      "settingsSaveFailed": "Orca không thể lưu cài đặt đăng nhập Antigravity của bạn. Hãy thử lại.",
+      "signInWith": "Đăng nhập bằng {{method}} trên {{host}}.",
+      "lastReading": "{{reading}} · Đọc lúc {{time}}",
+      "noReading": "Chưa rõ mức sử dụng: chưa được đọc"
     },
     "claude": {
       "added": "Đã thêm tài khoản. Hãy chọn nó để dùng cho Claude tiếp theo bạn khởi chạy.",
@@ -22321,7 +22504,17 @@
       "confirm": "Xóa tất cả worktree đã liệt kê",
       "preservedBranches": "Một số nhánh của worktree lồng nhau đã được giữ lại"
     },
-    "setupTerminalTitle": "Thiết lập"
+    "setupTerminalTitle": "Thiết lập",
+    "setupTrust": {
+      "createdBranchSkipped": "Thiết lập chưa chạy: nhánh của workspace này có lệnh thiết lập orca.yaml khác với lệnh bạn đã phê duyệt.",
+      "runFailed": "Không thể bắt đầu thiết lập.",
+      "changedAgain": "Thiết lập chưa chạy: orca.yaml của workspace này lại thay đổi kể từ khi bạn xem xét.",
+      "hostUnsupported": "Đã phê duyệt. Hãy cập nhật Orca trên host của workspace để chạy thiết lập cho workspace hiện có.",
+      "reviewAction": "Xem xét thiết lập",
+      "branchDiffersTitle": "Nhánh của workspace này có lệnh thiết lập khác",
+      "branchDiffersBody": "Workspace đã được tạo nhưng thiết lập chưa chạy: <code>orca.yaml</code> của nhánh khác với nội dung bạn đã phê duyệt. Chỉ chạy các lệnh này cho workspace này nếu bạn tin tưởng <repo/>.",
+      "branchSetupScript": "Script thiết lập của nhánh"
+    }
   },
   "projectBoard": {
     "noColumnField": "Chế độ xem board này không có trường single-select hoặc iteration để nhóm, nên Orca hiển thị dạng danh sách.",
@@ -23053,7 +23246,8 @@
     }
   },
   "browserTab": {
-    "agentDriving": "Một agent đang dùng trang này"
+    "agentDriving": "Một agent đang dùng trang này",
+    "controlledByHost": "Do {{host}} điều khiển"
   },
   "nativeChat": {
     "math": {
@@ -23544,7 +23738,11 @@
     "viewed": {
       "markFile": "Đánh dấu {{path}} là đã xem",
       "unmarkFile": "Bỏ đánh dấu đã xem cho {{path}}"
-    }
+    },
+    "pasteImageFile": "Dán ảnh dưới dạng tệp để đính kèm lên GitHub.",
+    "imageUploadFailed": "Không thể đính kèm ảnh: {{message}}",
+    "imageUploadError": "GitHub không thể tải ảnh này lên.",
+    "waitForImageUploads": "Đợi ảnh tải lên xong rồi thử lại Tạo PR."
   },
   "agentPicker": {
     "catalogUnsupported": "Mô hình của {{agent}} không khả dụng trên host này. Bạn có thể giữ lựa chọn hiện tại hoặc dùng Tham số.",
@@ -23608,7 +23806,8 @@
         "settingUp": "Dự án vẫn đang được thiết lập trên host automation đã chọn.",
         "error": "Thiết lập dự án trên host automation đã chọn thất bại.",
         "unsupported": "Host automation đã chọn không hỗ trợ dự án này."
-      }
+      },
+      "managedHostServer": "Cần di chuyển sang {{host}}"
     },
     "extraAgentArgs": {
       "errors": {
@@ -23625,6 +23824,17 @@
         "effortRepeated": "Tham số bổ sung đặt mức nỗ lực nhiều hơn một lần."
       },
       "hostUpdateRequired": "Cập nhật Orca trên host này để dùng tham số bổ sung."
+    },
+    "setupTrust": {
+      "reviewTitle": "Phê duyệt lệnh thiết lập mới cho tự động hóa này?",
+      "reviewBody": "Một lần chạy đã bỏ qua thiết lập vì lệnh thiết lập trong <code>orca.yaml</code> của nhánh đã thay đổi. Phê duyệt sẽ cho phép các lần chạy sau dùng các lệnh này. Chỉ phê duyệt nếu bạn tin tưởng <repo/>.",
+      "approve": "Phê duyệt",
+      "approved": "Đã phê duyệt thiết lập. Các lần chạy sau của tự động hóa này sẽ chạy thiết lập.",
+      "skippedSinceApproved": "Thiết lập không chạy ở lần này vì lệnh thiết lập orca.yaml của nhánh đã thay đổi. Các lệnh đó đã được phê duyệt sau đó, nên các lần chạy sau sẽ chạy chúng.",
+      "skippedReview": "Thiết lập chưa chạy: nhánh của lần chạy này có lệnh thiết lập orca.yaml khác với lệnh đã được phê duyệt cho tự động hóa này. Hãy xem xét chúng để chạy thiết lập ở các lần chạy sau.",
+      "reviewAction": "Xem xét và phê duyệt thiết lập",
+      "listSkipped": "Đã bỏ qua thiết lập",
+      "listSkippedTitle": "Lần chạy gần nhất đã bỏ qua thiết lập vì lệnh thiết lập orca.yaml của nhánh đã thay đổi. Hãy xem xét chúng từ menu thao tác."
     }
   },
   "codeHost": {
@@ -23843,6 +24053,33 @@
     },
     "settings": {
       "availabilityCheckFailed": "Không kiểm tra được tình trạng khả dụng của trình giả lập."
+    },
+    "opening": {
+      "when": "Khi mở",
+      "description": "Áp dụng cho các tab trình giả lập mới trên máy tính này. Các phiên workspace hiện có vẫn giữ kết nối.",
+      "lastUsed": "Dùng gần nhất",
+      "ask": "Luôn hỏi",
+      "specific": "Thiết bị cụ thể",
+      "fixed": "Thiết bị mặc định",
+      "fixedDescription": "Chọn một thiết bị hiện có. Nếu thiết bị bị thiếu hoặc không khả dụng, bạn sẽ được nhắc chọn thiết bị khác thay vì khởi động một nền tảng khác.",
+      "choose": "Chọn thiết bị",
+      "notFound": "Không tìm thấy",
+      "missing": "Thiết bị đã lưu không còn trên máy tính này. Hãy chọn thiết bị khác.",
+      "unavailable": "Runtime của thiết bị đã lưu không khả dụng. Hãy chọn thiết bị khác hoặc cài đặt runtime của thiết bị đó.",
+      "askPrompt": "Chọn một thiết bị để mở.",
+      "firstUse": "Chọn thiết bị đầu tiên của bạn. Orca sẽ ghi nhớ các lựa chọn thành công trên máy tính này."
+    },
+    "picker": {
+      "choose": "Chọn trình giả lập",
+      "search": "Tìm thiết bị…",
+      "empty": "Không có thiết bị nào khớp",
+      "used": "Thiết bị đã dùng",
+      "other": "Thiết bị khác trên máy tính này",
+      "unavailable": "Runtime không khả dụng",
+      "runtimeUnavailable": "Runtime không khả dụng",
+      "running": "Đang chạy",
+      "starting": "Đang khởi động",
+      "stopped": "Đã dừng"
     }
   },
   "ephemeralVm": {
@@ -24565,5 +24802,41 @@
     "discussionAction": "Tham gia thảo luận",
     "checkAction": "Kiểm tra tương thích",
     "settingsStatus": "Orca {{version}} cần macOS {{macos}} trở lên. Đây là phiên bản mới nhất cho máy Mac này."
+  },
+  "gitGraph": {
+    "copyHash": "Sao chép mã hash commit",
+    "parents": "Commit cha",
+    "files": "Tệp",
+    "currentBranch": "Nhánh hiện tại",
+    "allBranches": "Tất cả nhánh",
+    "chosenBranches": "Nhánh đã chọn",
+    "searchRefs": "Tìm nhánh và tag",
+    "oldServer": "Phiên bản Orca trên máy chủ này chỉ hiển thị nhánh hiện tại",
+    "copyBranch": "Sao chép tên nhánh",
+    "switchWorkspace": "Chuyển sang workspace",
+    "workspaceClosed": "Nhánh này không còn được mở trong workspace khác.",
+    "workspaceCheckFailed": "Không thể kiểm tra workspace này. Hãy thử lại khi đã kết nối.",
+    "refresh": "Làm mới commit",
+    "branchTag": "Nhánh / Tag",
+    "graph": "Đồ thị",
+    "resizeColumn": "Đổi kích thước cột đồ thị",
+    "message": "Thông điệp",
+    "author": "Tác giả",
+    "date": "Ngày",
+    "loadMore": "Tải thêm",
+    "noCommits": "Chưa có commit nào",
+    "historyChanged": "Lịch sử lại thay đổi. Hãy làm mới Git Graph để thử lại.",
+    "loadFailed": "Không tải được lịch sử Git",
+    "updateHost": "Cập nhật Orca trên {{host}} để mở Git Graph",
+    "title": "Git Graph"
+  },
+  "remoteHostBrowserControl": {
+    "title": "{{host}} đang điều khiển một tab trình duyệt",
+    "description": "Các agent trên host SSH này có thể mở và sử dụng tab trình duyệt Orca trong các workspace của host. Các tab do host điều khiển sẽ hiển thị tên của host. Bạn có thể thay đổi điều này trong Cài đặt > SSH.",
+    "stop": "Dừng",
+    "disallow": "Không cho phép",
+    "stopped": "{{host}} đã ngừng điều khiển tab trình duyệt cho đến khi Orca khởi động lại.",
+    "disallowed": "{{host}} không thể điều khiển tab trình duyệt nữa. Bật lại trong Cài đặt > SSH.",
+    "failed": "Không thể dừng {{host}}. Hãy tắt quyền điều khiển trình duyệt của host này trong Cài đặt > SSH."
   }
 }

@@ -44,7 +44,7 @@ const mocks = vi.hoisted(() => {
 })
 
 vi.mock('@/store', async () => {
-  const { createTestStore } = await import('@/store/slices/store-test-helpers')
+  const { createTestStore } = await import('@/store/testing/app-store-test-fixture')
   const useAppStore = createTestStore()
   mocks.store = useAppStore
   return { useAppStore }
@@ -52,7 +52,7 @@ vi.mock('@/store', async () => {
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), message: vi.fn() } }))
 
-vi.mock('@/lib/worktree-runtime-owner', () => ({
+vi.mock('@/lib/workspace/ownership/worktree-runtime-owner', () => ({
   getExecutionHostIdForWorktree: () => 'local'
 }))
 

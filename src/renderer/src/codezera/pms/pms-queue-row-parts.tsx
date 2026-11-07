@@ -3,7 +3,7 @@ import { Ban, CalendarCheck, ExternalLink, Users, Zap } from 'lucide-react'
 import { translate } from './pms-i18n'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { openAppHttpLink } from '@/lib/app-http-link-open'
+import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
 import { cn } from '@/lib/utils'
 import type { PmsItem, PmsQueueRow } from '../../../../shared/codezera/pms-types'
 

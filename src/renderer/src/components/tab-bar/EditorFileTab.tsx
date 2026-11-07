@@ -1,16 +1,17 @@
 /* eslint-disable max-lines -- Why: upstream sits at the cap; Codezera's Git Graph tab icon is kept inline so upstream merges stay conflict-free. */
+import { editorTabWorkspace } from '@/store/slices/editor/tabs/workspace-editor-files'
 import type { EditorFileTabProps } from './editor-file-tab-props'
 import { ContextMenu, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import {
+  GitGraph,
   GitCompareArrows,
   Eye,
   ShieldAlert,
   Pin,
   ListChecks,
-  Smartphone,
-  GitGraph
+  Smartphone
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { TabHoverCard } from './TabHoverCard'
@@ -20,7 +21,9 @@ import { renameFileOnDisk } from '@/lib/rename-file'
 import { isImeCompositionKeyDown } from '@/lib/ime-composition-keyboard-event'
 import { detectLanguage } from '@/lib/language-detect'
 import { FileTypeIcon } from '@/components/FileTypeIcon'
-import { useRepoById, useWorktreeById } from '@/store/selectors'
+import { useWorktreeById } from '@/store/workspaces/selection/use-selected-worktree'
+import { getOpenFileExecutionHostId } from '@/lib/unified-tab-host-ownership'
+import { resolveReviewRepository } from '@/lib/review-owner'
 import { useAppStore } from '@/store'
 import { STATUS_COLORS } from '../../lib/git-path-decoration'
 import { STATUS_LABELS } from '../../../../shared/git/status/git-status-labels'
@@ -44,7 +47,7 @@ import { EditorFileTabCloseButton } from './EditorFileTabCloseButton'
 import { useTabStripPointerActivation } from './tab-strip-pointer-activation'
 import { useTabContextMenuOpening } from './tab-context-menu-opening'
 import { editorTabDocumentFolderAccess } from '@/lib/local-file-access'
-import { useTabCustomEditor } from '@/store/plugin-custom-editors'
+import { useTabCustomEditor } from '@/store/plugins/file-editors/plugin-custom-editors'
 import { PluginContributionIcon } from '../plugins/PluginContributionIcon'
 
 export default function EditorFileTab({
@@ -68,8 +71,15 @@ export default function EditorFileTab({
   dropIndicator,
   includeTopTabBorder = true
 }: EditorFileTabProps): React.JSX.Element {
-  const worktree = useWorktreeById(file.worktreeId)
-  const repo = useRepoById(worktree?.repoId ?? null)
+  const placedElsewhere = useAppStore((state) =>
+    file.tabId
+      ? editorTabWorkspace(state.unifiedTabsByWorktree, file.tabId) !== file.worktreeId
+      : false
+  )
+  const worktree = useWorktreeById(file.worktreeId, getOpenFileExecutionHostId(file))
+  const repo = useAppStore((state) =>
+    worktree ? resolveReviewRepository(state.repos, worktree) : null
+  )
   // Keep dragged tabs anchored; only the insertion bar moves.
   const { attributes, listeners, setNodeRef } = useSortable({
     // Split copies share a file entity; unified tab IDs keep each copy independently draggable.
@@ -83,21 +93,24 @@ export default function EditorFileTab({
   const isMarkdownPreviewTab = file.mode === 'markdown-preview'
   const customEditor = useTabCustomEditor(file)
   // Why: simulator tabs reuse this chrome with a synthetic path an icon theme would map to its file icon.
-  const ModeIcon = isConflictReview
-    ? ShieldAlert
-    : isCheckDetails
-      ? ListChecks
-      : isDiff
-        ? GitCompareArrows
-        : isMarkdownPreviewTab
-          ? Eye
-          : file.language === 'simulator'
-            ? Smartphone
-            : file.mode === 'codezera-panel'
-              ? file.codezeraPanel === 'sftp-compare'
-                ? GitCompareArrows
-                : GitGraph
-              : null
+  const ModeIcon =
+    file.mode === 'git-graph'
+      ? GitGraph
+      : isConflictReview
+        ? ShieldAlert
+        : isCheckDetails
+          ? ListChecks
+          : isDiff
+            ? GitCompareArrows
+            : isMarkdownPreviewTab
+              ? Eye
+              : file.language === 'simulator'
+                ? Smartphone
+                : file.mode === 'codezera-panel'
+                  ? file.codezeraPanel === 'sftp-compare'
+                    ? GitCompareArrows
+                    : GitGraph
+                  : null
   const tabIcon = (className: string): React.ReactNode => (
     <PluginContributionIcon
       url={customEditor?.iconUrl}
@@ -331,6 +344,7 @@ export default function EditorFileTab({
             }}
           >
             {getEditorDisplayLabel(file)}
+            {placedElsewhere && repo ? ` · ${repo.displayName}` : ''}
           </span>
         )}
         {isMissingFileMutation && !isRenaming && (
@@ -377,7 +391,7 @@ export default function EditorFileTab({
             tabRoot
           ) : (
             <TabHoverCard
-              title={getEditorDisplayLabel(file)}
+              title={`${getEditorDisplayLabel(file)}${placedElsewhere && repo ? ` · ${repo.displayName}` : ''}`}
               programName={customEditor?.title ?? translate('tabHoverCard.editor', 'Editor')}
               icon={tabIcon('size-4')}
               description={file.relativePath}

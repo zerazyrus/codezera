@@ -137,7 +137,6 @@ export function attachMainWindowCoreServices(
     prepareForClaudeLaunch: (target) => claudeRuntimeAuth.prepareForClaudeLaunch(target),
     resolveBaseEnvironment: () => resolveHostAgentBaseEnvironment(store.getSettings())
   })
-  automations.setWebContents(window.webContents)
   automations.start()
   attachMainWindowServices(
     window,

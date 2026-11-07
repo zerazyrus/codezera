@@ -8,14 +8,14 @@ import {
 } from './task-page-linear-refresh-test-fixtures'
 import { pendingLinearIssueWrites } from '@/store/slices/linear/linear-issue-publication'
 import { getLinearSourceScope } from '@/store/slices/linear/linear-slice-scope'
-import { writeLinearIssue } from '@/lib/linear-issue-write'
+import { writeLinearIssue } from '@/lib/work-items/linear/linear-issue-write'
 import { defaultScopeSource } from '@/lib/default-creation-host'
 import LinearItemDrawer from '../../LinearItemDrawer'
 import { useLinearIssueWorkspaceDetail } from '../../linear-issue-workspace-detail-state'
 import type { LinearIssue } from '../../../../../shared/linear/issue-types'
 import { expect, it, vi } from 'vitest'
 import { act, renderHook, waitFor, render, screen } from '@testing-library/react'
-import { deferred } from '../../../store/slices/linear-slice-test-harness'
+import { deferred } from '../../../store/slices/linear/linear-slice-test-harness'
 
 // The navigation snapshot predates the save; no second writer supplies a missing enrollment edge.
 it.each(['workspace', 'drawer'] as const)(
@@ -184,7 +184,8 @@ it('queued initial detail setters cannot revoke settled intent or cross a full-s
 
 it('actual runtime-status session loss and recovery reacquire hydration and finish loading', async () => {
   const s = store()
-  const { createRuntimeStatusSlice } = await import('@/store/slices/runtime-status')
+  const { createRuntimeStatusSlice } =
+    await import('@/store/slices/runtime-status/create-runtime-status-slice')
   // SAFETY: this fixture installs the production runtime slice over the same Zustand store.
   const runtime = createRuntimeStatusSlice(
     s.setState,

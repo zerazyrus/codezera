@@ -56,6 +56,8 @@ A conflict only happens where Codezera and Orca edit the same lines of an Orca f
 - PMS picklists use `pms-picker.tsx` (Popover + Command, accent-insensitive search) instead of Orca's `Select`; new PMS pickers should reuse it. The agent workflow appended to every PMS-started prompt lives in `pms-workflow.ts` (default distilled from the `/pms` skill, user override in localStorage `codezera.pms.agentWorkflow`, edited under Settings → Integrations → CloudGO PMS).
 - Locally: `git config rerere.enabled true` (set by the setup script) replays a resolution you already made if the same conflict recurs.
 - Resolving: take Orca's side, then re-apply Codezera's hook where Orca moved the code (see the upstream commit's diff), then `pnpm tc:web` before pushing.
+- Union-type conflicts (editor `mode`, `EDITOR_VIEW_MODES`, `ModeIcon` arms, monaco setup steps): keep both sides — Orca's new members plus Codezera's `codezera-panel` lines. Orca's own Git Graph tab (`mode: 'git-graph'`, view-only) coexists with Codezera's Git Graph panel (`codezera-panel`, with checkout/merge/stash actions).
+- Orca moves renderer modules often (e.g. `@/store/selectors` → `@/store/workspaces/selection/use-selected-worktree`); fix Codezera imports by finding the symbol's new home in the upstream commit that deleted the old file. Orca's new English keys also need `vi.json` entries or `verify:localization-catalogs` fails.
 
 ## Unsigned macOS
 

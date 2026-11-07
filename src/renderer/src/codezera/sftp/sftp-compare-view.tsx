@@ -5,9 +5,9 @@ import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import { translate } from '@/i18n/i18n'
 import { detectLanguage } from '@/lib/language-detect'
 import { SftpToolbarButton as ToolbarButton } from './sftp-toolbar-button'
-import { readRuntimeFileContent } from '@/runtime/runtime-file-read-client'
-import { writeRuntimeFile } from '@/runtime/runtime-file-mutation-client'
-import type { OpenFile } from '@/store/slices/editor'
+import { readRuntimeFileContent } from '@/runtime/files/reads/runtime-file-read-client'
+import { writeRuntimeFile } from '@/runtime/files/mutations/runtime-file-mutation-client'
+import type { OpenFile } from '@/store/slices/editor/types/open-file'
 import type { SftpRemoteFile } from '../../../../shared/codezera/sftp-types'
 import {
   onCodezeraFileSaved,

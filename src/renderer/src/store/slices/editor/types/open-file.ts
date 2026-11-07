@@ -1,4 +1,5 @@
-import type { RecentlyClosedTabPosition } from '../../recently-closed-tabs'
+import type { ExecutionHostId } from '../../../../../../shared/execution-host'
+import type { RecentlyClosedTabPosition } from '../../tabs/recently-closed-tab-position'
 import type { EditorFileOperationProvenance } from '@/lib/editor-file-operation-owner'
 import type {
   GitBranchChangeEntry,
@@ -99,6 +100,7 @@ export type OpenFile = {
     | 'markdown-preview'
     | 'check-details'
     | 'codezera-panel'
+    | 'git-graph'
 }
 
 export type ActivityBarPosition = 'top' | 'side'
@@ -127,6 +129,8 @@ export const MAX_RECENT_CLOSED_EDITOR_TABS = 10
 export type EditorTabSelection = 'focus' | 'background' | 'none'
 
 export type EditorOpenTargetOptions = {
+  placementWorkspaceId?: string
+  executionHostId?: ExecutionHostId
   targetGroupId?: string
   preview?: boolean
   runtimeEnvironmentId?: string | null

@@ -1,12 +1,13 @@
 import { useAppStore } from '@/store'
-import { selectWorktreesByRepo } from '@/store/workspace-record-selectors'
-import { prepareDirectWorkItemSetup } from '@/lib/direct-work-item-setup'
-import { activateAndRevealWorktree } from '@/lib/worktree-activation'
-import { launchAgentInNewTab } from '@/lib/launch-agent-in-new-tab'
+import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-record-fields'
+import { prepareDirectWorkItemSetup } from '@/lib/workspace/creation/work-item/direct-work-item-setup'
+import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
+import { launchAgentInNewTab } from '@/lib/agent-session/launch/new-tab/launch-agent-in-new-tab'
 import { resolveDefaultAgentForWorktreeNewTab } from '@/lib/agent-tab-shortcuts'
-import { newAgentLaunchRequestId } from '@/lib/agent-launch-request-id'
+import { newAgentLaunchRequestId } from '@/lib/agent-session/launch/routing/agent-launch-request-id'
 import { getRepoExecutionHostId } from '../../../../shared/execution-host'
 import { isGitRepoKind } from '../../../../shared/repo-kind'
+import { pickApprovedSetupHashes } from '../../../../shared/worktree/approved-setup-hashes'
 import type { Repo } from '../../../../shared/repo-types'
 
 const PROJECT_REPOS_KEY = 'codezera.pms.projectRepos'
@@ -92,7 +93,7 @@ export async function startPmsWorktree(args: {
     repo.id,
     args.name,
     undefined,
-    setup,
+    setup.setupDecision,
     undefined,
     'unknown',
     args.displayName,
@@ -114,7 +115,7 @@ export async function startPmsWorktree(args: {
     undefined,
     undefined,
     undefined,
-    { executionHostId: hostId }
+    { executionHostId: hostId, ...pickApprovedSetupHashes(setup) }
   )
   await startAgent(created.worktree.id, args.prompt)
   return true
