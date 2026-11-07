@@ -27,7 +27,7 @@ export function mobileWebAppBundleMaxAssets(routeCount, imageCount, catalogChunk
 
 // UI-language catalogs have their own allowance, like the font: one chunk per non-English locale,
 // fetched only for the active language, never before the first route. Code keeps its own fence.
-export const MOBILE_WEB_APP_BUNDLE_MAX_CATALOG_CHUNKS = 10
+export const MOBILE_WEB_APP_BUNDLE_MAX_CATALOG_CHUNKS = 11 // Codezera: +1 for vi
 export const MOBILE_WEB_APP_BUNDLE_MAX_CATALOG_BYTES = 3 * 1024 * 1024
 
 // Our own fence on the page's code, well inside the phone contract (32 MiB total, 10 MiB per asset in
