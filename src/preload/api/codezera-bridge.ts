@@ -30,7 +30,7 @@ export const codezeraApi: CodezeraApi = {
   },
   ckit: {
     getQuota: () => ipcRenderer.invoke('codezera:ckit:getQuota'),
-    saveApiKey: (apiKey) => ipcRenderer.invoke('codezera:ckit:saveApiKey', apiKey)
+    saveApiKey: (apiKey, options) => ipcRenderer.invoke('codezera:ckit:saveApiKey', apiKey, options)
   },
   snippets: {
     list: () => ipcRenderer.invoke('codezera:snippets:list'),

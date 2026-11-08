@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { CheckCircle2, KeyRound, Loader2, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { OnboardingInlineCommandTerminal } from '@/components/onboarding/OnboardingInlineCommandTerminal'
 import { barColor } from '@/components/status-bar/provider-extra-usage-section'
 import { translate } from '@/i18n/i18n'
@@ -53,12 +55,13 @@ function ApiKeyForm({ onSaved }: { onSaved?: () => void }): React.JSX.Element {
   const [value, setValue] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [autoApprove, setAutoApprove] = useState(false)
 
   const submit = async (): Promise<void> => {
     setSaving(true)
     setError(null)
     try {
-      await saveApiKey(value)
+      await saveApiKey(value, { autoApprove })
       setValue('')
       onSaved?.()
     } catch (err) {
@@ -102,6 +105,21 @@ function ApiKeyForm({ onSaved }: { onSaved?: () => void }): React.JSX.Element {
           )}
           {translate('codezera.ckit.saveKey', 'Verify & save')}
         </Button>
+      </div>
+      <div className="flex items-start gap-2">
+        <Checkbox
+          id="codezera-ckit-auto-approve"
+          className="mt-0.5"
+          checked={autoApprove}
+          disabled={saving}
+          onCheckedChange={(next) => setAutoApprove(next === true)}
+        />
+        <Label htmlFor="codezera-ckit-auto-approve" className="text-xs font-normal leading-snug">
+          {translate(
+            'codezera.ckit.autoApprove',
+            'Let omp run tools without asking (approvalMode: yolo). Faster, but the agent can run any command on this computer.'
+          )}
+        </Label>
       </div>
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </form>
@@ -160,7 +178,7 @@ function SetupSteps({
         <p className="text-xs text-muted-foreground">
           {translate(
             'codezera.ckit.step2Hint',
-            'Codezera checks the key with the gateway, then saves it to {{path}} with the CloudGO Claude provider and the team model roles, so ckit, omp and Codezera all use it. Roles you already picked are kept, and a backup of the old file is kept next to it.',
+            'Codezera checks the key with the gateway and saves it to {{path}} with the CloudGO Claude provider, then writes the team model roles and omp settings (memory, compaction, autolearn) to config.yml next to it, so ckit, omp and Codezera all use it. Settings you already changed are kept, and each file gets a backup.',
             { path: status.configPath }
           )}
         </p>

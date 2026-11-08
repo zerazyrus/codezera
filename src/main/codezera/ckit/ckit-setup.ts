@@ -2,7 +2,7 @@ import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { Document, isMap, parseDocument } from 'yaml'
+import { Document, isMap, parseDocument, Scalar } from 'yaml'
 import { z } from 'zod'
 import { CKIT_CLAUDE_BASE_URL, CKIT_PROVIDER, getCkitModelsPath } from './ckit-quota'
 
@@ -26,6 +26,38 @@ const TEAM_MODEL_ROLES: Record<string, { models: string[]; effort: string }> = {
   tiny: HAIKU,
   commit: HAIKU
 }
+
+// Team omp settings. Applied when absent or still on the value ckit setup seeds (`replaces`), so
+// anything the user changed by hand stays. Compaction follows the team lead's guidance: a fixed
+// 300k trigger (wins over ckit's thresholdPercent) and an idle compact before the 5-minute prompt cache expires.
+const TEAM_OMP_SETTINGS: { path: string[]; value: unknown; replaces?: unknown }[] = [
+  { path: ['memory', 'backend'], value: 'mnemopi' },
+  { path: ['mnemopi', 'scoping'], value: 'per-project', replaces: 'per-project-tagged' },
+  { path: ['mnemopi', 'llmMode'], value: 'smol' },
+  { path: ['mnemopi', 'noEmbeddings'], value: false, replaces: true },
+  { path: ['mnemopi', 'polyphonicRecall'], value: true },
+  { path: ['mnemopi', 'enhancedRecall'], value: true },
+  { path: ['mnemopi', 'embeddingVariant'], value: 'multilingual' },
+  { path: ['compaction', 'thresholdTokens'], value: 300_000 },
+  { path: ['compaction', 'idleEnabled'], value: true },
+  { path: ['compaction', 'idleThresholdTokens'], value: 250_000 },
+  { path: ['compaction', 'idleTimeoutSeconds'], value: 260 },
+  { path: ['autolearn', 'enabled'], value: true },
+  { path: ['autolearn', 'autoContinue'], value: true },
+  { path: ['advisor', 'enabled'], value: false },
+  // Quoted like omp writes it; a bare `off` is a boolean to YAML 1.1 readers.
+  {
+    path: ['task', 'agentAdvisor', 'task'],
+    value: Object.assign(new Scalar('off'), { type: Scalar.QUOTE_DOUBLE })
+  },
+  { path: ['commands', 'enableClaudeUser'], value: false },
+  { path: ['commands', 'enableClaudeProject'], value: false },
+  { path: ['commands', 'enableOpencodeUser'], value: false },
+  { path: ['commands', 'enableOpencodeProject'], value: false },
+  { path: ['contextPromotion', 'enabled'], value: false },
+  { path: ['ttsr', 'builtinRules'], value: true },
+  { path: ['browser', 'relay'], value: true }
+]
 
 function getOmpConfigPath(): string {
   return join(homedir(), '.omp', 'agent', 'config.yml')
@@ -137,10 +169,8 @@ async function saveProvider(apiKey: string, models: GatewayModel[]): Promise<voi
 
 // ckit setup seeds roles on its 9router catalog, which this gateway does not serve. Those roles
 // and missing team roles move to the team routing on cloudgo-cc; roles the user picked stay.
-async function routeModelRoles(models: GatewayModel[]): Promise<void> {
+function routeModelRoles(doc: Document, models: GatewayModel[]): boolean {
   const ids = new Set(models.map((m) => m.id))
-  const path = getOmpConfigPath()
-  const doc = await readDocument(path)
   const parsed = z
     .object({ modelRoles: z.record(z.string(), z.unknown()).optional() })
     .safeParse(doc.toJS())
@@ -159,17 +189,42 @@ async function routeModelRoles(models: GatewayModel[]): Promise<void> {
     doc.setIn(['modelRoles', role], `${CKIT_PROVIDER}/${model}:${preset.effort}`)
     changed = true
   }
-  if (changed) {
-    await writeDocument(path, doc)
-  }
+  return changed
 }
 
-export async function saveCkitApiKey(rawKey: unknown): Promise<void> {
+function applyTeamSettings(doc: Document, autoApprove: boolean): boolean {
+  let changed = false
+  for (const { path, value, replaces } of TEAM_OMP_SETTINGS) {
+    const current = doc.getIn(path)
+    if (current === undefined || (replaces !== undefined && current === replaces)) {
+      doc.setIn(path, value)
+      changed = true
+    }
+  }
+  // Auto-approving every tool call is a per-person choice, so it is only ever switched on here.
+  if (autoApprove && doc.getIn(['tools', 'approvalMode']) !== 'yolo') {
+    doc.setIn(['tools', 'approvalMode'], 'yolo')
+    changed = true
+  }
+  return changed
+}
+
+export async function saveCkitApiKey(rawKey: unknown, rawOptions: unknown): Promise<void> {
   if (typeof rawKey !== 'string' || !rawKey.trim()) {
     throw new Error('Enter your CloudGO gateway API key.')
   }
+  const { autoApprove } = z
+    .object({ autoApprove: z.boolean() })
+    .catch({ autoApprove: false })
+    .parse(rawOptions)
   const apiKey = rawKey.trim()
   const models = await verifyKey(apiKey)
   await saveProvider(apiKey, models)
-  await routeModelRoles(models)
+  // One write so the .codezera-bak backup holds the file as it was before Codezera touched it.
+  const path = getOmpConfigPath()
+  const doc = await readDocument(path)
+  const rolesChanged = routeModelRoles(doc, models)
+  if (applyTeamSettings(doc, autoApprove) || rolesChanged) {
+    await writeDocument(path, doc)
+  }
 }

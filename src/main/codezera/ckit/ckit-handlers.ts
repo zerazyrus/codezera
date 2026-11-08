@@ -4,8 +4,8 @@ import { saveCkitApiKey } from './ckit-setup'
 
 export function registerCodezeraCkitHandlers(): void {
   ipcMain.handle('codezera:ckit:getQuota', () => getCkitQuota())
-  ipcMain.handle('codezera:ckit:saveApiKey', async (_event, apiKey: unknown) => {
-    await saveCkitApiKey(apiKey)
+  ipcMain.handle('codezera:ckit:saveApiKey', async (_event, apiKey: unknown, options: unknown) => {
+    await saveCkitApiKey(apiKey, options)
     return getCkitQuota()
   })
 }

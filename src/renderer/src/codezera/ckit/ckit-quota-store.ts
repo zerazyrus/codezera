@@ -12,7 +12,7 @@ type CkitQuotaStore = {
   refreshing: boolean
   refresh: () => Promise<void>
   /** Throws the gateway's reason so the form can show it. */
-  saveApiKey: (apiKey: string) => Promise<void>
+  saveApiKey: (apiKey: string, options: { autoApprove: boolean }) => Promise<void>
 }
 
 export const useCkitQuotaStore = create<CkitQuotaStore>()((set, get) => ({
@@ -32,8 +32,8 @@ export const useCkitQuotaStore = create<CkitQuotaStore>()((set, get) => ({
       set({ refreshing: false })
     }
   },
-  saveApiKey: async (apiKey) => {
-    set({ status: await window.api.codezera.ckit.saveApiKey(apiKey) })
+  saveApiKey: async (apiKey, options) => {
+    set({ status: await window.api.codezera.ckit.saveApiKey(apiKey, options) })
   }
 }))
 

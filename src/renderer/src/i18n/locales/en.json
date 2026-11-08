@@ -24421,7 +24421,8 @@
       "installHint": "Press Enter to install ckit and its agent harness (omp, skills, codegraph, MCP servers).",
       "installHintWindows": "Press Enter to install Bun (if missing), ckit and its agent harness (omp, skills, codegraph, MCP servers) in PowerShell.",
       "step2": "Enter your CloudGO gateway key",
-      "step2Hint": "Codezera checks the key with the gateway, then saves it to {{path}} with the CloudGO Claude provider and the team model roles, so ckit, omp and Codezera all use it. Roles you already picked are kept, and a backup of the old file is kept next to it.",
+      "step2Hint": "Codezera checks the key with the gateway and saves it to {{path}} with the CloudGO Claude provider, then writes the team model roles and omp settings (memory, compaction, autolearn) to config.yml next to it, so ckit, omp and Codezera all use it. Settings you already changed are kept, and each file gets a backup.",
+      "autoApprove": "Let omp run tools without asking (approvalMode: yolo). Faster, but the agent can run any command on this computer.",
       "changeKey": "Change key"
     },
     "snippets": {

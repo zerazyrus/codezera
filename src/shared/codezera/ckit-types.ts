@@ -31,6 +31,6 @@ export type CkitQuotaStatus =
 
 export type CkitApi = {
   getQuota: () => Promise<CkitQuotaStatus>
-  /** Verifies the key against the gateway, then writes it into the omp config ckit uses. */
-  saveApiKey: (apiKey: string) => Promise<CkitQuotaStatus>
+  /** Verifies the key against the gateway, then writes it plus the team omp settings into the config ckit uses. */
+  saveApiKey: (apiKey: string, options: { autoApprove: boolean }) => Promise<CkitQuotaStatus>
 }
