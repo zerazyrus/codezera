@@ -1,0 +1,66 @@
+# Codezera: unpublished Windows review build ("Codezera Review", installs beside the release app).
+# Push any commit to a `review/**` branch; the installer lands as a run artifact, never a release.
+name: codezera-review-win
+
+on:
+  push:
+    branches: ['review/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.repository == 'zerazyrus/codezera'
+    runs-on: windows-2022
+    timeout-minutes: 150
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      ORCA_BACKGROUND_LAUNCH: '1'
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # codezera-package pins agent skills to the last merged stablyai/orca commit (merge-base with upstream/main).
+      - name: Fetch upstream Orca
+        shell: bash
+        run: |
+          git remote add upstream https://github.com/stablyai/orca.git
+          git fetch --no-tags --filter=blob:none upstream main
+
+      - uses: pnpm/setup@v2
+        with:
+          install: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: package.json
+          check-latest: true
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            mobile/pnpm-lock.yaml
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: pnpm install --frozen-lockfile
+
+      - uses: ./.github/actions/install-mobile-dependencies
+
+      - name: Build the review installer
+        shell: bash
+        run: node config/scripts/codezera-package.mjs win --review
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codezera-review-windows-setup
+          path: dist/codezera-review-windows-setup.exe
+          if-no-files-found: error
+          retention-days: 14
