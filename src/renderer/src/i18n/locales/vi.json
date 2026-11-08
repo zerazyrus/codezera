@@ -24423,7 +24423,16 @@
       "step2": "Nhập key gateway CloudGO của bạn",
       "step2Hint": "Codezera kiểm tra key với gateway và lưu vào {{path}} cùng nhà cung cấp Claude của CloudGO, rồi ghi bộ model theo vai trò và cấu hình omp chung của team (bộ nhớ, compaction, autolearn) vào config.yml ngay cạnh đó, để ckit, omp và Codezera cùng dùng. Thiết lập bạn đã tự đổi được giữ nguyên, và mỗi tệp đều có bản sao lưu.",
       "autoApprove": "Cho omp chạy công cụ mà không cần hỏi (approvalMode: yolo). Nhanh hơn, nhưng agent có thể chạy bất kỳ lệnh nào trên máy này.",
-      "changeKey": "Đổi key"
+      "changeKey": "Đổi key",
+      "updateTitle": "Có bản cập nhật ckit / omp",
+      "updateDoneTitle": "Đã cập nhật ckit / omp",
+      "updateDismiss": "Đóng",
+      "updateDoneHint": "Các phiên omp đang mở vẫn chạy bản cũ; khởi động lại để dùng bản mới.",
+      "updateFailed": "Cập nhật {{tool}} thất bại:",
+      "updating": "Đang cập nhật…",
+      "updateRetry": "Thử lại",
+      "updateNow": "Cập nhật ngay",
+      "updateLater": "Để sau"
     },
     "snippets": {
       "importMissing": "Không có thư mục snippet VS Code tại {{path}}.",

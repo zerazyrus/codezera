@@ -79,6 +79,7 @@ Output: `dist/`. Needs `pnpm install` and `pnpm -C mobile install --frozen-lockf
 - Own bundle id `net.thezera.codezera.review` and userData `~/Library/Application Support/codezera-review`, so projects, settings and the single-instance lock never touch the release app.
 - Version `99.<yyyymmdd>.<hhmm>`: above every release, so the updater never replaces it. Never published.
 - Windows review installer: push to any `review/**` branch (`git push origin HEAD:review/<name>`). `codezera-review-win` builds `codezera-review-windows-setup.exe` as a 14-day run artifact; fetch it with `gh run download <run-id> -R zerazyrus/codezera`.
+- Ckit update notice (`src/renderer/src/codezera/ckit/CkitToolUpdateCard.tsx`, mounted in `AppNotificationCards.tsx`): on launch and every 6 h, compares installed ckit with the latest `dante241/ckit_agent` release and runs `omp update --check`; "Update now" runs `ckit up` then `omp update`. "Later" hides that release until a newer one ships.
 
 ## Download links (thezera.net/apps/codezera)
 

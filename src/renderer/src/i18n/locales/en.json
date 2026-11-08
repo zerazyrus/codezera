@@ -24423,7 +24423,16 @@
       "step2": "Enter your CloudGO gateway key",
       "step2Hint": "Codezera checks the key with the gateway and saves it to {{path}} with the CloudGO Claude provider, then writes the team model roles and omp settings (memory, compaction, autolearn) to config.yml next to it, so ckit, omp and Codezera all use it. Settings you already changed are kept, and each file gets a backup.",
       "autoApprove": "Let omp run tools without asking (approvalMode: yolo). Faster, but the agent can run any command on this computer.",
-      "changeKey": "Change key"
+      "changeKey": "Change key",
+      "updateTitle": "ckit / omp update available",
+      "updateDoneTitle": "ckit / omp updated",
+      "updateDismiss": "Dismiss",
+      "updateDoneHint": "Open omp sessions keep the old version; restart them to use the new one.",
+      "updateFailed": "{{tool}} update failed:",
+      "updating": "Updating…",
+      "updateRetry": "Try again",
+      "updateNow": "Update now",
+      "updateLater": "Later"
     },
     "snippets": {
       "importMissing": "No VS Code snippets folder at {{path}}.",

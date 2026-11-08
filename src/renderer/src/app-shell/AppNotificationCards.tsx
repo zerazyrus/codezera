@@ -2,6 +2,7 @@ import { Suspense, type JSX } from 'react'
 import type { TopLevelView } from '../../../shared/ui-chrome-types'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import { CodexSharedSettingsNoticeCard } from '../components/CodexSharedSettingsNoticeCard'
+import { CkitToolUpdateCard } from '../codezera/ckit/CkitToolUpdateCard'
 import { NotificationCardStack } from '../components/NotificationCardStack'
 import { StarNagCard } from '../components/StarNagCard'
 import { OverlayBoundary } from './app-root-surface-boundaries'
@@ -58,6 +59,9 @@ export function AppNotificationCards({
       </OverlayBoundary>
       <OverlayBoundary boundaryId="overlay.codex-shared-settings-notice" resetKey={activeView}>
         <CodexSharedSettingsNoticeCard />
+      </OverlayBoundary>
+      <OverlayBoundary boundaryId="overlay.codezera-ckit-tool-update" resetKey={activeView}>
+        <CkitToolUpdateCard />
       </OverlayBoundary>
     </NotificationCardStack>
   )

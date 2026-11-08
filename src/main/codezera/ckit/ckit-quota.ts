@@ -7,12 +7,12 @@ import { z } from 'zod'
 import type { CkitQuotaStatus, CkitQuotaWindow } from '../../../shared/codezera/ckit-types'
 
 // Where install.sh / install.ps1 drop the binary by default.
-export function isCkitInstalled(): boolean {
+export function getCkitBinaryPath(): string {
   if (process.platform === 'win32') {
     const localAppData = process.env.LOCALAPPDATA ?? join(homedir(), 'AppData', 'Local')
-    return existsSync(join(localAppData, 'Programs', 'ckit', 'ckit.exe'))
+    return join(localAppData, 'Programs', 'ckit', 'ckit.exe')
   }
-  return existsSync(join(homedir(), '.local', 'bin', 'ckit'))
+  return join(homedir(), '.local', 'bin', 'ckit')
 }
 
 // Shared with ckit/omp. Codezera writes it only when the user saves a key in Settings.
@@ -98,7 +98,7 @@ export async function getCkitQuota(): Promise<CkitQuotaStatus> {
   } catch {
     // Missing or malformed models.yml both mean "not set up yet".
   }
-  const ckitInstalled = isCkitInstalled()
+  const ckitInstalled = existsSync(getCkitBinaryPath())
   if (!provider) {
     return { state: 'not-configured', configPath, ckitInstalled }
   }
