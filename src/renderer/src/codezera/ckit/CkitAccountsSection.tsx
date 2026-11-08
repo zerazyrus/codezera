@@ -12,9 +12,18 @@ import { CloudgoLogo, ckitResetLabel, ckitWindowLabel } from './ckit-quota-prese
 
 export const CKIT_SEARCH_KEYWORDS = ['ckit', 'cloudgo', 'gateway', 'quota', 'usage', 'omp', 'key']
 
-// The installer drops ckit in ~/.local/bin; call it by path because that dir may not be on PATH yet.
-const CKIT_INSTALL_COMMAND =
-  'curl -fsSL https://raw.githubusercontent.com/dante241/ckit_agent/main/install.sh | sh && ~/.local/bin/ckit setup --no-profile'
+const CKIT_RAW = 'https://raw.githubusercontent.com/dante241/ckit_agent/main'
+// The installer's bin dirs may not be on PATH yet in this shell; `harness global` applies the team omp rules.
+const CKIT_INSTALL_COMMAND = `export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && curl -fsSL ${CKIT_RAW}/install.sh | sh && ckit setup --no-profile && ckit harness global`
+// Windows PowerShell 5.1 has no `&&`. Installers run in child shells so an `exit` inside them keeps this one;
+// ckit setup needs Bun there to install omp and codegraph.
+const CKIT_WINDOWS_INSTALL_COMMAND = [
+  'if (-not (Get-Command bun -ErrorAction SilentlyContinue)) { powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://bun.sh/install.ps1 | iex" }',
+  `powershell -NoProfile -ExecutionPolicy Bypass -Command "irm ${CKIT_RAW}/install.ps1 | iex"`,
+  '$env:Path = "$env:USERPROFILE\\.bun\\bin;$env:LOCALAPPDATA\\Programs\\ckit;$env:Path"',
+  'ckit setup --no-profile',
+  'if ($LASTEXITCODE -eq 0) { ckit harness global }'
+].join('; ')
 
 function StepTitle({
   step,
@@ -117,27 +126,28 @@ function SetupSteps({
           <p className="text-xs text-muted-foreground">
             {translate('codezera.ckit.installed', 'ckit is installed on this computer.')}
           </p>
-        ) : windows ? (
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'codezera.ckit.windowsUnsupported',
-              'ckit has no Windows installer yet. You can still enter your key below to track quota.'
-            )}
-          </p>
         ) : (
           <OnboardingInlineCommandTerminal
-            command={CKIT_INSTALL_COMMAND}
+            command={windows ? CKIT_WINDOWS_INSTALL_COMMAND : CKIT_INSTALL_COMMAND}
             title={translate('codezera.ckit.installTerminal', 'ckit setup')}
             ariaLabel={translate('codezera.ckit.installTerminalLabel', 'ckit install terminal')}
-            description={translate(
-              'codezera.ckit.installHint',
-              'Press Enter to install ckit and its agent harness (omp, skills, codegraph).'
-            )}
+            description={
+              windows
+                ? translate(
+                    'codezera.ckit.installHintWindows',
+                    'Press Enter to install Bun (if missing), ckit and its agent harness (omp, skills, codegraph, MCP servers) in PowerShell.'
+                  )
+                : translate(
+                    'codezera.ckit.installHint',
+                    'Press Enter to install ckit and its agent harness (omp, skills, codegraph, MCP servers).'
+                  )
+            }
             terminalHeightPx={260}
             terminalTopMarginPx={8}
             descriptionPaddingClassName="px-4 py-2"
             autoScrollIntoView={false}
             worktreeId="codezera-ckit-install-terminal"
+            shellOverride={windows ? 'powershell.exe' : undefined}
             forceHostRuntime
             onCommandFinished={() => void refresh()}
           />
@@ -150,7 +160,7 @@ function SetupSteps({
         <p className="text-xs text-muted-foreground">
           {translate(
             'codezera.ckit.step2Hint',
-            'Codezera checks the key with the gateway, then saves it to {{path}} so ckit, omp and Codezera all use it. A backup of the old file is kept next to it.',
+            'Codezera checks the key with the gateway, then saves it to {{path}} with the CloudGO Claude provider and the team model roles, so ckit, omp and Codezera all use it. Roles you already picked are kept, and a backup of the old file is kept next to it.',
             { path: status.configPath }
           )}
         </p>

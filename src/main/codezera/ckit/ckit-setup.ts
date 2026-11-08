@@ -7,10 +7,25 @@ import { z } from 'zod'
 import { CKIT_CLAUDE_BASE_URL, CKIT_PROVIDER, getCkitModelsPath } from './ckit-quota'
 
 const REQUEST_TIMEOUT_MS = 15_000
-const PREFERRED_DEFAULT_MODELS = ['claude-sonnet-5', 'claude-opus-5-5', 'claude-opus-4-8']
-const CHEAP_MODEL = 'claude-haiku-4-5-20251001'
 // The /llm/ routes only; ckit's seeded 9router entries sit on the bare host with a placeholder key.
 const CKIT_GATEWAY_ORIGIN = 'https://ai-gateway.cloudgo.vn/llm/'
+
+// CloudGO team routing (same as the maintainer's machine); each role takes the first model the gateway serves.
+const OPUS_HIGH = {
+  models: ['claude-opus-4-8', 'claude-opus-5-5', 'claude-opus-5'],
+  effort: 'high'
+}
+const HAIKU = { models: ['claude-haiku-4-5-20251001', 'claude-haiku-5-5'], effort: 'medium' }
+const TEAM_MODEL_ROLES: Record<string, { models: string[]; effort: string }> = {
+  default: { models: ['claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5'], effort: 'medium' },
+  plan: OPUS_HIGH,
+  slow: OPUS_HIGH,
+  designer: OPUS_HIGH,
+  advisor: { models: ['claude-sonnet-5', 'claude-sonnet-4-6'], effort: 'medium' },
+  smol: HAIKU,
+  tiny: HAIKU,
+  commit: HAIKU
+}
 
 function getOmpConfigPath(): string {
   return join(homedir(), '.omp', 'agent', 'config.yml')
@@ -120,39 +135,28 @@ async function saveProvider(apiKey: string, models: GatewayModel[]): Promise<voi
   await writeDocument(path, doc)
 }
 
-// ckit setup seeds roles on its 9router catalog, which this gateway does not serve; point those
-// (and a missing default) at cloudgo-cc so omp works right after the key is saved.
+// ckit setup seeds roles on its 9router catalog, which this gateway does not serve. Those roles
+// and missing team roles move to the team routing on cloudgo-cc; roles the user picked stay.
 async function routeModelRoles(models: GatewayModel[]): Promise<void> {
   const ids = new Set(models.map((m) => m.id))
-  const fallback = PREFERRED_DEFAULT_MODELS.find((id) => ids.has(id)) ?? models[0]?.id
-  if (!fallback) {
-    return
-  }
   const path = getOmpConfigPath()
   const doc = await readDocument(path)
   const parsed = z
     .object({ modelRoles: z.record(z.string(), z.unknown()).optional() })
     .safeParse(doc.toJS())
-  const entries = Object.entries(parsed.success ? (parsed.data.modelRoles ?? {}) : {}).flatMap(
-    ([role, value]) => (typeof value === 'string' ? [[role, value] as const] : [])
-  )
+  const current = parsed.success ? (parsed.data.modelRoles ?? {}) : {}
+  const roles = new Set([...Object.keys(TEAM_MODEL_ROLES), ...Object.keys(current)])
   let changed = false
-  for (const [role, value] of entries) {
-    if (!value.startsWith('9router-')) {
+  for (const role of roles) {
+    const value = current[role]
+    const replaceable =
+      value === undefined || (typeof value === 'string' && value.startsWith('9router-'))
+    const preset = TEAM_MODEL_ROLES[role] ?? TEAM_MODEL_ROLES.default
+    const model = preset.models.find((id) => ids.has(id)) ?? models[0]?.id
+    if (!replaceable || !model) {
       continue
     }
-    const [selector, effort] = value.split(':')
-    const model = selector.split('/').at(-1) ?? ''
-    const target = ids.has(model)
-      ? model
-      : selector.startsWith('9router-cx') && ids.has(CHEAP_MODEL)
-        ? CHEAP_MODEL
-        : fallback
-    doc.setIn(['modelRoles', role], `${CKIT_PROVIDER}/${target}${effort ? `:${effort}` : ''}`)
-    changed = true
-  }
-  if (!entries.some(([role]) => role === 'default')) {
-    doc.setIn(['modelRoles', 'default'], `${CKIT_PROVIDER}/${fallback}`)
+    doc.setIn(['modelRoles', role], `${CKIT_PROVIDER}/${model}:${preset.effort}`)
     changed = true
   }
   if (changed) {

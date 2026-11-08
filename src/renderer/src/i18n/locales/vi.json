@@ -24416,12 +24416,12 @@
       "saveKey": "Xác minh & lưu",
       "step1": "Cài ckit",
       "installed": "ckit đã được cài trên máy này.",
-      "windowsUnsupported": "ckit chưa có bộ cài cho Windows. Bạn vẫn có thể nhập key bên dưới để theo dõi hạn mức.",
       "installTerminal": "Thiết lập ckit",
       "installTerminalLabel": "Terminal cài ckit",
-      "installHint": "Nhấn Enter để cài ckit và bộ harness agent (omp, skill, codegraph).",
+      "installHint": "Nhấn Enter để cài ckit và bộ harness agent (omp, skill, codegraph, MCP server).",
+      "installHintWindows": "Nhấn Enter để cài Bun (nếu chưa có), ckit và bộ harness agent (omp, skill, codegraph, MCP server) trong PowerShell.",
       "step2": "Nhập key gateway CloudGO của bạn",
-      "step2Hint": "Codezera kiểm tra key với gateway, rồi lưu vào {{path}} để ckit, omp và Codezera cùng dùng. Bản sao lưu của tệp cũ được giữ ngay bên cạnh.",
+      "step2Hint": "Codezera kiểm tra key với gateway, rồi lưu vào {{path}} cùng nhà cung cấp Claude của CloudGO và bộ model theo vai trò của team, để ckit, omp và Codezera cùng dùng. Vai trò bạn đã tự chọn được giữ nguyên, và bản sao lưu của tệp cũ được giữ ngay bên cạnh.",
       "changeKey": "Đổi key"
     },
     "snippets": {

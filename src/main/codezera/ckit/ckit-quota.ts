@@ -6,9 +6,13 @@ import { parse } from 'yaml'
 import { z } from 'zod'
 import type { CkitQuotaStatus, CkitQuotaWindow } from '../../../shared/codezera/ckit-types'
 
+// Where install.sh / install.ps1 drop the binary by default.
 export function isCkitInstalled(): boolean {
-  const bin = process.platform === 'win32' ? 'ckit.exe' : 'ckit'
-  return existsSync(join(homedir(), '.local', 'bin', bin))
+  if (process.platform === 'win32') {
+    const localAppData = process.env.LOCALAPPDATA ?? join(homedir(), 'AppData', 'Local')
+    return existsSync(join(localAppData, 'Programs', 'ckit', 'ckit.exe'))
+  }
+  return existsSync(join(homedir(), '.local', 'bin', 'ckit'))
 }
 
 // Shared with ckit/omp. Codezera writes it only when the user saves a key in Settings.

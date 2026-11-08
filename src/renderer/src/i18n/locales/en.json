@@ -24416,12 +24416,12 @@
       "saveKey": "Verify & save",
       "step1": "Install ckit",
       "installed": "ckit is installed on this computer.",
-      "windowsUnsupported": "ckit has no Windows installer yet. You can still enter your key below to track quota.",
       "installTerminal": "ckit setup",
       "installTerminalLabel": "ckit install terminal",
-      "installHint": "Press Enter to install ckit and its agent harness (omp, skills, codegraph).",
+      "installHint": "Press Enter to install ckit and its agent harness (omp, skills, codegraph, MCP servers).",
+      "installHintWindows": "Press Enter to install Bun (if missing), ckit and its agent harness (omp, skills, codegraph, MCP servers) in PowerShell.",
       "step2": "Enter your CloudGO gateway key",
-      "step2Hint": "Codezera checks the key with the gateway, then saves it to {{path}} so ckit, omp and Codezera all use it. A backup of the old file is kept next to it.",
+      "step2Hint": "Codezera checks the key with the gateway, then saves it to {{path}} with the CloudGO Claude provider and the team model roles, so ckit, omp and Codezera all use it. Roles you already picked are kept, and a backup of the old file is kept next to it.",
       "changeKey": "Change key"
     },
     "snippets": {
