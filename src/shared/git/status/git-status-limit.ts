@@ -1,5 +1,5 @@
 // Share native/WSL/SSH/renderer entry caps: enormous unignored folders otherwise freeze projections; capped views show too many changes.
-export const DEFAULT_GIT_STATUS_LIMIT = 1_000
+export const DEFAULT_GIT_STATUS_LIMIT = 10_000
 
 export function resolveGitStatusLimit(value: unknown): number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0

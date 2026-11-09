@@ -21,7 +21,7 @@ const MAX_EVENT_LOOP_LAG_MS = 1_000
 
 // Virtualization must bound mounts to viewport plus overscan, independent of change count.
 const MAX_MOUNTED_ROWS = 200
-const MAX_CAPPED_STATUS_PAYLOAD_BYTES = 200_000
+const MAX_CAPPED_STATUS_PAYLOAD_BYTES = 2_000_000
 
 type LoadMeasurement = {
   entryCount: number
