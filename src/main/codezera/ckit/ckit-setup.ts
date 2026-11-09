@@ -1,12 +1,19 @@
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { access, copyFile, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
+import { runProcess } from '@orca/process-host'
 import { Document, isMap, parseDocument, Scalar } from 'yaml'
 import { z } from 'zod'
-import { CKIT_CLAUDE_BASE_URL, CKIT_PROVIDER, getCkitModelsPath } from './ckit-quota'
+import {
+  CKIT_CLAUDE_BASE_URL,
+  CKIT_PROVIDER,
+  getCkitBinaryPath,
+  getCkitModelsPath
+} from './ckit-quota'
 
 const REQUEST_TIMEOUT_MS = 15_000
+const CKIT_COMMAND_TIMEOUT_MS = 30_000
 // The /llm/ routes only; ckit's seeded 9router entries sit on the bare host with a placeholder key.
 const CKIT_GATEWAY_ORIGIN = 'https://ai-gateway.cloudgo.vn/llm/'
 
@@ -27,9 +34,10 @@ const TEAM_MODEL_ROLES: Record<string, { models: string[]; effort: string }> = {
   commit: HAIKU
 }
 
-// Team omp settings. Applied when absent or still on the value ckit setup seeds (`replaces`), so
-// anything the user changed by hand stays. Compaction follows the team lead's guidance: a fixed
-// 300k trigger (wins over ckit's thresholdPercent) and an idle compact before the 5-minute prompt cache expires.
+// Team omp settings. Applied when absent or still on the value ckit setup (or an older Codezera)
+// seeds (`replaces`), so anything the user changed by hand stays. Compaction follows the team lead's
+// guidance: a fixed 300k trigger (wins over ckit's thresholdPercent) and an idle compact before the
+// 5-minute prompt cache expires. Capture-at-stop and the advisor are off to cut per-turn cost.
 const TEAM_OMP_SETTINGS: { path: string[]; value: unknown; replaces?: unknown }[] = [
   { path: ['memory', 'backend'], value: 'mnemopi' },
   { path: ['mnemopi', 'scoping'], value: 'per-project', replaces: 'per-project-tagged' },
@@ -43,7 +51,7 @@ const TEAM_OMP_SETTINGS: { path: string[]; value: unknown; replaces?: unknown }[
   { path: ['compaction', 'idleThresholdTokens'], value: 250_000 },
   { path: ['compaction', 'idleTimeoutSeconds'], value: 260 },
   { path: ['autolearn', 'enabled'], value: true },
-  { path: ['autolearn', 'autoContinue'], value: true },
+  { path: ['autolearn', 'autoContinue'], value: false, replaces: true },
   { path: ['advisor', 'enabled'], value: false },
   // Quoted like omp writes it; a bare `off` is a boolean to YAML 1.1 readers.
   {
@@ -209,6 +217,55 @@ function applyTeamSettings(doc: Document, autoApprove: boolean): boolean {
   return changed
 }
 
+async function turnOffCkitAdvisor(): Promise<void> {
+  const bin = getCkitBinaryPath()
+  if (
+    !(await access(bin).then(
+      () => true,
+      () => false
+    ))
+  ) {
+    return
+  }
+  // ckit reads this path on every OS and ships `advisor = true`, adding omp `--advisor` to each launch.
+  const path = join(homedir(), '.config', 'ckit', 'models.toml')
+  const text = await readFile(path, 'utf8').catch(() => '')
+  // Only a top-level key counts; ckit ignores `advisor` inside a [section].
+  const topLevel = text.split(/^\s*\[/m)[0]
+  if (/^\s*advisor\s*=\s*false\b/m.test(topLevel)) {
+    return
+  }
+  // ckit owns the TOML format and refuses to rewrite a file it cannot parse.
+  const result = await runProcess(
+    {
+      program: bin,
+      args: ['harness', 'model', 'advisor', 'off'],
+      timeoutMs: CKIT_COMMAND_TIMEOUT_MS
+    },
+    'tail'
+  )
+  if (result.code !== 0) {
+    throw new Error(`ckit harness model advisor off failed: ${result.stderr.trim()}`)
+  }
+}
+
+/** Brings an existing ckit install up to the team settings; runs on launch and after a ckit update. */
+export async function applyCkitTeamSettings(): Promise<void> {
+  const path = getOmpConfigPath()
+  if (
+    await access(path).then(
+      () => true,
+      () => false
+    )
+  ) {
+    const doc = await readDocument(path)
+    if (applyTeamSettings(doc, false)) {
+      await writeDocument(path, doc)
+    }
+  }
+  await turnOffCkitAdvisor()
+}
+
 export async function saveCkitApiKey(rawKey: unknown, rawOptions: unknown): Promise<void> {
   if (typeof rawKey !== 'string' || !rawKey.trim()) {
     throw new Error('Enter your CloudGO gateway API key.')
@@ -227,4 +284,5 @@ export async function saveCkitApiKey(rawKey: unknown, rawOptions: unknown): Prom
   if (applyTeamSettings(doc, autoApprove) || rolesChanged) {
     await writeDocument(path, doc)
   }
+  await turnOffCkitAdvisor()
 }

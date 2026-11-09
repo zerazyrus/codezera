@@ -80,6 +80,7 @@ Output: `dist/`. Needs `pnpm install` and `pnpm -C mobile install --frozen-lockf
 - Version `99.<yyyymmdd>.<hhmm>`: above every release, so the updater never replaces it. Never published.
 - Windows review installer: push to any `review/**` branch (`git push origin HEAD:review/<name>`). `codezera-review-win` builds `codezera-review-windows-setup.exe` as a 14-day run artifact; fetch it with `gh run download <run-id> -R zerazyrus/codezera`.
 - Ckit update notice (`src/renderer/src/codezera/ckit/CkitToolUpdateCard.tsx`, mounted in `AppNotificationCards.tsx`): on launch and every 6 h, compares installed ckit with the latest `dante241/ckit_agent` release and runs `omp update --check`; "Update now" runs `ckit up` then `omp update`. "Later" hides that release until a newer one ships.
+- Ckit team settings (`TEAM_OMP_SETTINGS` in `src/main/codezera/ckit/ckit-setup.ts`): applied to `~/.omp/agent/config.yml` on every launch, after "Update now" and on saving the gateway key, so a new release carries team config changes to existing installs. A key is set only when absent or still on the seeded value (`replaces`); hand edits stay. The same pass runs `ckit harness model advisor off` unless `~/.config/ckit/models.toml` already has top-level `advisor = false`.
 
 ## Download links (thezera.net/apps/codezera)
 
