@@ -171,7 +171,8 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
   onToggle,
   onRequest,
   onCommitAction,
-  issueLinking
+  issueLinking,
+  findMatch
 }: {
   item: GitHistoryItem
   row: GitGraphRow
@@ -183,6 +184,7 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
   onRequest: (request: GitGraphRequest) => void
   onCommitAction: (action: GitHistoryCommitAction, item: GitHistoryItem) => void
   issueLinking: GitGraphIssueLinking | null
+  findMatch?: 'match' | 'current'
 }): React.JSX.Element {
   // VS Code Git Graph mutes merge commits so the work they bring in stands out.
   const muted = item.parentIds.length > 1
@@ -198,7 +200,9 @@ export const GitGraphCommitRow = memo(function GitGraphCommitRow({
           data-commit-id={item.id}
           className={cn(
             'grid cursor-pointer items-center gap-x-2 pr-2 hover:bg-accent/60 focus-visible:outline-none',
-            expanded && 'bg-accent'
+            expanded && 'bg-accent',
+            findMatch === 'match' && 'bg-amber-500/10',
+            findMatch === 'current' && 'bg-amber-500/25 ring-1 ring-inset ring-amber-500/70'
           )}
           style={{ gridTemplateColumns: GIT_GRAPH_GRID_COLUMNS, height: GIT_GRAPH_ROW_HEIGHT }}
           onClick={() => onToggle(item)}

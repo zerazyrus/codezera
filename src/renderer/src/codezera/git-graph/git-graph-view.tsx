@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { CloudDownload, Loader2, RefreshCw, Settings } from 'lucide-react'
+import { CloudDownload, Loader2, RefreshCw, Search, Settings } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -29,10 +29,13 @@ import { GitGraphRepoSettingsDialog } from './git-graph-repo-settings-dialog'
 import { useGitGraphLog } from './use-git-graph-log'
 import { layoutGitGraph } from './git-graph-layout'
 import { GIT_GRAPH_LANE_WIDTH, GIT_GRAPH_ROW_HEIGHT, GitGraphRowSvg } from './git-graph-lanes-svg'
+import { GitGraphFindBar } from './git-graph-find-bar'
+import { useGitGraphFind } from './use-git-graph-find'
 
 const MIN_GRAPH_COLUMN_WIDTH = 64
 const MAX_GRAPH_COLUMN_WIDTH = 400
 const NO_SPLIT_GROUP = (): undefined => undefined
+const NO_ITEMS: readonly GitHistoryItem[] = []
 
 function ToolbarIconButton({
   label,
@@ -243,12 +246,16 @@ export function GitGraphView({
     store.setRightSidebarOpen(true)
   }
 
+  const find = useGitGraphFind(result?.items ?? NO_ITEMS, scrollRef)
+
   const loading = state.status === 'loading'
   const lanesStyle = { ['--git-graph-lanes' as string]: `${graphWidth}px` }
 
   return (
     <div
-      className="flex h-full min-h-0 flex-col bg-editor-surface text-[13px]"
+      ref={find.rootRef}
+      tabIndex={-1}
+      className="relative flex h-full min-h-0 flex-col bg-editor-surface text-[13px] focus:outline-none"
       data-testid="git-graph-view"
     >
       <div className="relative flex h-10 shrink-0 items-center justify-center gap-3 border-b border-border px-3">
@@ -276,6 +283,12 @@ export function GitGraphView({
             onClick={() => void fetchAll()}
           >
             <CloudDownload className={cn(fetching && 'animate-pulse')} />
+          </ToolbarIconButton>
+          <ToolbarIconButton
+            label={`${translate('codezera.gitGraph.find.open', 'Find')}${find.shortcutLabel ? ` (${find.shortcutLabel})` : ''}`}
+            onClick={find.open}
+          >
+            <Search />
           </ToolbarIconButton>
           <ToolbarIconButton
             label={translate('codezera.gitGraph.refresh', 'Refresh')}
@@ -347,6 +360,7 @@ export function GitGraphView({
                 onRequest={handleRequest}
                 onCommitAction={handleCommitAction}
                 issueLinking={settings?.issueLinking ?? null}
+                findMatch={find.matchFor(item.id)}
               />
               {expanded ? (
                 <GitGraphCommitDetails
@@ -377,6 +391,7 @@ export function GitGraphView({
           </div>
         ) : null}
       </div>
+      {find.bar ? <GitGraphFindBar {...find.bar} /> : null}
       <GitGraphRequestDialog request={request} onClose={() => setRequest(null)} onRun={runAction} />
       {settings ? (
         <GitGraphRepoSettingsDialog
