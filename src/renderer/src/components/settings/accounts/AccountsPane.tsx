@@ -7,6 +7,7 @@ import type { CodexConfigSyncStatus } from '../../../../../shared/codex-config-s
 import { toast } from 'sonner'
 import { useAppStore } from '../../../store/index'
 import { translate } from '@/i18n/i18n'
+import { useIntlLocale, useTranslate } from '@/i18n/use-translate'
 import { isWebClientLocation } from '@/lib/web-client-location'
 import {
   emptyClaudeAccountsState,
@@ -87,6 +88,8 @@ export function AccountsPane({
   accountOwnerPlatform = null,
   wslHostDistro = null
 }: AccountsPaneProps): React.JSX.Element {
+  const t = useTranslate()
+  const intlLocale = useIntlLocale()
   const searchQuery = useAppStore((s) => s.settingsSearchQuery)
   const codexRateLimits = useAppStore((s) => s.rateLimits.codex)
   const codexRateLimitTarget = useAppStore((s) => s.rateLimits.codexTarget)
@@ -103,7 +106,8 @@ export function AccountsPane({
     wslAvailable,
     wslDistros,
     wslCapabilitiesLoading,
-    wslHostDistro
+    wslHostDistro,
+    t
   )
   // Route all account actions to the Settings-selected owner, independent of focused host (#7973).
   const accountOwner = hostScope.target
@@ -123,7 +127,7 @@ export function AccountsPane({
     : null
   const remoteServerLabel = isRemoteAccountScope
     ? (remoteServerName ??
-      translate('auto.components.settings.AccountsPane.remoteServerFallback', 'the remote server'))
+      t('auto.components.settings.AccountsPane.remoteServerFallback', 'the remote server'))
     : null
   const accountRuntime = isRemoteAccountScope
     ? { runtime: 'host' as const, label: remoteServerLabel ?? '' }
@@ -136,11 +140,8 @@ export function AccountsPane({
   const remoteAccountScopeNotice =
     isRemoteAccountScope && !isWebClientLocation() ? (
       <ProviderHostScopeControl
-        labelPrefix={translate(
-          'auto.components.settings.AccountsPane.accountScopePrefix',
-          'Account scope'
-        )}
-        scope={getRemoteAccountsPaneScope(remoteServerName)}
+        labelPrefix={t('auto.components.settings.AccountsPane.accountScopePrefix', 'Account scope')}
+        scope={getRemoteAccountsPaneScope(remoteServerName, t)}
         className="text-xs"
       />
     ) : null
@@ -337,16 +338,16 @@ export function AccountsPane({
     !isRemoteAccountScope &&
     !wslHostDistro &&
     matchesSettingsSearch(searchQuery, getAccountsLocationSearchEntries())
-      ? renderAccountsLocationSection(model)
+      ? renderAccountsLocationSection(model, t)
       : null,
     matchesSettingsSearch(searchQuery, getAccountsClaudeSearchEntries())
-      ? renderClaudeAccountsSection(model)
+      ? renderClaudeAccountsSection(model, t, intlLocale)
       : null,
     matchesSettingsSearch(searchQuery, getAccountsCodexSearchEntries())
-      ? renderCodexAccountsSection(model)
+      ? renderCodexAccountsSection(model, t, intlLocale)
       : null,
     matchesSettingsSearch(searchQuery, getAccountsGeminiSearchEntries())
-      ? renderGeminiAccountsSection(model)
+      ? renderGeminiAccountsSection(model, t)
       : null,
     matchesSettingsSearch(searchQuery, getAccountsAntigravitySearchEntries()) ? (
       <AntigravityAccountsSection
@@ -358,7 +359,7 @@ export function AccountsPane({
       />
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsOpencodeSearchEntries())
-      ? renderOpenCodeAccountsSection(model)
+      ? renderOpenCodeAccountsSection(model, t)
       : null,
     matchesSettingsSearch(searchQuery, getAccountsMiniMaxSearchEntries()) ? (
       <MiniMaxAccountsSection
@@ -386,8 +387,8 @@ export function AccountsPane({
 
   return (
     <div className="space-y-8">
-      {renderAccountsRemovalDialogs(model, removeCodexTarget, removeClaudeTarget)}
-      <SettingsSectionStack sections={visibleSections} spacing="group" />
+      {renderAccountsRemovalDialogs(model, removeCodexTarget, removeClaudeTarget, t)}
+      <SettingsSectionStack sections={visibleSections} />
     </div>
   )
 }

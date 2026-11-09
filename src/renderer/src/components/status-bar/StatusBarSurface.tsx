@@ -8,7 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { translate } from '@/i18n/i18n'
+import { useTranslate } from '@/i18n/use-translate'
 import { UsageRosterPanel } from './UsageRosterPanel'
 import {
   STATUS_BAR_CONTEXT_MENU_EXEMPT_PROPS,
@@ -67,6 +67,7 @@ export type StatusBarProps = {
 export function StatusBarSurface({
   floatingTerminalOpen
 }: StatusBarProps): React.JSX.Element | null {
+  const t = useTranslate()
   // Memoized labels still need to follow language changes.
   useTranslation()
   const controller = useStatusBarController(floatingTerminalOpen)
@@ -122,7 +123,12 @@ export function StatusBarSurface({
     !isPairedWebClientWindow() && ckitState !== undefined && ckitState !== 'not-configured'
   const orcaUsageVisible = anyVisible && !isEmptyUsageState
   const usageMode = usageTightestOnly ? 'compact' : statusBarUsageMode
-  const unitLabelState = getUsageUnitLabelState(rosterProviders, collapsedUsageProviders, usageMode)
+  const unitLabelState = getUsageUnitLabelState(
+    rosterProviders,
+    collapsedUsageProviders,
+    usageMode,
+    t
+  )
 
   return (
     <div
@@ -166,10 +172,7 @@ export function StatusBarSurface({
                   <button
                     type="button"
                     className="inline-flex items-center gap-3 rounded px-1 py-0.5 hover:bg-accent/70"
-                    aria-label={translate(
-                      'auto.components.status.bar.UsageRosterPanel.title',
-                      'Usage'
-                    )}
+                    aria-label={t('auto.components.status.bar.UsageRosterPanel.title', 'Usage')}
                   >
                     {unitLabelState !== 'absent' ? (
                       <UsageUnitLabel
@@ -183,7 +186,7 @@ export function StatusBarSurface({
                         key={p.provider}
                         data-usage-chip={p.provider}
                         data-usage-urgent={getUsageTone(p) === 'urgent'}
-                        data-usage-percentage={usageChipShowsPercentage(p, usageMode)}
+                        data-usage-percentage={usageChipShowsPercentage(p, usageMode, t)}
                         data-usage-collapsed={collapsedUsageProviders.includes(p.provider)}
                         aria-hidden={collapsedUsageProviders.includes(p.provider)}
                         className="inline-flex data-[usage-collapsed=true]:invisible data-[usage-collapsed=true]:absolute"
@@ -276,7 +279,7 @@ export function StatusBarSurface({
                           iconOnly={false}
                           asSubmenu
                           triggerContent={rowNode}
-                          ariaLabel={translate(
+                          ariaLabel={t(
                             'auto.components.status.bar.UsageRosterPanel.openDetails',
                             'Open usage details'
                           )}
@@ -302,7 +305,7 @@ export function StatusBarSurface({
                   }}
                   disabled={isRefreshing || ckitRefreshing}
                   className="p-0.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
-                  aria-label={translate(
+                  aria-label={t(
                     'auto.components.status.bar.StatusBar.3325d996cb',
                     'Refresh rate limits'
                   )}
@@ -314,7 +317,7 @@ export function StatusBarSurface({
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={6}>
-                {translate('auto.components.status.bar.StatusBar.c8857b40f7', 'Refresh usage data')}
+                {t('auto.components.status.bar.StatusBar.c8857b40f7', 'Refresh usage data')}
               </TooltipContent>
             </Tooltip>
           )}
@@ -357,7 +360,7 @@ export function StatusBarSurface({
                     className="relative inline-flex size-5 cursor-pointer items-center justify-center rounded border border-border bg-secondary text-secondary-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                     aria-label={
                       showFloatingWorkspaceAttentionDot
-                        ? translate(
+                        ? t(
                             'auto.components.status.bar.StatusBar.floatingTerminalNewActivity',
                             '{{label}}, new activity',
                             { label: floatingTerminalActionLabel }

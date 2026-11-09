@@ -1,6 +1,6 @@
 import type { ChildProcess } from 'node:child_process'
 import type { Client, SFTPWrapper } from 'ssh2'
-import { loadSsh2 } from '../../ssh/ssh2-module-load'
+import { loadSsh2 } from '../../ssh/authentication/ssh2-module-load'
 import { openSftpConnectConfig, type SftpEndpoint } from './sftp-endpoint'
 
 const IDLE_CLOSE_MS = 10 * 60_000

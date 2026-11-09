@@ -6,7 +6,10 @@ import {
   buildConnectConfig,
   resolveEffectiveSshEndpoint
 } from '../../ssh/connection/ssh-connect-config'
-import { resolveEffectiveProxy, spawnProxyCommand } from '../../ssh/ssh-proxy-command'
+import {
+  resolveEffectiveProxy,
+  spawnProxyCommand
+} from '../../ssh/system-transport/ssh-proxy-command'
 
 /** An Orca SSH host merged with `ssh -G`, exactly as Orca's own ssh2 transport sees it. */
 export type SftpEndpoint = {

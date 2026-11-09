@@ -4,15 +4,7 @@ import type { EditorFileTabProps } from './editor-file-tab-props'
 import { ContextMenu, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
-import {
-  GitGraph,
-  GitCompareArrows,
-  Eye,
-  ShieldAlert,
-  Pin,
-  ListChecks,
-  Smartphone
-} from 'lucide-react'
+import { Eye, ShieldAlert, Pin } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { TabHoverCard } from './TabHoverCard'
 import { basename } from '@/lib/path'
@@ -40,7 +32,8 @@ import {
 } from './drop-indicator'
 import { canOpenMarkdownPreview } from '@/components/editor/view-mode/markdown-preview-controls'
 import { EditorFileTabContextMenu } from './EditorFileTabContextMenu'
-import { translate } from '@/i18n/i18n'
+import { getEditorFileTabModeIcon } from './editor-file-tab-mode-icon'
+import { useTranslate } from '@/i18n/use-translate'
 import { TAB_LABEL_WIDTH_CLASSES } from './tab-width-rules'
 import { useTabStripSlotProps } from './use-tab-strip-slot-props'
 import { EditorFileTabCloseButton } from './EditorFileTabCloseButton'
@@ -71,6 +64,7 @@ export default function EditorFileTab({
   dropIndicator,
   includeTopTabBorder = true
 }: EditorFileTabProps): React.JSX.Element {
+  const t = useTranslate()
   const placedElsewhere = useAppStore((state) =>
     file.tabId
       ? editorTabWorkspace(state.unifiedTabsByWorktree, file.tabId) !== file.worktreeId
@@ -87,30 +81,11 @@ export default function EditorFileTab({
     data: dragData
   })
 
-  const isDiff = file.mode === 'diff'
   const isConflictReview = file.mode === 'conflict-review'
-  const isCheckDetails = file.mode === 'check-details'
   const isMarkdownPreviewTab = file.mode === 'markdown-preview'
   const customEditor = useTabCustomEditor(file)
   // Why: simulator tabs reuse this chrome with a synthetic path an icon theme would map to its file icon.
-  const ModeIcon =
-    file.mode === 'git-graph'
-      ? GitGraph
-      : isConflictReview
-        ? ShieldAlert
-        : isCheckDetails
-          ? ListChecks
-          : isDiff
-            ? GitCompareArrows
-            : isMarkdownPreviewTab
-              ? Eye
-              : file.language === 'simulator'
-                ? Smartphone
-                : file.mode === 'codezera-panel'
-                  ? file.codezeraPanel === 'sftp-compare'
-                    ? GitCompareArrows
-                    : GitGraph
-                  : null
+  const ModeIcon = getEditorFileTabModeIcon(file)
   const tabIcon = (className: string): React.ReactNode => (
     <PluginContributionIcon
       url={customEditor?.iconUrl}
@@ -295,7 +270,7 @@ export default function EditorFileTab({
             ref={setRenameInputElement}
             density="compact"
             data-tab-rename-input="true"
-            aria-label={translate(
+            aria-label={t(
               'auto.components.tab.bar.EditorFileTab.3da7445c84',
               'Rename file {{value0}}',
               { value0: basename(file.filePath) }
@@ -343,7 +318,7 @@ export default function EditorFileTab({
               openRenameInput()
             }}
           >
-            {getEditorDisplayLabel(file)}
+            {getEditorDisplayLabel(file, undefined, t)}
             {placedElsewhere && repo ? ` · ${repo.displayName}` : ''}
           </span>
         )}
@@ -391,8 +366,8 @@ export default function EditorFileTab({
             tabRoot
           ) : (
             <TabHoverCard
-              title={`${getEditorDisplayLabel(file)}${placedElsewhere && repo ? ` · ${repo.displayName}` : ''}`}
-              programName={customEditor?.title ?? translate('tabHoverCard.editor', 'Editor')}
+              title={`${getEditorDisplayLabel(file, undefined, t)}${placedElsewhere && repo ? ` · ${repo.displayName}` : ''}`}
+              programName={customEditor?.title ?? t('tabHoverCard.editor', 'Editor')}
               icon={tabIcon('size-4')}
               description={file.relativePath}
             >
