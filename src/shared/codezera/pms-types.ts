@@ -1,4 +1,14 @@
 import type { TextGenerationFailureFields } from '../text-generation-failure-copy'
+import type {
+  PmsDashboardDrill,
+  PmsDashboardDrillArgs,
+  PmsDashboardFilters,
+  PmsDashboardOverview,
+  PmsDashboardReport,
+  PmsDashboardReportArgs,
+  PmsQueue,
+  PmsQueueArgs
+} from './pms-dashboard-types'
 
 /** CloudGO PMS work item kinds: HelpDesk tickets and ProjectTask tasks. */
 export type PmsItemKind = 'ticket' | 'task'
@@ -101,6 +111,8 @@ export type PmsListArgs = {
   status: string | null
   search: string
   offset: number
+  /** An employee id, or `all` for everyone; the user's own when absent. */
+  ownerId?: string
 }
 
 export type PmsListResult = { items: PmsItem[]; total: number; nextOffset: number | null }
@@ -130,60 +142,6 @@ export type PmsFormField = {
 
 /** A save the status modal would refuse: the caller fills these fields and retries. */
 export type PmsNeedsFields = { needs: 'fields'; fields: PmsFormField[] }
-
-export type PmsQueueRole = 'all' | 'processing' | 'verification' | 'reception' | 'owner'
-export type PmsQueueLayout = 'eisenhower' | 'list' | 'project'
-export type PmsQuadrant = 'do_now' | 'plan' | 'delegate' | 'limit'
-
-/** One open ticket as the PMS Ticket Dashboard ranks it. */
-export type PmsQueueRow = {
-  id: string
-  number: string
-  title: string
-  status: string
-  priority: string
-  category: string
-  roles: string[]
-  /** Fields the next step still needs, as the dashboard names them. */
-  missing: string[]
-  /** YYYY-MM-DD or empty. */
-  due: string
-  late: boolean
-  lateDays: number
-  soon: boolean
-  stale: boolean
-  ageDays: number
-  project: string
-  /** Mức độ quan trọng = Quan trọng. */
-  important: boolean
-  /** Người tiếp nhận / xử lý names, empty when unset. */
-  receptionName: string
-  processingName: string
-}
-
-export type PmsQueueBucket = { key: string; total: number; late: number; rows: PmsQueueRow[] }
-
-export type PmsQueueArgs = {
-  role: PmsQueueRole
-  layout: PmsQueueLayout
-  keyword: string
-  status: string
-  /** 1-based page of the list/project layouts. */
-  page: number
-  quadrantPages: Partial<Record<PmsQuadrant, number>>
-}
-
-export type PmsQueue = {
-  layout: PmsQueueLayout
-  statuses: string[]
-  total: number
-  /** Eisenhower quadrants or project groups; the list layout is one bucket keyed `all`. */
-  buckets: PmsQueueBucket[]
-  page: number
-  pageCount: number
-  /** Rows per quadrant page / list page, for paging. */
-  pageSize: number
-}
 
 export type PmsLinkedTask = {
   id: string
@@ -297,6 +255,11 @@ export type PmsApi = {
   list: (args: PmsListArgs) => Promise<PmsListResult>
   /** The user's open tickets as the PMS Ticket Dashboard ranks them. */
   queue: (args: PmsQueueArgs) => Promise<PmsQueue>
+  /** Ticket Dashboard "Tổng quan" under the filters. */
+  dashboardOverview: (filters: PmsDashboardFilters) => Promise<PmsDashboardOverview>
+  /** Ticket Dashboard "Báo cáo": new and completed tickets per period. */
+  dashboardReport: (args: PmsDashboardReportArgs) => Promise<PmsDashboardReport>
+  dashboardDrill: (args: PmsDashboardDrillArgs) => Promise<PmsDashboardDrill>
   getItem: (args: { kind: PmsItemKind; id: string }) => Promise<PmsItemDetail>
   /** Every status of the kind, for list filters and badges. */
   statusOptions: (kind: PmsItemKind) => Promise<PmsStatusOption[]>

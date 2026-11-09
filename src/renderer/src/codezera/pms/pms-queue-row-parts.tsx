@@ -5,7 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
 import { cn } from '@/lib/utils'
-import type { PmsItem, PmsQueueRow } from '../../../../shared/codezera/pms-types'
+import type { PmsItem } from '../../../../shared/codezera/pms-types'
+import { PMS_NO_PROJECT, type PmsQueueRow } from '../../../../shared/codezera/pms-dashboard-types'
+
+export function pmsProjectLabel(project: string): string {
+  return project === PMS_NO_PROJECT
+    ? translate('codezera.pms.dashboard.noProject', 'No project')
+    : project
+}
 
 export function priorityLabel(priority: string): string {
   switch (priority) {

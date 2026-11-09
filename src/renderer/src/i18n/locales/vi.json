@@ -24302,6 +24302,18 @@
       "showRemote": "Hiện nhánh remote",
       "fetch": "Fetch từ remote",
       "refresh": "Làm mới",
+      "find": {
+        "open": "Tìm kiếm",
+        "placeholder": "Tìm theo nội dung commit, hash, tác giả, nhánh hoặc tag",
+        "count": "{{current}} / {{total}}",
+        "none": "Không có kết quả",
+        "invalid": "Regex không hợp lệ",
+        "caseSensitive": "Phân biệt hoa thường",
+        "regex": "Dùng biểu thức chính quy",
+        "previous": "Kết quả trước (Shift+Enter)",
+        "next": "Kết quả tiếp theo (Enter)",
+        "close": "Đóng (Escape)"
+      },
       "column": {
         "graph": "Đồ thị",
         "description": "Mô tả",
@@ -24561,7 +24573,12 @@
         "verification": "Tôi xác minh",
         "reception": "Tôi tiếp nhận",
         "owner": "Tôi sở hữu",
-        "all": "Mọi vai trò của tôi"
+        "all": "Mọi vai trò của tôi",
+        "allOf": "Mọi vai trò",
+        "ownerOf": "Phụ trách",
+        "processingOf": "Xử lý",
+        "receptionOf": "Tiếp nhận",
+        "verificationOf": "Xác minh"
       },
       "layout": {
         "eisenhower": "Eisenhower",
@@ -24605,6 +24622,13 @@
       "nextPage": "Trang sau",
       "lateCount": "{{count}} trễ hạn",
       "myQueue": "Việc của tôi",
+      "viewAs": "Nhân viên",
+      "allEmployees": "Tất cả nhân viên",
+      "queueOwnOnly": "PMS chỉ cho bạn xem hàng đợi của chính mình. Nhờ người quản lý Ticket thêm bạn vào \"Người dùng xem được toàn bộ nhân viên\" trong cấu hình Ticket Dashboard; Tickets và Tasks vẫn xem được của nhân viên này.",
+      "viewOthers": {
+        "title": "Xem ticket của người khác",
+        "hint": "Thêm ô chọn nhân viên vào Việc của tôi, Tickets và Tasks. Việc của tôi của người khác theo quyền PMS: chỉ người quản lý Ticket Dashboard mới xem được."
+      },
       "todayHint": "Số giờ đã log hôm nay",
       "changeStatus": "Đổi trạng thái",
       "lateDays": "Trễ {{days}} ngày",
@@ -24727,6 +24751,70 @@
         "hint": "Được thêm vào prompt của mọi agent bắt đầu từ ticket hoặc tác vụ PMS.",
         "reset": "Khôi phục mặc định",
         "saved": "Đã lưu quy trình"
+      },
+      "dashboard": {
+        "allCompanies": "Tất cả công ty",
+        "allProjects": "Tất cả dự án",
+        "allTypes": "Tất cả",
+        "byCategory": "Danh mục",
+        "byEmployee": "Nhân viên",
+        "byProject": "Dự án",
+        "categories": "Theo danh mục",
+        "company": "Công ty",
+        "detail": "Chi tiết",
+        "drillTotal": "{{count}} ticket",
+        "median": "~{{days}} ngày",
+        "medianHint": "Trung vị số ngày làm việc từ lần cập nhật cuối; số ticket bị treo",
+        "noCategory": "Chưa có danh mục",
+        "noHolder": "Chưa có người",
+        "noProject": "Không có dự án",
+        "overview": "Tổng quan",
+        "pipeline": "Theo trạng thái",
+        "project": "Dự án",
+        "projectType": "Loại dự án",
+        "report": "Báo cáo",
+        "sections": "Chế độ xem dashboard",
+        "staleCount": "{{count}} treo"
+      },
+      "metric": {
+        "all": "Cần xử lý",
+        "late": "Quá hạn",
+        "missing": "Thiếu thông tin",
+        "parked": "Tạm hoãn / Theo dõi",
+        "soon": "Sắp đến hạn",
+        "stale": "Treo quá lâu",
+        "waitcus": "Chờ KH"
+      },
+      "period": {
+        "label": "Kỳ",
+        "month": "Tháng",
+        "quarter": "Quý",
+        "week": "Tuần",
+        "year": "Năm"
+      },
+      "dashReport": {
+        "backlog": "Biến động tồn",
+        "backlogHint": "{{created}} tạo mới, {{completed}} hoàn thành",
+        "by": "Theo",
+        "compare": "{{picked}} so với cùng khoảng của {{previous}}",
+        "completed": "Hoàn thành",
+        "completedInPeriod": "Hoàn thành trong kỳ",
+        "created": "Tạo mới",
+        "createdInPeriod": "Ticket tạo trong kỳ",
+        "done": "Đã xong",
+        "doneRate": "Tỉ lệ xong",
+        "open": "Mới, còn mở",
+        "openShare": "{{percent}}% ticket mới",
+        "overdue": "Quá hạn",
+        "overdueHint": "Ticket mới còn mở đã quá hạn",
+        "previous": "Cùng khoảng kỳ trước: {{count}}",
+        "standing": "Bạn đứng thứ {{rank}}/{{total}}, kém hạng trên {{behind}} ticket.",
+        "standingFirst": "Bạn dẫn đầu {{total}} người trong kỳ này.",
+        "stillOpen": "Còn mở",
+        "tickets": "Ticket",
+        "total": "Tổng",
+        "trend": "Tạo mới và hoàn thành theo {{period}}",
+        "vsBefore": "± kỳ trước"
       }
     }
   },

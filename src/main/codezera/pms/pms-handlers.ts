@@ -15,6 +15,7 @@ import {
   setPmsItemStatus
 } from './pms-service'
 import { pmsQueue, pmsTicketFieldOptions, pmsUsers } from './pms-queue'
+import { pmsDashboardDrill, pmsDashboardOverview, pmsDashboardReport } from './pms-dashboard'
 import {
   finishPmsTicket,
   pmsTicketTasks,
@@ -35,6 +36,13 @@ export function registerCodezeraPmsHandlers(
   ipcMain.handle('codezera:pms:disconnect', () => disconnectPms())
   ipcMain.handle('codezera:pms:list', (_event, args: unknown) => listPmsItems(args))
   ipcMain.handle('codezera:pms:queue', (_event, args: unknown) => pmsQueue(args))
+  ipcMain.handle('codezera:pms:dashboardOverview', (_event, filters: unknown) =>
+    pmsDashboardOverview(filters)
+  )
+  ipcMain.handle('codezera:pms:dashboardReport', (_event, args: unknown) =>
+    pmsDashboardReport(args)
+  )
+  ipcMain.handle('codezera:pms:dashboardDrill', (_event, args: unknown) => pmsDashboardDrill(args))
   ipcMain.handle('codezera:pms:getItem', (_event, args: unknown) => getPmsItem(args))
   ipcMain.handle('codezera:pms:statusOptions', (_event, kind: unknown) => pmsStatusOptions(kind))
   ipcMain.handle('codezera:pms:logTimeCategories', () => pmsLogTimeCategories())

@@ -6,10 +6,15 @@ import { Input } from '@/components/ui/input'
 import { PmsPicker, pmsStatusPicks } from './pms-picker'
 import { cn } from '@/lib/utils'
 import type { PmsItem, PmsItemKind } from '../../../../shared/codezera/pms-types'
-import { PmsQueueView } from './pms-queue-view'
+import { PmsDashboardView } from './pms-dashboard-view'
 import { PmsReportView } from './pms-report-view'
 import { PmsStatusBadge } from './pms-status-label'
-import { pmsErrorText, usePmsStore, type PmsListView as ListView } from './pms-store'
+import {
+  PMS_ALL_EMPLOYEES,
+  pmsErrorText,
+  usePmsStore,
+  type PmsListView as ListView
+} from './pms-store'
 
 const VIEW_KEY = 'codezera.pms.listView'
 
@@ -66,6 +71,18 @@ export function PmsItemList({
       setView(requestedView)
     }
   }, [requestedView])
+  const viewOthers = usePmsStore((s) => s.viewOthers)
+  const users = usePmsStore((s) => s.users)
+  const loadUsers = usePmsStore((s) => s.loadUsers)
+  const viewAs = usePmsStore((s) => s.viewAs)
+  const setViewAs = usePmsStore((s) => s.setViewAs)
+  const status = usePmsStore((s) => s.status)
+  const me = status?.state === 'connected' ? { id: status.userId, name: status.userName } : null
+  useEffect(() => {
+    if (viewOthers) {
+      void loadUsers().catch(() => undefined)
+    }
+  }, [viewOthers, loadUsers])
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex h-11 min-h-11 items-center gap-1 border-b border-border/50 px-4">
@@ -94,10 +111,31 @@ export function PmsItemList({
                   : translate('codezera.pms.reports', 'Reports')}
           </button>
         ))}
-        <div className="ml-auto flex shrink-0 items-center gap-2">{trailing}</div>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {/* Reports are always the user's own timesheets. */}
+          {viewOthers && me && view !== 'report' ? (
+            <PmsPicker
+              value={viewAs || me.id}
+              onChange={(value) => setViewAs(value === me.id ? '' : value)}
+              options={[
+                { value: me.id, label: me.name },
+                {
+                  value: PMS_ALL_EMPLOYEES,
+                  label: translate('codezera.pms.allEmployees', 'All employees')
+                },
+                ...(users ?? [])
+                  .filter((user) => user.id !== me.id)
+                  .map((user) => ({ value: user.id, label: user.name }))
+              ]}
+              ariaLabel={translate('codezera.pms.viewAs', 'Employee')}
+              className="w-48 text-xs"
+            />
+          ) : null}
+          {trailing}
+        </div>
       </div>
       {view === 'queue' ? (
-        <PmsQueueView onOpen={onOpen} reloadKey={reloadKey} />
+        <PmsDashboardView onOpen={onOpen} reloadKey={reloadKey} />
       ) : view === 'report' ? (
         <PmsReportView />
       ) : (
@@ -126,6 +164,7 @@ function PmsRecordList({
   const [error, setError] = useState<string | null>(null)
   const options = usePmsStore((s) => s.statusOptions[kind])
   const loadStatusOptions = usePmsStore((s) => s.loadStatusOptions)
+  const viewAs = usePmsStore((s) => s.viewAs)
 
   useEffect(() => {
     void loadStatusOptions(kind).catch(() => undefined)
@@ -149,7 +188,8 @@ function PmsRecordList({
         kind,
         status: statusFilter,
         search: query,
-        offset
+        offset,
+        ownerId: viewAs || undefined
       })
       if (request !== latestRequest.current) {
         return
@@ -173,7 +213,7 @@ function PmsRecordList({
     void load(0)
     // `load` reads exactly these inputs.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind, statusFilter, query, reloadKey])
+  }, [kind, statusFilter, query, viewAs, reloadKey])
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

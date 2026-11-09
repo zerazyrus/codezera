@@ -4,43 +4,30 @@ import { translate } from './pms-i18n'
 import { Input } from '@/components/ui/input'
 import { PmsPicker, pmsStatusPicks } from './pms-picker'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { cn } from '@/lib/utils'
+import type { PmsItem } from '../../../../shared/codezera/pms-types'
 import type {
-  PmsItem,
+  PmsDashboardFilters,
+  PmsDashboardScope,
   PmsQuadrant,
   PmsQueue,
-  PmsQueueLayout,
-  PmsQueueRole
-} from '../../../../shared/codezera/pms-types'
+  PmsQueueLayout
+} from '../../../../shared/codezera/pms-dashboard-types'
 import { pmsErrorText, usePmsStore } from './pms-store'
 import { toItem } from './pms-queue-row-parts'
 import { ListRow, ListHeader, Pager, Quadrant, ProjectGroup } from './pms-queue-sections'
 
-const ROLE_KEY = 'codezera.pms.queueRole'
 const LAYOUT_KEY = 'codezera.pms.queueLayout'
 const ALL_STATUSES = '__all__'
-const ROLES = ['all', 'processing', 'verification', 'reception', 'owner'] as const
 
-function roleLabel(role: PmsQueueRole): string {
-  switch (role) {
-    case 'processing':
-      return translate('codezera.pms.role.processing', 'I handle')
-    case 'verification':
-      return translate('codezera.pms.role.verification', 'I verify')
-    case 'reception':
-      return translate('codezera.pms.role.reception', 'I receive')
-    case 'owner':
-      return translate('codezera.pms.role.owner', 'I own')
-    default:
-      return translate('codezera.pms.role.all', 'All my roles')
-  }
-}
-
-/** "Việc của tôi": the PMS Ticket Dashboard queue, filtered by the role the user plays on each ticket. */
+/** "Chi tiết" of the Ticket Dashboard: the open tickets under the filters, ranked as PMS ranks them. */
 export function PmsQueueView({
+  filters,
+  onScope,
   onOpen,
   reloadKey
 }: {
+  filters: PmsDashboardFilters
+  onScope: (scope: PmsDashboardScope) => void
   onOpen: (item: PmsItem) => void
   reloadKey: number
 }): React.JSX.Element {
@@ -48,9 +35,6 @@ export function PmsQueueView({
   const options = usePmsStore((s) => s.statusOptions.ticket)
   const loadStatusOptions = usePmsStore((s) => s.loadStatusOptions)
   const baseUrl = status?.state === 'connected' ? status.baseUrl : ''
-  const [role, setRole] = useState<PmsQueueRole>(
-    () => (localStorage.getItem(ROLE_KEY) as PmsQueueRole | null) ?? 'processing'
-  )
   const [layout, setLayout] = useState<PmsQueueLayout>(
     () => (localStorage.getItem(LAYOUT_KEY) as PmsQueueLayout | null) ?? 'eisenhower'
   )
@@ -73,10 +57,11 @@ export function PmsQueueView({
     return () => clearTimeout(timer)
   }, [search])
 
+  // Any filter change resets paging.
   useEffect(() => {
     setPage(1)
     setQuadrantPages({})
-  }, [role, layout, statusFilter, keyword])
+  }, [filters, layout, statusFilter, keyword])
 
   useEffect(() => {
     const request = ++latestRequest.current
@@ -84,93 +69,74 @@ export function PmsQueueView({
     setError(null)
     window.api.codezera.pms
       .queue({
-        role,
+        filters,
         layout,
         keyword,
         status: statusFilter === ALL_STATUSES ? '' : statusFilter,
         page,
         quadrantPages
       })
-      .then((next) => request === latestRequest.current && setQueue(next))
+      .then((next) => {
+        if (request === latestRequest.current) {
+          setQueue(next)
+          onScope(next.scope)
+        }
+      })
       .catch((err: unknown) => request === latestRequest.current && setError(pmsErrorText(err)))
       .finally(() => request === latestRequest.current && setLoading(false))
-  }, [role, layout, statusFilter, keyword, page, quadrantPages, reloadKey])
+  }, [filters, layout, statusFilter, keyword, page, quadrantPages, reloadKey, onScope])
 
   // The previous layout's buckets render wrongly in the new one until its data arrives.
   const shown = queue?.layout === layout ? queue : null
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex flex-col gap-2 border-b border-border/50 px-4 py-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1.5" role="group">
-            {ROLES.map((entry) => (
-              <button
-                key={entry}
-                type="button"
-                aria-pressed={entry === role}
-                onClick={() => {
-                  localStorage.setItem(ROLE_KEY, entry)
-                  setRole(entry)
-                }}
-                className={cn(
-                  'rounded-md border px-2 py-1 text-xs transition',
-                  entry === role
-                    ? 'border-border/50 bg-foreground/90 text-background'
-                    : 'border-border/50 bg-transparent text-foreground hover:bg-muted/50'
-                )}
-              >
-                {roleLabel(entry)}
-              </button>
-            ))}
-          </div>
-          <ToggleGroup
-            type="single"
-            value={layout}
-            onValueChange={(value) => {
-              if (value === 'list' || value === 'project' || value === 'eisenhower') {
-                localStorage.setItem(LAYOUT_KEY, value)
-                setLayout(value)
-              }
-            }}
-            aria-label={translate('codezera.pms.layout.label', 'Queue layout')}
-            variant="outline"
-            size="sm"
-          >
-            <ToggleGroupItem value="list">
-              <List />
-              {translate('codezera.pms.layout.list', 'List')}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="project">
-              <FolderKanban />
-              {translate('codezera.pms.layout.project', 'By project')}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="eisenhower">
-              <Grid2x2 />
-              {translate('codezera.pms.layout.eisenhower', 'Eisenhower')}
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative min-w-0 flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder={translate('codezera.pms.searchTickets', 'Search title or #number')}
-              className="h-8 rounded-md border-border/50 bg-background pl-8 text-xs"
-            />
-          </div>
-          <PmsPicker
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={[
-              { value: ALL_STATUSES, label: translate('codezera.pms.allStatuses', 'All statuses') },
-              ...pmsStatusPicks(queue?.statuses ?? [], options)
-            ]}
-            className="w-44 shrink-0 text-xs"
+      <div className="flex items-center gap-2 border-b border-border/50 px-4 py-2.5">
+        <div className="relative min-w-0 flex-1">
+          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder={translate('codezera.pms.searchTickets', 'Search title or #number')}
+            className="h-8 rounded-md border-border/50 bg-background pl-8 text-xs"
           />
         </div>
+        <PmsPicker
+          value={statusFilter}
+          onChange={setStatusFilter}
+          options={[
+            { value: ALL_STATUSES, label: translate('codezera.pms.allStatuses', 'All statuses') },
+            ...pmsStatusPicks(queue?.statuses ?? [], options)
+          ]}
+          className="w-44 shrink-0 text-xs"
+        />
+        <ToggleGroup
+          type="single"
+          value={layout}
+          onValueChange={(value) => {
+            if (value === 'list' || value === 'project' || value === 'eisenhower') {
+              localStorage.setItem(LAYOUT_KEY, value)
+              setLayout(value)
+            }
+          }}
+          aria-label={translate('codezera.pms.layout.label', 'Queue layout')}
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+        >
+          <ToggleGroupItem value="list">
+            <List />
+            {translate('codezera.pms.layout.list', 'List')}
+          </ToggleGroupItem>
+          <ToggleGroupItem value="project">
+            <FolderKanban />
+            {translate('codezera.pms.layout.project', 'By project')}
+          </ToggleGroupItem>
+          <ToggleGroupItem value="eisenhower">
+            <Grid2x2 />
+            {translate('codezera.pms.layout.eisenhower', 'Eisenhower')}
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
       <div className="scrollbar-sleek @container min-h-0 flex-1 overflow-y-auto">
         {shown?.layout === 'eisenhower' ? (

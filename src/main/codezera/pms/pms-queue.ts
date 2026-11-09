@@ -1,18 +1,17 @@
 import { z } from 'zod'
+import type { PmsStatusOption, PmsUser } from '../../../shared/codezera/pms-types'
 import type {
   PmsQueue,
   PmsQueueBucket,
-  PmsQueueRow,
-  PmsStatusOption,
-  PmsUser
-} from '../../../shared/codezera/pms-types'
+  PmsQueueRow
+} from '../../../shared/codezera/pms-dashboard-types'
+import { DashboardFiltersSchema, dashboardAction, dashboardScope } from './pms-dashboard-scope'
 import { pmsField, type PmsRecord } from './pms-records'
 import { connectedClient, picklist } from './pms-service'
 import { TICKET_FORM_FIELD_RULES } from './pms-ticket-rules'
-import { pmsWebSession } from './pms-web-session'
 
 const QueueArgsSchema = z.object({
-  role: z.enum(['all', 'processing', 'verification', 'reception', 'owner']),
+  filters: DashboardFiltersSchema,
   layout: z.enum(['eisenhower', 'list', 'project']),
   keyword: z.string().max(200),
   status: z.string().max(100),
@@ -70,21 +69,15 @@ function bucket(key: string, raw: PmsRecord, people: PmsRecord): PmsQueueBucket 
 export async function pmsQueue(input: unknown): Promise<PmsQueue> {
   const args = QueueArgsSchema.parse(input)
   const pms = await connectedClient()
-  const result = await pmsWebSession(pms).action({
-    module: 'HelpDesk',
-    action: 'TicketDashboard',
-    mode: 'getData',
-    params: JSON.stringify({
-      sections: ['detail'],
-      filters: { role: args.role },
-      detail: {
-        layout: args.layout,
-        keyword: args.keyword,
-        status: args.status,
-        page: args.page,
-        quadrant_pages: args.quadrantPages
-      }
-    })
+  const result = await dashboardAction(pms, 'getData', args.filters, {
+    sections: ['detail'],
+    detail: {
+      layout: args.layout,
+      keyword: args.keyword,
+      status: args.status,
+      page: args.page,
+      quadrant_pages: args.quadrantPages
+    }
   })
   const detail = (result.detail ?? {}) as PmsRecord
   const people = (detail.people ?? {}) as PmsRecord
@@ -100,6 +93,7 @@ export async function pmsQueue(input: unknown): Promise<PmsQueue> {
         : [bucket('all', { rows: detail.rows, total }, people)]
   return {
     layout: args.layout,
+    scope: await dashboardScope(result),
     statuses: Array.isArray(detail.statuses) ? detail.statuses.map(String) : [],
     total,
     buckets,

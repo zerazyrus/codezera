@@ -3,6 +3,7 @@ import { ClipboardList, Loader2, Unlink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import {
@@ -71,6 +72,30 @@ function AccountForm(): React.JSX.Element {
       </Button>
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </form>
+  )
+}
+
+/** Off by default: each person sees only their own tickets until they turn this on. */
+function ViewOthersSetting(): React.JSX.Element {
+  const viewOthers = usePmsStore((s) => s.viewOthers)
+  const setViewOthers = usePmsStore((s) => s.setViewOthers)
+  return (
+    <IntegrationCardDetails>
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <Label htmlFor="pms-view-others">
+            {translate('codezera.pms.viewOthers.title', "View other employees' tickets")}
+          </Label>
+          <p className="text-xs text-muted-foreground">
+            {translate(
+              'codezera.pms.viewOthers.hint',
+              'Adds an employee picker to My work, Tickets and Tasks. My work of others follows PMS: only Ticket Dashboard managers get it.'
+            )}
+          </p>
+        </div>
+        <Switch id="pms-view-others" checked={viewOthers} onCheckedChange={setViewOthers} />
+      </div>
+    </IntegrationCardDetails>
   )
 }
 
@@ -231,7 +256,12 @@ export function PmsIntegrationCard(): React.JSX.Element | null {
           ) : null}
         </IntegrationCardDetails>
       ) : null}
-      {connected && !editing ? <WorkflowEditor /> : null}
+      {connected && !editing ? (
+        <>
+          <ViewOthersSetting />
+          <WorkflowEditor />
+        </>
+      ) : null}
       {error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
     </IntegrationCardShell>
   )

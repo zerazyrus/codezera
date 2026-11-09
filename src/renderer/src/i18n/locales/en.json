@@ -24450,6 +24450,18 @@
       "showRemote": "Show Remote Branches",
       "fetch": "Fetch from Remote(s)",
       "refresh": "Refresh",
+      "find": {
+        "open": "Find",
+        "placeholder": "Find commit message, hash, author, branch or tag",
+        "count": "{{current}} of {{total}}",
+        "none": "No results",
+        "invalid": "Invalid regex",
+        "caseSensitive": "Match Case",
+        "regex": "Use Regular Expression",
+        "previous": "Previous match (Shift+Enter)",
+        "next": "Next match (Enter)",
+        "close": "Close (Escape)"
+      },
       "column": {
         "graph": "Graph",
         "description": "Description",
@@ -24709,7 +24721,12 @@
         "verification": "I verify",
         "reception": "I receive",
         "owner": "I own",
-        "all": "All my roles"
+        "all": "All my roles",
+        "allOf": "All roles",
+        "ownerOf": "Owns",
+        "processingOf": "Handles",
+        "receptionOf": "Receives",
+        "verificationOf": "Verifies"
       },
       "layout": {
         "eisenhower": "Eisenhower",
@@ -24753,6 +24770,13 @@
       "nextPage": "Next page",
       "lateCount": "{{count}} late",
       "myQueue": "My work",
+      "viewAs": "Employee",
+      "allEmployees": "All employees",
+      "queueOwnOnly": "PMS only shows you your own queue. Ask a Ticket manager to add you to \"Users who can see every employee\" in the Ticket Dashboard settings; Tickets and Tasks still show this employee.",
+      "viewOthers": {
+        "title": "View other employees' tickets",
+        "hint": "Adds an employee picker to My work, Tickets and Tasks. My work of others follows PMS: only Ticket Dashboard managers get it."
+      },
       "todayHint": "Hours logged today",
       "changeStatus": "Change status",
       "lateDays": "{{days}}d late",
@@ -24875,6 +24899,70 @@
         "hint": "Added to the prompt of every agent started from a PMS ticket or task.",
         "reset": "Restore default",
         "saved": "Workflow saved"
+      },
+      "dashboard": {
+        "allCompanies": "All companies",
+        "allProjects": "All projects",
+        "allTypes": "All",
+        "byCategory": "Category",
+        "byEmployee": "Employee",
+        "byProject": "Project",
+        "categories": "By category",
+        "company": "Company",
+        "detail": "Detail",
+        "drillTotal": "{{count}} tickets",
+        "median": "~{{days}}d",
+        "medianHint": "Median working days since the last update; idle tickets",
+        "noCategory": "No category",
+        "noHolder": "Nobody yet",
+        "noProject": "No project",
+        "overview": "Overview",
+        "pipeline": "By status",
+        "project": "Project",
+        "projectType": "Project type",
+        "report": "Report",
+        "sections": "Dashboard view",
+        "staleCount": "{{count}} idle"
+      },
+      "metric": {
+        "all": "To do",
+        "late": "Overdue",
+        "missing": "Missing info",
+        "parked": "On hold / Follow up",
+        "soon": "Due soon",
+        "stale": "Idle too long",
+        "waitcus": "Waiting for customer"
+      },
+      "period": {
+        "label": "Period",
+        "month": "Month",
+        "quarter": "Quarter",
+        "week": "Week",
+        "year": "Year"
+      },
+      "dashReport": {
+        "backlog": "Backlog change",
+        "backlogHint": "{{created}} created, {{completed}} completed",
+        "by": "By",
+        "compare": "{{picked}} vs the same span of {{previous}}",
+        "completed": "Completed",
+        "completedInPeriod": "Completed in the period",
+        "created": "Created",
+        "createdInPeriod": "Created in the period",
+        "done": "Done",
+        "doneRate": "Done rate",
+        "open": "New, still open",
+        "openShare": "{{percent}}% of new tickets",
+        "overdue": "Overdue",
+        "overdueHint": "New tickets still open past their due date",
+        "previous": "Same span before: {{count}}",
+        "standing": "You rank {{rank}} of {{total}}, {{behind}} tickets behind the next place.",
+        "standingFirst": "You lead {{total}} people this period.",
+        "stillOpen": "Open",
+        "tickets": "Tickets",
+        "total": "Total",
+        "trend": "Created and completed per {{period}}",
+        "vsBefore": "± before"
       }
     }
   },

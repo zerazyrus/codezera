@@ -4,12 +4,12 @@ import { translate } from './pms-i18n'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
+import type { PmsItem } from '../../../../shared/codezera/pms-types'
 import type {
-  PmsItem,
   PmsQueue,
   PmsQueueBucket,
   PmsQueueRow
-} from '../../../../shared/codezera/pms-types'
+} from '../../../../shared/codezera/pms-dashboard-types'
 import { PmsStatusBadge } from './pms-status-label'
 import { usePmsStore } from './pms-store'
 import {

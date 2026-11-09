@@ -36,7 +36,9 @@ const ListArgsSchema = z.object({
   kind: KindSchema,
   status: z.string().max(100).nullable(),
   search: z.string().max(200),
-  offset: z.number().int().min(0)
+  offset: z.number().int().min(0),
+  /** An employee id, or `all` for everyone; the user's own when absent. */
+  ownerId: z.union([IdSchema, z.literal('all')]).optional()
 })
 
 const ItemArgsSchema = z.object({ kind: KindSchema, id: IdSchema })
@@ -174,7 +176,9 @@ export async function listPmsItems(input: unknown): Promise<PmsListResult> {
   const args = ListArgsSchema.parse(input)
   const pms = await connectedClient()
   // main_owner_id is the person responsible; assigned_user_id may hold a multi-owner group.
-  const filters: PmsRecord[] = [{ name: 'main_owner_id', value: pms.user?.id ?? '', operator: 'e' }]
+  const owner = args.ownerId ?? pms.user?.id ?? ''
+  const filters: PmsRecord[] =
+    owner === 'all' ? [] : [{ name: 'main_owner_id', value: owner, operator: 'e' }]
   if (args.status) {
     filters.push({ name: STATUS_FIELD[args.kind], value: args.status, operator: 'e' })
   }

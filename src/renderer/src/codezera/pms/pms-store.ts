@@ -35,6 +35,15 @@ export function pmsFormatHours(hours: number): string {
 }
 
 const TASK_PAGE_ACTIVE_KEY = 'codezera.pms.taskPageActive'
+const VIEW_OTHERS_KEY = 'codezera.pms.viewOthers'
+/** `viewAs` value showing every employee's work. */
+export const PMS_ALL_EMPLOYEES = 'all'
+
+/** A choice saved in localStorage, or the fallback when it is absent or no longer offered. */
+export function storedChoice<T extends string>(key: string, choices: readonly T[], fallback: T): T {
+  const saved = localStorage.getItem(key)
+  return choices.find((choice) => choice === saved) ?? fallback
+}
 
 export type PmsListView = 'queue' | PmsItemKind | 'report'
 /** What another surface (status bar) asks the PMS page to show once it is open. */
@@ -48,6 +57,12 @@ type PmsStore = {
   /** PMS users for the missing-field form, loaded once. */
   users: PmsUser[] | null
   loadUsers: () => Promise<void>
+  /** Settings switch: the lists offer other employees' work, not only the user's. */
+  viewOthers: boolean
+  setViewOthers: (enabled: boolean) => void
+  /** Whose work the lists show: empty is the user, an employee id, or `PMS_ALL_EMPLOYEES`. */
+  viewAs: string
+  setViewAs: (viewAs: string) => void
   /** PMS is the selected source on the Tasks page (Orca's own source stays as it was). */
   taskPageActive: boolean
   setTaskPageActive: (active: boolean) => void
@@ -72,6 +87,13 @@ export const usePmsStore = create<PmsStore>()((set, get) => ({
       set({ users: await window.api.codezera.pms.users() })
     }
   },
+  viewOthers: typeof localStorage !== 'undefined' && localStorage.getItem(VIEW_OTHERS_KEY) === '1',
+  setViewOthers: (enabled) => {
+    localStorage.setItem(VIEW_OTHERS_KEY, enabled ? '1' : '0')
+    set(enabled ? { viewOthers: true } : { viewOthers: false, viewAs: '' })
+  },
+  viewAs: '',
+  setViewAs: (viewAs) => set({ viewAs }),
   // The status bar imports this store, and its tests run without a DOM storage.
   taskPageActive:
     typeof localStorage !== 'undefined' && localStorage.getItem(TASK_PAGE_ACTIVE_KEY) === '1',
@@ -93,16 +115,25 @@ export const usePmsStore = create<PmsStore>()((set, get) => ({
     }
   },
   connect: async (input) => {
-    set({ status: await window.api.codezera.pms.connect(input), statusOptions: {} })
+    set({
+      status: await window.api.codezera.pms.connect(input),
+      statusOptions: {},
+      viewAs: ''
+    })
   },
   connectFromSkillConfig: async () => {
-    set({ status: await window.api.codezera.pms.connectFromSkillConfig(), statusOptions: {} })
+    set({
+      status: await window.api.codezera.pms.connectFromSkillConfig(),
+      statusOptions: {},
+      viewAs: ''
+    })
   },
   disconnect: async () => {
     set({
       status: await window.api.codezera.pms.disconnect(),
       statusOptions: {},
-      todayHours: null
+      todayHours: null,
+      viewAs: ''
     })
   },
   loadStatusOptions: async (kind) => {

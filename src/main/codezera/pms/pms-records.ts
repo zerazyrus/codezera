@@ -2,6 +2,15 @@ import type { PmsItem, PmsItemKind, PmsStatusOption } from '../../../shared/code
 
 export type PmsRecord = Record<string, unknown>
 
+function isPmsRecord(value: unknown): value is PmsRecord {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** A nested PMS object; PHP encodes an empty map as []. */
+export function pmsRecord(value: unknown): PmsRecord {
+  return isPmsRecord(value) ? value : {}
+}
+
 /** PMS returns every scalar as a string; reference fields can come back as `{value,label}` objects. */
 export function pmsField(record: PmsRecord, key: string): string {
   const value = record[key]
