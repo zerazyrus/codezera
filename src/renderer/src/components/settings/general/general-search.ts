@@ -6,6 +6,7 @@ import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 import { getGeneralProjectRuntimeSearchEntries } from './project-runtime/general-project-runtime-search'
 import { getGeneralSupportSearchEntries } from './general-support-search'
 import { getCodezeraSnippetsSearchEntries } from '@/codezera/snippets/snippets-settings-search'
+import { getCodezeraIndentationSearchEntries } from '@/codezera/indentation/indentation-settings-search'
 import { getCodezeraSftpSearchEntries } from '@/codezera/sftp/sftp-settings-search'
 import { getUpdateDelayDescription, getUpdateDelayTitle } from '../updates/update-delay-copy'
 
@@ -281,6 +282,7 @@ export function getGeneralPaneSearchEntries(
     ...getGeneralNavigationSearchEntries(),
     ...(options.includeProjectRuntime === false ? [] : getGeneralProjectRuntimeSearchEntries()),
     ...getGeneralEditorSearchEntries(),
+    ...getCodezeraIndentationSearchEntries(),
     ...getCodezeraSnippetsSearchEntries(),
     ...getCodezeraSftpSearchEntries(),
     ...getGeneralCliSearchEntries(),

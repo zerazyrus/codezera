@@ -32,6 +32,7 @@ import { installMonacoContextMenuPaste } from '@/components/editor/install-monac
 import { runMonacoSetupSteps } from './monaco-setup-steps'
 import { installMonacoTsWorkerIdleStop } from './monaco-ts-worker-idle-stop'
 import { registerCodezeraSnippetCompletions } from '@/codezera/snippets/snippet-completions'
+import { installCodezeraIndentation } from '@/codezera/indentation/indentation-monaco'
 import { onPluginFontLoadsChanged } from '@/store/plugins/appearance/plugin-fonts'
 
 globalThis.MonacoEnvironment = {
@@ -99,6 +100,7 @@ runMonacoSetupSteps([
   // Sandboxed navigator.clipboard blocks Monaco Paste; use trusted IPC as native Cmd+V does.
   ['context-menu paste', () => installMonacoContextMenuPaste(monaco)],
   ['Codezera snippets', () => registerCodezeraSnippetCompletions(monaco)],
+  ['Codezera indentation', () => installCodezeraIndentation(monaco)],
   ['TS worker idle stop', () => installMonacoTsWorkerIdleStop(monaco)],
   // Monaco caches glyph widths, so a plugin font that loads after first paint must re-measure.
   ['plugin font remeasure', () => onPluginFontLoadsChanged(() => monaco.editor.remeasureFonts())]

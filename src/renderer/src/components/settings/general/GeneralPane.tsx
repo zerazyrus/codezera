@@ -25,6 +25,8 @@ import { DefaultWindowsProjectRuntimeSetting } from './project-runtime/DefaultWi
 import { defaultScopeHost } from '@/lib/default-creation-host'
 import { ImportFromOrcaSetting } from '@/codezera/orca-import/import-from-orca'
 import { CodezeraSnippetsSetting } from '@/codezera/snippets/CodezeraSnippetsSetting'
+import { CodezeraIndentationSetting } from '@/codezera/indentation/CodezeraIndentationSetting'
+import { getCodezeraIndentationSearchEntries } from '@/codezera/indentation/indentation-settings-search'
 import { SftpImportAllSetting } from '@/codezera/sftp/sftp-import-all-setting'
 import { getCodezeraSnippetsSearchEntries } from '@/codezera/snippets/snippets-settings-search'
 import { getCodezeraSftpSearchEntries } from '@/codezera/sftp/sftp-settings-search'
@@ -263,10 +265,12 @@ export function GeneralPane({
       />
     ) : null,
     matchesSettingsSearch(searchQuery, [
+      ...getCodezeraIndentationSearchEntries(),
       ...getCodezeraSnippetsSearchEntries(),
       ...getCodezeraSftpSearchEntries()
     ]) ? (
       <div key="codezera" className="space-y-6">
+        <CodezeraIndentationSetting />
         <CodezeraSnippetsSetting />
         <SftpImportAllSetting />
       </div>

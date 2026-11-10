@@ -24487,6 +24487,15 @@
       "sectionTitle": "Snippet",
       "sectionDescription": "Đoạn code được gợi ý dưới dạng completion trong trình soạn thảo, lưu trên máy này."
     },
+    "indentation": {
+      "title": "Thụt lề",
+      "description": "Trình soạn thảo thụt lề bằng tab hay dấu cách, và rộng bao nhiêu.",
+      "tabs": "Tab",
+      "spaces": "Dấu cách",
+      "size": "Độ rộng",
+      "detect": "Tự nhận theo nội dung file",
+      "detectHint": "Bật: mỗi file giữ kiểu thụt lề đang dùng. Tắt: mọi file thụt lề theo cài đặt ở trên."
+    },
     "pms": {
       "baseUrl": "URL PMS",
       "username": "Tên đăng nhập",
