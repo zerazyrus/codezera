@@ -1,6 +1,10 @@
 import type { ChildProcess } from 'node:child_process'
 import type { ConnectConfig } from 'ssh2'
 import type { SshTarget } from '../../../shared/ssh-types'
+import {
+  isUnencryptedPrivateKey,
+  resolvePrivateKeys
+} from '../../ssh/authentication/ssh-auth-resolution'
 import { resolveWithSshG, type SshResolvedConfig } from '../../ssh/config/ssh-g-config-resolution'
 import {
   buildConnectConfig,
@@ -33,7 +37,14 @@ export function openSftpConnectConfig(endpoint: SftpEndpoint): {
   config: ConnectConfig
   proxyProcess: ChildProcess | null
 } {
-  const config = buildConnectConfig(endpoint.target, endpoint.resolved)
+  // Orca leaves default-path keys (~/.ssh/id_ed25519) to the agent and retries with them after an
+  // agent failure; this pool has no retry ladder, so offer them up front unless one needs a passphrase.
+  const keys = resolvePrivateKeys(endpoint.target, endpoint.resolved)
+  const allUnencrypted =
+    keys.length > 0 && keys.every((key) => isUnencryptedPrivateKey(key.contents))
+  const config = buildConnectConfig(endpoint.target, endpoint.resolved, {
+    includePrivateKey: allUnencrypted || undefined
+  })
   // No prompt UI here: password/MFA hosts fail fast instead of hanging on a challenge.
   config.tryKeyboard = false
   const proxy = resolveEffectiveProxy(endpoint.target, endpoint.resolved)
