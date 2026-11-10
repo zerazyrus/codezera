@@ -1,10 +1,10 @@
 # Codezera releases
 
-Codezera ships from `zerazyrus/codezera` (branch `codezera`), merged daily from `stablyai/orca` `main`.
+Codezera ships from `zerazyrus/codezera` (branch `codezera`), merged from `stablyai/orca` `main` on each release run.
 
 ## Pipeline (`.github/workflows/codezera-release.yml`)
 
-06:00 ICT daily, or **Actions → codezera-release → Run workflow** (`force` rebuilds even without changes).
+Manual only: **Actions → codezera-release → Run workflow** (`force` rebuilds even without changes).
 
 1. Disables inherited Orca workflows (they target Orca's runners and secrets).
 2. Merges `upstream/main` after `config/scripts/codezera-merge-setup.sh` (brand files keep ours, see below). A conflict opens an issue and stops; resolve locally and push.

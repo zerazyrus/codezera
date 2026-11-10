@@ -1,11 +1,8 @@
-# Codezera: daily upstream merge → mac + windows build → one GitHub Release.
+# Codezera: manual upstream merge → mac + windows build → one GitHub Release.
 # Orca's own release workflows are guarded to stablyai/orca and never run here.
 name: codezera-release
 
 on:
-  schedule:
-    # 06:00 Asia/Ho_Chi_Minh.
-    - cron: '0 23 * * *'
   workflow_dispatch:
     inputs:
       force:
@@ -72,7 +69,7 @@ jobs:
           conflicts="$(git diff --name-only --diff-filter=U)"
           git merge --abort
           title="Upstream merge conflict $(date -u +%F)"
-          body="$(printf 'Daily merge of stablyai/orca main into codezera stopped on conflicts:\n\n```\n%s\n```\n\nResolve locally: `git fetch upstream main && git merge upstream/main`, then push codezera.' "$conflicts")"
+          body="$(printf 'Merge of stablyai/orca main into codezera stopped on conflicts:\n\n```\n%s\n```\n\nResolve locally: `git fetch upstream main && git merge upstream/main`, then push codezera.' "$conflicts")"
           gh issue create --title "$title" --body "$body" --label upstream-conflict 2>/dev/null \
             || gh issue create --title "$title" --body "$body"
           echo "::error::Upstream merge conflicted: $conflicts"
