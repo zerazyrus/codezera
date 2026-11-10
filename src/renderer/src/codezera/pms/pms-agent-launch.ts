@@ -3,7 +3,7 @@ import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-reco
 import { prepareDirectWorkItemSetup } from '@/lib/workspace/creation/work-item/direct-work-item-setup'
 import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
 import { launchAgentInNewTab } from '@/lib/agent-session/launch/new-tab/launch-agent-in-new-tab'
-import { resolveDefaultAgentForWorktreeNewTab } from '@/lib/agent-tab-shortcuts'
+import { resolveDefaultAgentForWorktreeNewTab } from '@/lib/agent-session/launch/shortcuts/agent-tab-shortcuts'
 import { newAgentLaunchRequestId } from '@/lib/agent-session/launch/routing/agent-launch-request-id'
 import { getRepoExecutionHostId } from '../../../../shared/execution-host'
 import { isGitRepoKind } from '../../../../shared/repo-kind'

@@ -1,8 +1,10 @@
 import { BranchSwitchCollisionError } from '../../git/branch-switch-target'
+import { SparsePresetValidationError } from '../../../shared/worktree/sparse-preset-failure'
 import {
   RECIPE_VM_REFUSAL_CODES,
   RecipeVmWakeUnavailableError
 } from '../../../shared/remote-runtime/recipe-vm-wake'
+import { RecipeWorkspaceRemovalError } from '../../../shared/recipe-host-removal'
 import { formatTerminalStartFailure } from '../../../shared/terminal/pty/lifecycle/terminal-start-failure'
 // Centralize the runtimeId envelope and error-code contracts that clients use for decisions and display.
 import { AGENT_LAUNCH_SURFACE_UNAVAILABLE_CODE } from '../../../shared/agent-launch/contracts/agent-launch-surface'
@@ -14,6 +16,7 @@ import {
 import type { RpcEnvelopeMeta, RpcFailure, RpcSuccess } from './core'
 import { CONNECTOR_REPLY_ERROR_CODES } from '../../../shared/rpc-contract/connector-params'
 import { ORCHESTRATION_SESSION_CALLER_ERROR_CODES } from '../../../shared/orchestration/orchestration-session-caller-codes'
+import { ORCHESTRATION_FEDERATION_ERROR_CODES } from '../../../shared/orchestration/orchestration-federation-error-codes'
 import { computerUseErrorRecoveryData } from '../../../shared/computer-use-error-recovery'
 import { COMPUTER_ERROR_CODES } from '../../../shared/computer-use-runtime-types'
 import { TerminalSplitOutcomeError } from '../../../shared/workspace-layout/terminal-split-outcome'
@@ -40,7 +43,6 @@ import { PLUGIN_CLI_ERROR_CODES } from '../../../shared/plugins/approval/plugin-
 import { GIT_DIFF_TOO_LARGE_CODE } from '../../../shared/git/diff/git-diff-transport-budget'
 import { AUTOMATION_OWNER_CONFLICT_CODES } from '../../../shared/automations/ownership/automation-owner-conflict'
 import { ARCHIVE_HOOK_FAILED_REMOVAL_CODE } from '../../../shared/worktree/archive-hook-removal-gate'
-import { RECIPE_WORKSPACE_CREATE_FAILED_CODE } from '../../../shared/recipe-workspace-create-progress'
 import { NESTED_WORKER_DEPTH_EXCEEDED_CODE } from '../../../shared/orchestration/workers/nested-worker-depth'
 import { PROJECT_RUNTIME_REPAIR_REQUIRED_CODE } from '../../../shared/project-runtime-repair-message'
 import {
@@ -144,15 +146,7 @@ const STRUCTURED_RUNTIME_PASSTHROUGH_CODES: ReadonlySet<string> = new Set([
   'cursor_dispatch_mismatch',
   'source_changed',
   'transcript_required',
-  'server_required',
-  'worktree_not_found_on_server',
-  'resource_server_mismatch',
-  'peer_changed',
-  'remote_runtime_unavailable',
-  'runtime_timeout',
-  'invalid_runtime_response',
-  'capability_unsupported',
-  'relay_quota_exceeded',
+  ...ORCHESTRATION_FEDERATION_ERROR_CODES,
   'dispatch_capability_invalid',
   'agent_unconfigured',
   'worker_prompt_too_large',
@@ -176,8 +170,6 @@ const STRUCTURED_RUNTIME_PASSTHROUGH_CODES: ReadonlySet<string> = new Set([
   'invalid_argument',
   // Preserve archive-hook failure so callers can retry, waive or skip it (#19334).
   ARCHIVE_HOOK_FAILED_REMOVAL_CODE,
-  // The failed step, the recipe failure code and whether the new VM was destroyed ride in data.
-  RECIPE_WORKSPACE_CREATE_FAILED_CODE,
   // Paired-only method refusal must match the mobile transport allowlist's forbidden code.
   'forbidden',
   NESTED_WORKER_DEPTH_EXCEEDED_CODE,
@@ -204,15 +196,20 @@ export function mapRuntimeError(id: string, meta: RpcEnvelopeMeta, error: unknow
   if (isAgentSessionRefusalError(error)) {
     return agentSessionRefusalErrorResponse(id, meta, error)
   }
-  if (error instanceof RecipeVmWakeUnavailableError) {
-    return errorResponse(id, meta, error.code, message)
+  // A recipe workspace removal keeps its environment's own code (archive hook, PTY stop, selector).
+  if (
+    error instanceof RecipeVmWakeUnavailableError ||
+    error instanceof RecipeWorkspaceRemovalError
+  ) {
+    return errorResponse(id, meta, error.code, message, 'data' in error ? error.data : undefined)
   }
   if (
     error instanceof BranchSwitchCollisionError ||
     error instanceof TerminalSplitOutcomeError ||
+    error instanceof SparsePresetValidationError ||
     error instanceof WslHostWindowsDriveRefusalError
   ) {
-    // Keeps the code callers already match; the split's id or the refusal kind rides in `data`.
+    // Keep the existing RPC code while preserving structured details.
     return errorResponse(id, meta, 'runtime_error', message, error.data)
   }
   if (

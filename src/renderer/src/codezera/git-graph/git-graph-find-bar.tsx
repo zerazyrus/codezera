@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { CaseSensitive, ChevronDown, ChevronUp, Regex, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
-import { ImeInput } from '@/lib/ime-text-field'
+import { ImeInput } from '@/lib/text-input/ime/ime-text-field'
 import { Button } from '@/components/ui/button'
 import type { GitGraphFindOptions } from './git-graph-find'
 

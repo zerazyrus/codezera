@@ -3,19 +3,19 @@ import { Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { IntegrationStatusPill } from '@/components/integration-status-pill'
 import { IntegrationCardDetails } from '@/components/integrations/presentation/integration-card-shell'
-import { SkillUnsupportedStatusPill } from '@/components/skills/SkillFreshnessStatusPill'
+import { SkillUnsupportedStatusPill } from '@/components/skills/freshness/SkillFreshnessStatusPill'
 import { BundledSkillInstallStatus } from '@/components/skills/setup/BundledSkillInstallStatus'
-import { useActiveProjectSkillRuntime } from '@/hooks/useActiveProjectSkillRuntime'
+import { useActiveProjectSkillRuntime } from '@/hooks/skills/runtime/useActiveProjectSkillRuntime'
 import {
   GLOBAL_AGENT_SKILL_SOURCE_KINDS,
   useInstalledAgentSkillNames
-} from '@/hooks/useInstalledAgentSkills'
-import { useBundledSkillInstallAction } from '@/hooks/use-bundled-skill-install-action'
+} from '@/hooks/skills/discovery/useInstalledAgentSkills'
+import { useBundledSkillInstallAction } from '@/hooks/skills/installation/use-bundled-skill-install-action'
 import {
   bundledSkillInstallNeedsAttention,
   useBundledSkillInstall
-} from '@/hooks/use-bundled-skill-install'
-import { recheckSurfacesAfterAgentSkillInstall } from '@/hooks/agent-skill-recheck-surface-sync'
+} from '@/hooks/skills/installation/use-bundled-skill-install'
+import { recheckSurfacesAfterAgentSkillInstall } from '@/components/skills/setup/agent-skill-recheck-surface-sync'
 import { translate } from './pms-i18n'
 
 const PMS_SKILL_NAMES = ['orca-pms'] as const

@@ -24,6 +24,7 @@ import { JIRA_COMMAND_SPECS } from './jira'
 import { CODEZERA_PMS_COMMAND_SPECS } from './codezera-pms'
 import { LINEAR_COMMAND_SPECS } from './linear'
 import { VM_COMMAND_SPECS } from './vm'
+import { VM_ENV_COMMAND_SPECS } from './vm-env'
 import { SKILL_COMMAND_SPECS } from './skills'
 import { ARTIFACT_COMMAND_SPECS } from './artifacts'
 import { SEARCH_COMMAND_SPECS } from './search'
@@ -61,6 +62,7 @@ export const COMMAND_SPECS: CommandSpec[] = [
   ...CODEZERA_PMS_COMMAND_SPECS,
   ...LINEAR_COMMAND_SPECS,
   ...VM_COMMAND_SPECS,
+  ...VM_ENV_COMMAND_SPECS,
   ...EMULATOR_COMMAND_SPECS,
   ...SKILL_COMMAND_SPECS,
   ...SEARCH_COMMAND_SPECS,

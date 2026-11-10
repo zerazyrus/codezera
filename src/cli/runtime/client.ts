@@ -38,10 +38,7 @@ import {
   ORCHESTRATION_CONTRACT_VERSION
 } from '../../shared/orchestration/orchestration-runtime-capabilities'
 import { RemoteRuntimeCompatGate } from './remote-runtime-compat-gate'
-import {
-  createAgentLaunchCallerEvidence,
-  createOrchestrationCompatibilityEnvelope
-} from './orchestration-compatibility-envelope'
+import { OrchestrationRequestEvidence } from './orchestration-compatibility-envelope'
 import { getTimeoutMsParam, isWaitingCheck } from './runtime-request-timeout'
 import {
   isWorkerStartTimeoutWithinTimerLimit,
@@ -56,7 +53,6 @@ import {
 
 const LONG_POLL_CLIENT_GRACE_MS = 10_000
 // The host records the launched agent in the caller's chat; older hosts ignore the evidence.
-const AGENT_LAUNCH_METHODS: ReadonlySet<string> = new Set(['agent.launch', 'agent.launchReplay'])
 
 const loadWebSocketTransport = async () => await import('./websocket-transport.js')
 
@@ -68,10 +64,7 @@ export class RuntimeClient {
   private readonly originalArgs: readonly string[] | undefined
   private readonly remoteCompat: RemoteRuntimeCompatGate
   private orchestrationContractCheck: Promise<void> | null = null
-  private readonly orchestrationCompatibility = createOrchestrationCompatibilityEnvelope(
-    process.env
-  )
-  private readonly agentLaunchCaller = createAgentLaunchCallerEvidence(process.env)
+  private readonly requestEvidence = new OrchestrationRequestEvidence(process.env)
   private readonly runtimeSourceFence: RuntimeSourceFence
 
   // Browser session cold starts can take 15–30 seconds; allow time for initialization.
@@ -139,15 +132,11 @@ export class RuntimeClient {
           : error
       }
     }
-    const compatibilityEnvelope = method.startsWith('orchestration.')
-      ? {
-          ...this.orchestrationCompatibility,
-          compatibilityInvocationId:
-            orchestrationRequestId ?? this.orchestrationCompatibility.compatibilityInvocationId
-        }
-      : AGENT_LAUNCH_METHODS.has(method) && !this.remote && this.agentLaunchCaller
-        ? { orchestrationCompatibilityEvidence: this.agentLaunchCaller }
-        : {}
+    const compatibilityEnvelope = this.requestEvidence.envelopeFor(method, {
+      remote: this.remote !== null,
+      mutation: orchestrationMutation,
+      requestId: orchestrationRequestId
+    })
     const envelope = {
       orchestrationCapability: options?.orchestrationCapability,
       orchestrationContractVersion: method.startsWith('orchestration.')
@@ -194,8 +183,7 @@ export class RuntimeClient {
         effectiveTimeoutMs,
         envelope,
         expectedRuntimeSource,
-        // Only requestSelection and onProgress reach the socket; the rest shaped the envelope above.
-        options
+        options?.requestSelection ? { requestSelection: options.requestSelection } : undefined
       )
     } catch (error) {
       // A pre-send refusal has no outcome to recover; retry advice would resend the same bytes.

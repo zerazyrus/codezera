@@ -19,6 +19,17 @@ export type RuntimeLongPollClass = 'ask' | 'browser-host' | 'wait'
 
 // One long-poll classifier owns admission, abort and keepalive (design §3.1).
 export function classifyRuntimeLongPoll(request: RpcRequest): RuntimeLongPollClass | null {
+  // A removal that also destroys its recipe environment waits on that environment's Git removal and
+  // the recipe's destroy step; other removals stay short calls.
+  if (
+    request.method === 'worktree.rm' &&
+    typeof request.params === 'object' &&
+    request.params !== null &&
+    'destroyHost' in request.params &&
+    request.params.destroyHost === true
+  ) {
+    return 'wait'
+  }
   // Worker readiness plus prompt verification can take 90–110s; keep Unix and Windows pipe connections alive.
   if (request.method === 'orchestration.workerStart') {
     return 'wait'
@@ -72,15 +83,6 @@ export function classifyRuntimeLongPoll(request: RpcRequest): RuntimeLongPollCla
   if (request.method === 'orchestration.check') {
     const params = request.params as { wait?: unknown } | undefined
     return params?.wait === true ? 'wait' : null
-  }
-  if (
-    request.method === 'worktree.create' &&
-    typeof request.params === 'object' &&
-    request.params !== null &&
-    'recipeId' in request.params &&
-    typeof request.params.recipeId === 'string'
-  ) {
-    return 'wait'
   }
   return null
 }

@@ -24,6 +24,7 @@ import {
   WorktreeActivate,
   WorktreeForceDeleteBranch,
   WorktreeRemove,
+  WorktreePreviewNestedRemoval,
   WorktreeResolveMrBase,
   WorktreeResolvePrBase,
   WorktreeRunApprovedSetup,
@@ -34,7 +35,6 @@ import {
 } from '../../../../../shared/rpc-contract/worktree-params'
 import { WORKTREE_CATALOG_METHODS } from './worktree-catalog-methods'
 import { WORKTREE_PROVISIONED_ROOT_METHOD } from './worktree-provisioned-root-method'
-import { VM_RECIPE_LIST_METHOD } from './vm-recipe-list-method'
 import { waitsForWorktreeRemoval } from '../../worktree-removal-marker-projection'
 import { queueWorkspaceDelete } from '../../../workspaces/lifecycle/workspace-lifecycle-commands'
 import { WORKTREE_SLEEP_METHOD } from './worktree-sleep-method'
@@ -122,24 +122,6 @@ export const WORKTREE_METHODS = [
       // Mobile retries after migration share clientMutationId; return the same pending/created worktree. Desktop/CLI without keys run plainly.
       context.runtime.dedupeWorktreeCreate(params, params.clientMutationId, async () => {
         const { runtime } = context
-        if (params.recipeId !== undefined) {
-          // Why: a recipe starts a billed machine from this computer's orca.yaml; paired devices
-          // do not get to start one until they have their own UI and confirmation for it.
-          if (context.clientKind !== undefined) {
-            throw Object.assign(
-              new Error(
-                "Recipe workspaces are created from this computer's Orca app or CLI, not from a paired device."
-              ),
-              { code: 'forbidden' }
-            )
-          }
-          return runtime.createManagedRecipeWorkspace(params, {
-            ...(context.signal ? { signal: context.signal } : {}),
-            ...(context.reportProgress
-              ? { onPhase: (phase) => context.reportProgress?.({ phase }) }
-              : {})
-          })
-        }
         const repo = await runtime.showRepo(worktreeCreateRepoSelector(params))
         const automationProvenance =
           resolveAutomationWorkspaceProvenance({
@@ -184,7 +166,6 @@ export const WORKTREE_METHODS = [
       })
   }),
   WORKTREE_PROVISIONED_ROOT_METHOD,
-  VM_RECIPE_LIST_METHOD,
   defineMethod({
     name: 'worktree.prefetchCreateBase',
     permission: 'workspace',
@@ -239,6 +220,9 @@ export const WORKTREE_METHODS = [
     params: WorktreeRemove,
     handler: async (params, context) => {
       const { runtime } = context
+      if (runtime.ownsRecipeWorkspaceRemoval?.(params)) {
+        return runtime.removeRecipeWorkspace(params)
+      }
       // Translate a paired client's runtime-local host spelling before host-qualified reads.
       let resolvedHostId = resolvePairedCallerHostId(
         () => runtime.listRepos(),
@@ -267,11 +251,19 @@ export const WORKTREE_METHODS = [
         params.worktree,
         resolvedHostId,
         params,
-        (removal) =>
-          runtime.removeManagedWorktree(params.worktree, {
+        (removal) => {
+          const options = {
             ...removal,
             waitForBackgroundRemoval: waitsForWorktreeRemoval(context, params)
-          })
+          }
+          return params.approvedNestedWorktrees
+            ? runtime.removeManagedWorktreeWithNested(
+                params.worktree,
+                params.approvedNestedWorktrees,
+                options
+              )
+            : runtime.removeManagedWorktree(params.worktree, options)
+        }
       )
       return {
         removed: result.removing !== true,
@@ -279,6 +271,16 @@ export const WORKTREE_METHODS = [
         ...(repoId ? { catalogVersion: getLocalWorktreeCatalogVersion(repoId) } : {})
       }
     }
+  }),
+  defineMethod({
+    name: 'worktree.previewNestedRemoval',
+    permission: 'workspace',
+    params: WorktreePreviewNestedRemoval,
+    handler: async (params, { runtime }) =>
+      runtime.previewNestedManagedWorktreeRemoval(
+        params.worktree,
+        resolvePairedCallerHostId(() => runtime.listRepos(), params.worktree, params.hostId)
+      )
   }),
   defineMethod({
     name: 'worktree.forceDeleteBranch',

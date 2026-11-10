@@ -5,6 +5,7 @@ import { CodexSharedSettingsNoticeCard } from '../components/CodexSharedSettings
 import { CkitToolUpdateCard } from '../codezera/ckit/CkitToolUpdateCard'
 import { NotificationCardStack } from '../components/NotificationCardStack'
 import { StarNagCard } from '../components/StarNagCard'
+import { SpeechModelUpdateCard } from '../components/dictation/SpeechModelUpdateCard'
 import { OverlayBoundary } from './app-root-surface-boundaries'
 
 const ChatUiHereCornerCard = lazy(() =>
@@ -59,6 +60,9 @@ export function AppNotificationCards({
       </OverlayBoundary>
       <OverlayBoundary boundaryId="overlay.codex-shared-settings-notice" resetKey={activeView}>
         <CodexSharedSettingsNoticeCard />
+      </OverlayBoundary>
+      <OverlayBoundary boundaryId="overlay.speech-model-update" resetKey={activeView}>
+        <SpeechModelUpdateCard />
       </OverlayBoundary>
       <OverlayBoundary boundaryId="overlay.codezera-ckit-tool-update" resetKey={activeView}>
         <CkitToolUpdateCard />

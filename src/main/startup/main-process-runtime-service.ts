@@ -1,3 +1,4 @@
+import { wireRecipeWorkspaceRemoval } from '../ephemeral-vm/recipe-workspace-removal-wiring'
 import {
   applySessionSearchSettingsChange,
   installChildSessionSearchService
@@ -61,10 +62,6 @@ import { recordDurableCrashBreadcrumb } from '../crash-reporting/durable-crash-b
 import { ORCA_LAYOUT_OWNER_IS_MAIN } from '../../shared/layout-owner-switch'
 import { getRuntimeEnvironmentRegistryRoot } from '../ipc/runtime-environments/runtime-environment-registry-root'
 import { openOffscreenBrowserPageLink } from '../runtime/browser/commands/offscreen-browser-page-link'
-import {
-  createCliRecipeWorkspace,
-  listCliEnvironmentRecipes
-} from '../ephemeral-vm/cli-workspace-create'
 
 export function getDesktopWindowStatus(): RuntimeDesktopWindowStatus {
   const activation = state.desktopActivationGate
@@ -149,18 +146,6 @@ export function initializeMainProcessRuntime(): OrcaRuntimeService {
     applySessionSearchSettings: applySessionSearchSettingsChange,
     skillTransactionRecovery: state.skillTransactionRecovery
   })
-  runtime.setRecipeWorkspaceService({
-    create: (params, repo, options) =>
-      createCliRecipeWorkspace({
-        store,
-        userDataPath: app.getPath('userData'),
-        repo,
-        params,
-        pluginService: state.pluginService,
-        ...options
-      }),
-    list: (repo) => listCliEnvironmentRecipes(store, repo, state.pluginService)
-  })
   // Both desktop and headless serve own a host-local search service.
   const sessionSearch = installChildSessionSearchService({
     dataRoot: getCanonicalUserDataPath(),
@@ -173,6 +158,7 @@ export function initializeMainProcessRuntime(): OrcaRuntimeService {
   startAgentStateRulesLiveUpdates(store, (rules) =>
     recordDurableCrashBreadcrumb('agent_state_rules_active', rules)
   )
+  wireRecipeWorkspaceRemoval(runtime, store, () => app.getPath('userData'))
   state.runtime = runtime
   // Opening a recipe VM's workspace from a client wakes the VM through the runtime's one owner.
   registerRecipeVmWaker({
