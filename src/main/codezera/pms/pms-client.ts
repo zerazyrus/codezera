@@ -52,6 +52,8 @@ export class PmsClient {
   private cloudWorkToken: string | null = null
   private openApiToken: { token: string; expiresAt: number } | null = null
   user: { id: string; name: string } | null = null
+  /** PMS `report_to`: my direct managers, who the web report form assigns every report to. */
+  managerIds: string[] = []
 
   constructor(readonly account: PmsAccount) {}
 
@@ -78,6 +80,14 @@ export class PmsClient {
       id: String(info.id ?? ''),
       name: name.length > 0 ? name.join(' ') : this.account.username
     }
+    const reportTo = Array.isArray(info.report_to) ? info.report_to : []
+    this.managerIds = [
+      ...new Set(
+        reportTo
+          .map((owner) => String(owner).replace(/^Users:/, ''))
+          .filter((id) => /^\d+$/.test(id) && id !== this.user?.id)
+      )
+    ]
     return this.user
   }
 

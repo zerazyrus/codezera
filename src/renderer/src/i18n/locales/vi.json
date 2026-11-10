@@ -24727,6 +24727,8 @@
         "recipients": "Người nhận (ngoài bạn)",
         "removeRecipient": "Bỏ",
         "addRecipient": "Thêm người nhận",
+        "manager": "Cấp trên",
+        "managerHint": "Cấp trên của bạn trên PMS, luôn nhận báo cáo",
         "saveDraft": "Lưu nháp",
         "submitShort": "Vẫn nộp",
         "submit": "Nộp báo cáo"

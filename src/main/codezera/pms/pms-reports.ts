@@ -233,6 +233,7 @@ export async function pmsReportPreview(input: unknown): Promise<PmsReportPreview
     perDay,
     entries,
     existing,
+    managerIds: pms.managerIds,
     name:
       args.type === 'day'
         ? `${userName} - Báo cáo ${slashDate(start)}`
@@ -244,7 +245,8 @@ export async function pmsReportPreview(input: unknown): Promise<PmsReportPreview
 /**
  * Creates the CPReportTask. Task lists go as real arrays: OpenAPI decodes the body once, and the
  * server's validateTasks rejects a JSON string. Weekly reports render only `description`, but
- * validation still needs the week's tasks. I am the first owner: PMS takes it as main_owner_id.
+ * validation still needs the week's tasks. Owners match the web form (Owner.tpl getDirectManagerId):
+ * me first, as PMS takes the first owner as main_owner_id, then my managers, then extra recipients.
  */
 export async function submitPmsReport(input: unknown): Promise<PmsReportSubmitResult> {
   const args = SubmitArgsSchema.parse(input)
@@ -261,7 +263,7 @@ export async function submitPmsReport(input: unknown): Promise<PmsReportSubmitRe
   if (entries.length === 0) {
     throw new Error('No time logged in this period.')
   }
-  const owners = [me, ...args.recipientIds.filter((id) => id !== me)]
+  const owners = [...new Set([me, ...pms.managerIds, ...args.recipientIds])]
   const created = await pms.openApi(
     'create',
     { module: 'CPReportTask' },

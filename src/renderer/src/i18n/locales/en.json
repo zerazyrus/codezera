@@ -24895,6 +24895,8 @@
         "recipients": "Recipients (besides you)",
         "removeRecipient": "Remove",
         "addRecipient": "Add recipient",
+        "manager": "Manager",
+        "managerHint": "Your manager in PMS, always receives the report",
         "saveDraft": "Save draft",
         "submitShort": "Submit anyway",
         "submit": "Submit report"

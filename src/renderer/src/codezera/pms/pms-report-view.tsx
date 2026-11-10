@@ -132,6 +132,7 @@ export function PmsReportView(): React.JSX.Element {
   }
 
   const short = !!preview && preview.type === 'day' && preview.totalHours < PMS_DAY_HOURS
+  const extraRecipients = recipients.filter((id) => !preview?.managerIds.includes(id))
   const filed = (preview?.existing.length ?? 0) > 0
   const canSubmit =
     !!preview &&
@@ -308,7 +309,22 @@ export function PmsReportView(): React.JSX.Element {
                 {translate('codezera.pms.report.recipients', 'Recipients (besides you)')}
               </span>
               <div className="flex flex-wrap items-center gap-1.5">
-                {recipients.map((id) => (
+                {preview.managerIds.map((id) => (
+                  <span
+                    key={id}
+                    title={translate(
+                      'codezera.pms.report.managerHint',
+                      'Your manager in PMS, always receives the report'
+                    )}
+                    className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-[13px]"
+                  >
+                    {users?.find((user) => user.id === id)?.name ?? `#${id}`}
+                    <span className="text-[11px] text-muted-foreground">
+                      {translate('codezera.pms.report.manager', 'Manager')}
+                    </span>
+                  </span>
+                ))}
+                {extraRecipients.map((id) => (
                   <span
                     key={id}
                     className="flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 py-0.5 pr-1 pl-2.5 text-[13px]"
@@ -331,7 +347,12 @@ export function PmsReportView(): React.JSX.Element {
                   placeholder={translate('codezera.pms.report.addRecipient', 'Add recipient')}
                   className="h-7 w-44"
                   options={(users ?? [])
-                    .filter((user) => user.id !== myId && !recipients.includes(user.id))
+                    .filter(
+                      (user) =>
+                        user.id !== myId &&
+                        !recipients.includes(user.id) &&
+                        !preview.managerIds.includes(user.id)
+                    )
                     .map((user) => ({ value: user.id, label: user.name }))}
                 />
               </div>
