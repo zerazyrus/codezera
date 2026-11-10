@@ -2,7 +2,7 @@ const WORKFLOW_KEY = 'codezera.pms.agentWorkflow'
 
 /** The `/pms` skill's ticket rules (B3.5, B4.5, B5), for machines without that skill; users rewrite it per team. */
 export const DEFAULT_PMS_WORKFLOW = `Quy trình xử lý (bắt buộc theo thứ tự):
-1. Đọc kỹ nội dung ticket/tác vụ ở trên. Nếu cần bình luận hoặc ảnh đính kèm mà ở trên không có, hỏi tôi gửi thêm. Tái hiện lỗi nếu có thể.
+1. Đọc kỹ nội dung ticket/tác vụ ở trên, xem hết ảnh đính kèm và bình luận bằng lệnh "orca pms" (mục PMS commands). Chỉ hỏi tôi khi vẫn thiếu thông tin. Tái hiện lỗi nếu có thể.
 2. Đọc code tìm nguyên nhân gốc (file/hàm/dòng gây lỗi). Báo cho tôi ngắn gọn:
    (a) hiện tượng, (b) nguyên nhân gốc, (c) hướng xử lý đề xuất (kèm phương án khác nếu có) và rủi ro.
    Rồi DỪNG, chờ tôi duyệt. Không sửa code, không commit khi tôi chưa đồng ý — kể cả lỗi có vẻ hiển nhiên.

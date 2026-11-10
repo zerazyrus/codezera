@@ -55,6 +55,7 @@ export const CLI_COMMAND_NAMES = [
   'pair',
   'pdf',
   'plugin',
+  'pms',
   'ports',
   'profile',
   'project',

@@ -24806,6 +24806,15 @@
         "title": "View other employees' tickets",
         "hint": "Adds an employee picker to My work, Tickets and Tasks. My work of others follows PMS: only Ticket Dashboard managers get it."
       },
+      "agentSkill": {
+        "title": "Agent skill",
+        "checking": "Checking...",
+        "installed": "Installed",
+        "notInstalled": "Not installed",
+        "install": "Install",
+        "update": "Update",
+        "hint": "Lets Claude, Codex, omp and other agents read and update PMS tickets and tasks with this account through the orca pms command, even in a chat not started from a ticket. Replaces the /pms skill."
+      },
       "todayHint": "Hours logged today",
       "changeStatus": "Change status",
       "lateDays": "{{days}}d late",

@@ -122,6 +122,9 @@
     "orca-plugin-authoring": [
       "633d9b8dd17a7406a77541633e10391d95dfe10a0c25fcd0e04d6a248ea2f597"
     ],
+    "orca-pms": [
+      "b82b160dfc47d7d3a60f0b82710f2df87421771a72ff12921512ae86072ad4e1"
+    ],
     "orchestration": [
       "0cb898d37560ab7ac4cb477a2d7e8ba3e593d45affd6d7e9f99151879aaeb1a5",
       "0cfb6a082625edc0d474bae430eb22c28bbe484e54fbfebedb4ff89d96e36305",

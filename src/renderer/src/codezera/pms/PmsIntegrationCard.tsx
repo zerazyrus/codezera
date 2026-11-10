@@ -14,6 +14,7 @@ import { translate, usePmsCatalog } from './pms-i18n'
 import type { PmsAccountInput } from '../../../../shared/codezera/pms-types'
 import { pmsAvailable, pmsErrorText, usePmsStore } from './pms-store'
 import { DEFAULT_PMS_WORKFLOW, loadPmsWorkflow, savePmsWorkflow } from './pms-workflow'
+import { PmsAgentSkillSetting } from './pms-agent-skill-setting'
 
 export const PMS_INTEGRATION_SECTION_ID = 'integrations-pms'
 
@@ -259,6 +260,7 @@ export function PmsIntegrationCard(): React.JSX.Element | null {
       {connected && !editing ? (
         <>
           <ViewOthersSetting />
+          <PmsAgentSkillSetting />
           <WorkflowEditor />
         </>
       ) : null}

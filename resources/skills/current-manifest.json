@@ -162,6 +162,22 @@
       ]
     },
     {
+      "name": "orca-pms",
+      "sourcePath": "skills/orca-pms",
+      "packageDigest": "dc24fd8dd4b477ee43151346161fbe16e0efe116f5f3499ae2111f7937b467e3",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "size": 2183,
+          "executable": false,
+          "classification": "text",
+          "exactSha256": "b82b160dfc47d7d3a60f0b82710f2df87421771a72ff12921512ae86072ad4e1",
+          "textNormalizedSha256": "b82b160dfc47d7d3a60f0b82710f2df87421771a72ff12921512ae86072ad4e1",
+          "identitySha256": "b82b160dfc47d7d3a60f0b82710f2df87421771a72ff12921512ae86072ad4e1"
+        }
+      ]
+    },
+    {
       "name": "orchestration",
       "sourcePath": "skills/orchestration",
       "packageDigest": "ff539effe2690ab15d2232ba0c4e55b7579ff17324185a8b07f4108bfb1ea4c9",

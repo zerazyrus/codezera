@@ -176,6 +176,7 @@ import {
   SaveImageAsTempFile,
   StartImageUpload
 } from './clipboard-params'
+import { CodezeraPmsCall } from './codezera-pms-params'
 import { ComputerCapabilitiesParams, ComputerPermissionsStatusParams } from './computer-params'
 import {
   Click,
@@ -993,6 +994,7 @@ export const RPC_PARAMS_BY_METHOD = {
   'clipboard.commitImageUpload': CommitImageUpload,
   'clipboard.saveImageAsTempFile': SaveImageAsTempFile,
   'clipboard.startImageUpload': StartImageUpload,
+  'codezera.pms': CodezeraPmsCall,
   'computer.capabilities': ComputerCapabilitiesParams,
   'computer.click': Click,
   'computer.drag': DragOfComputerSchemasParams,

@@ -24638,6 +24638,15 @@
         "title": "Xem ticket của người khác",
         "hint": "Thêm ô chọn nhân viên vào Việc của tôi, Tickets và Tasks. Việc của tôi của người khác theo quyền PMS: chỉ người quản lý Ticket Dashboard mới xem được."
       },
+      "agentSkill": {
+        "title": "Skill cho agent",
+        "checking": "Đang kiểm tra...",
+        "installed": "Đã cài",
+        "notInstalled": "Chưa cài",
+        "install": "Cài đặt",
+        "update": "Cập nhật",
+        "hint": "Giúp Claude, Codex, omp và các agent khác đọc và cập nhật ticket, task PMS bằng tài khoản này qua lệnh orca pms, kể cả trong chat không bắt đầu từ ticket. Thay cho skill /pms."
+      },
       "todayHint": "Số giờ đã log hôm nay",
       "changeStatus": "Đổi trạng thái",
       "lateDays": "Trễ {{days}} ngày",
