@@ -21,7 +21,7 @@ import { addPmsComment, pmsComments } from './pms-comments'
 import { downloadPmsTicketImages } from './pms-attachments'
 
 /**
- * PMS work shared by the app's IPC and the `orca pms` CLI that agents run; account changes and the
+ * PMS work shared by the app's IPC and the `codezera pms` CLI that agents run; account changes and the
  * dashboard stay UI-only. Every action validates its own input.
  */
 export const PMS_AGENT_ACTIONS: Record<string, (args: unknown) => Promise<unknown>> = {

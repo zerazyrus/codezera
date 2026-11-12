@@ -25128,7 +25128,7 @@
         "notInstalled": "Not installed",
         "install": "Install",
         "update": "Update",
-        "hint": "Lets Claude, Codex, omp and other agents read and update PMS tickets and tasks with this account through the orca pms command, even in a chat not started from a ticket. Replaces the /pms skill."
+        "hint": "Lets Claude, Codex, omp and other agents read and update PMS tickets and tasks with this account through the codezera pms command, even in a chat not started from a ticket. Replaces the /pms skill."
       },
       "todayHint": "Hours logged today",
       "changeStatus": "Change status",

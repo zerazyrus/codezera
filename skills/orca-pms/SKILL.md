@@ -11,28 +11,22 @@ description: >-
 
 # Codezera PMS
 
-This discovery stub loads the version-matched guide from the Orca executable used for this session.
+This discovery stub loads the version-matched guide from the Codezera executable used for this session.
 
-## Resolve the CLI for this session
+## Pick the Codezera command
 
-Choose the executable once and reuse it for every later command:
+PMS commands exist only in Codezera, never in Orca. Choose the executable once and reuse it:
 
-- If the `ORCA_CLI_COMMAND` environment variable is set, use its value. Orca exports this
-  for managed WSL sessions.
-- Otherwise, in a dev checkout whose session exposes `ORCA_DEV_REPO_ROOT`, use `orca-dev`.
-- Otherwise, on Linux outside an Orca-managed terminal, use `orca-ide`. Never run bare
-  `orca` there — outside Orca's terminals it normally resolves to the
-  GNOME Orca screen reader (`/usr/bin/orca`) and starts speech on the user's machine.
-- Otherwise, use `orca`.
+- In a dev checkout whose session exposes `ORCA_DEV_REPO_ROOT`, use `orca-dev`.
+- Otherwise use `codezera`. Do not use `orca`: outside Codezera's terminals it usually runs
+  Orca, which has no `pms` commands.
 
-Below, `ORCA` is a placeholder for the executable you resolved. Substitute it before
-running anything; do not create a shell variable or run `ORCA` literally. This works the
-same way in POSIX shells, PowerShell, and cmd.exe.
+Below, `ORCA` is a placeholder for the executable you picked. Substitute it before running
+anything; do not create a shell variable or run `ORCA` literally.
 
-If the selected executable cannot run, report its exact error and stop. Do not fall through
-to another executable, which could silently target a different Orca build.
+If the selected executable cannot run, report its exact error and stop.
 
-## Load the version-matched guide before running Orca commands
+## Load the version-matched guide before running PMS commands
 
 ```text
 ORCA skills get orca-pms

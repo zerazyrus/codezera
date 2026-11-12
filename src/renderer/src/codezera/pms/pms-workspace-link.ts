@@ -69,14 +69,14 @@ export function pmsAgentPrompt(item: PmsItemDetail): string {
     lines.push(
       '',
       '## Attached images',
-      `View every image before analysing: \`orca pms images ${item.id}\` saves them locally and prints the paths (or download these public URLs into a temp folder outside the repo):`,
+      `View every image before analysing: \`codezera pms images ${item.id}\` saves them locally and prints the paths (or download these public URLs into a temp folder outside the repo):`,
       ...images.map((image) => `- ${image.name}: ${image.url}`)
     )
   }
   lines.push(
     '',
     '## PMS commands',
-    `Read comments with \`orca pms comment list ${item.id}\`. Run \`orca skills get orca-pms\` for every PMS command (status, cause/solution, log time, reports) and when writes are allowed.`
+    `Read comments with \`codezera pms comment list ${item.id}\`. Run \`codezera skills get orca-pms\` for every PMS command (status, cause/solution, log time, reports) and when writes are allowed.`
   )
   lines.push('', '## Workflow', loadPmsWorkflow())
   return lines.join('\n')

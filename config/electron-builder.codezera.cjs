@@ -1,5 +1,27 @@
 // Codezera packaging overlay: keeps Orca's config untouched so upstream merges never conflict here.
+const { copyFileSync, readFileSync, writeFileSync } = require('node:fs')
+const { join } = require('node:path')
 const base = require('./electron-builder.config.cjs')
+
+// Orca's mac shim hardcodes `MacOS/Orca`, but the executable is named after productName.
+function writeMacCliShims(context) {
+  const appName = context.packager.appInfo.productFilename
+  const binDir = join(context.appOutDir, `${appName}.app`, 'Contents', 'Resources', 'bin')
+  const shim = join(binDir, 'orca')
+  const source = readFileSync(shim, 'utf8')
+  const orcaLine = 'ELECTRON="$CONTENTS/MacOS/Orca"'
+  if (!source.includes(orcaLine)) {
+    throw new Error(`Codezera: ${shim} no longer contains ${orcaLine}; update writeMacCliShims`)
+  }
+  writeFileSync(shim, source.replace(orcaLine, `ELECTRON="$CONTENTS/MacOS/${appName}"`))
+  copyFileSync(shim, join(binDir, 'codezera'))
+}
+
+// `codezera` is the product's own command, so it never collides with Orca's `orca` on PATH.
+function writeLinuxCliShim(context) {
+  const binDir = join(context.appOutDir, 'resources', 'bin')
+  copyFileSync(join(binDir, 'orca-ide'), join(binDir, 'codezera'))
+}
 
 const { publisherName: _signPathPublisher, ...unsignedSigntoolOptions } =
   base.win.signtoolOptions ?? {}
@@ -15,6 +37,14 @@ const artifactBase = review ? 'codezera-review' : 'codezera'
 module.exports = {
   ...base,
   appId: review ? 'net.thezera.codezera.review' : 'net.thezera.codezera',
+  afterPack: async (context) => {
+    await base.afterPack(context)
+    if (context.electronPlatformName === 'darwin') {
+      writeMacCliShims(context)
+    } else if (context.electronPlatformName === 'linux') {
+      writeLinuxCliShim(context)
+    }
+  },
   productName,
   extraMetadata: {
     ...base.extraMetadata,

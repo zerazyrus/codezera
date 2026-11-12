@@ -90,7 +90,7 @@ function formatDetail(item: PmsItemDetail): string {
   }
   const images = item.ticket?.images ?? []
   if (images.length > 0) {
-    lines.push('', `## images (orca pms images ${item.id} downloads them)`)
+    lines.push('', `## images (codezera pms images ${item.id} downloads them)`)
     lines.push(...images.map((image) => `- ${image.name}: ${image.url}`))
   }
   if (item.nextStatuses.length > 0) {

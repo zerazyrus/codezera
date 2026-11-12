@@ -20,7 +20,7 @@ import { translate } from './pms-i18n'
 
 const PMS_SKILL_NAMES = ['orca-pms'] as const
 
-/** Installs the bundled `orca-pms` skill so any agent, even in a blank chat, knows `orca pms`. */
+/** Installs the bundled `orca-pms` skill so any agent, even in a blank chat, knows `codezera pms`. */
 export function PmsAgentSkillSetting(): React.JSX.Element {
   const runtime = useActiveProjectSkillRuntime()
   const skill = useInstalledAgentSkillNames(PMS_SKILL_NAMES, {
@@ -92,7 +92,7 @@ export function PmsAgentSkillSetting(): React.JSX.Element {
       <p className="text-xs text-muted-foreground">
         {translate(
           'codezera.pms.agentSkill.hint',
-          'Lets Claude, Codex, omp and other agents read and update PMS tickets and tasks with this account through the orca pms command, even in a chat not started from a ticket. Replaces the /pms skill.'
+          'Lets Claude, Codex, omp and other agents read and update PMS tickets and tasks with this account through the codezera pms command, even in a chat not started from a ticket. Replaces the /pms skill.'
         )}
       </p>
       {skill.error ? <p className="text-xs text-destructive">{skill.error}</p> : null}

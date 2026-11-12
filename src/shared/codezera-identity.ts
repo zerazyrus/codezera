@@ -12,3 +12,5 @@ export const APP_RELEASE_REPO = upstream ? 'stablyai/orca' : 'zerazyrus/codezera
 export const APP_RELEASE_REPO_PATTERN = APP_RELEASE_REPO.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')
 export const PACKAGED_APP_NAME = upstream ? 'Orca' : 'Codezera'
 export const PACKAGED_APP_USER_MODEL_ID = upstream ? 'com.stablyai.orca' : 'net.thezera.codezera'
+/** macOS shell command the packaged app installs; Orca owns `/usr/local/bin/orca`. */
+export const PACKAGED_MAC_CLI_COMMAND_NAME = upstream ? 'orca' : 'codezera'

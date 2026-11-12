@@ -24645,7 +24645,7 @@
         "notInstalled": "Chưa cài",
         "install": "Cài đặt",
         "update": "Cập nhật",
-        "hint": "Giúp Claude, Codex, omp và các agent khác đọc và cập nhật ticket, task PMS bằng tài khoản này qua lệnh orca pms, kể cả trong chat không bắt đầu từ ticket. Thay cho skill /pms."
+        "hint": "Giúp Claude, Codex, omp và các agent khác đọc và cập nhật ticket, task PMS bằng tài khoản này qua lệnh codezera pms, kể cả trong chat không bắt đầu từ ticket. Thay cho skill /pms."
       },
       "todayHint": "Số giờ đã log hôm nay",
       "changeStatus": "Đổi trạng thái",
