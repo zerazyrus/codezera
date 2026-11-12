@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from './pms-i18n'
 import { PmsPicker } from './pms-picker'
 import { PmsQueueView } from './pms-queue-view'

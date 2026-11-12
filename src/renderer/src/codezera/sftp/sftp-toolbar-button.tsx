@@ -1,5 +1,5 @@
 import type React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 

@@ -1,5 +1,5 @@
 import type React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import type { PmsStatusOption } from '../../../../shared/codezera/pms-types'
 
 /** Status with the dot color PMS assigns, so it reads the same as the PMS web and CloudWORK app. */

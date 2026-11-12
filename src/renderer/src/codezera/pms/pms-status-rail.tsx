@@ -1,7 +1,7 @@
 import type React from 'react'
 import { History } from 'lucide-react'
 import { translate } from './pms-i18n'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import {
   PMS_TICKET_STATUS_PHASES,
   type PmsStatusOption,

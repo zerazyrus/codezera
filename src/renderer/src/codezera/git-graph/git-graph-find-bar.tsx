@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useCallback } from 'react'
 import { CaseSensitive, ChevronDown, ChevronUp, Regex, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from '@/i18n/i18n'
 import { ImeInput } from '@/lib/text-input/ime/ime-text-field'
 import { Button } from '@/components/ui/button'

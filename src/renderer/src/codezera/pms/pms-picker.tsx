@@ -8,7 +8,7 @@ import {
   CommandList
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from './pms-i18n'
 import { PmsStatusLabel } from './pms-status-label'
 import type { PmsStatusOption } from '../../../../shared/codezera/pms-types'

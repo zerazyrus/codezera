@@ -10,8 +10,8 @@ import type {
   GitGraphRepoInfoRequest,
   GitGraphRepoSettings
 } from '../../../shared/codezera/git-graph-types'
-import { gitExecFileAsync } from '../../git/runner'
-import { gitOptionsForWorktree } from '../../git/git-runtime-options'
+import { gitExecFileAsync } from '../../git/command-runner/git-exec-file'
+import { gitOptionsForWorktree } from '../../git/command-runner/git-runtime-options'
 import { readWorktreeGitUnlessWslStopped } from '../../ipc/filesystem/wsl-gated-worktree-git-read'
 import { requireReachableGitRoute } from '../../providers/execution-host-provider-dispatch'
 import { getConnectionExecutionHostId } from '../../../shared/execution-host'

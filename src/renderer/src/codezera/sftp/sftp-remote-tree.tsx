@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { ChevronRight, CloudDownload, CloudUpload, GitCompareArrows, Loader2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from '@/i18n/i18n'
 import { FileTypeIcon, FolderIcon } from '@/components/FileTypeIcon'
 import {

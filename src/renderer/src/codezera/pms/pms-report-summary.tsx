@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import type React from 'react'
 import { translate } from './pms-i18n'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import type { PmsReportPreview } from '../../../../shared/codezera/pms-types'
 import { PmsStatusBadge } from './pms-status-label'
 import { pmsFormatHours, usePmsStore } from './pms-store'

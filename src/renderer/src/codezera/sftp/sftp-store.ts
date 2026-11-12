@@ -4,8 +4,8 @@ import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
 import { getConnectionIdFromState } from '@/lib/workspace/ownership/connection-owner-resolution'
 import { runtimeTargetForWorkspaceOwner } from '@/lib/workspace/ownership/resolve-owner'
-import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
-import { isWebClientLocation } from '@/lib/web-client-location'
+import { isPairedWebClientWindow } from '@/app-shell/chrome/desktop-window-chrome'
+import { isWebClientLocation } from '@/app-shell/platform/web-client-location'
 import type { SftpConfigState } from '../../../../shared/codezera/sftp-types'
 
 export type SftpWorkspace = { worktreeId: string; workspacePath: string }

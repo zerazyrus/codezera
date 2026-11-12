@@ -1,6 +1,6 @@
 import type React from 'react'
 import { memo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from '@/i18n/i18n'
 import { uiDateTimeFormat } from '@/i18n/ui-intl-formatters'
 import {

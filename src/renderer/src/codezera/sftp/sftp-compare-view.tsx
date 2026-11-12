@@ -1,7 +1,7 @@
 import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { CloudDownload, CloudUpload, Loader2, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
-import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
+import { lazyWithRetry as lazy } from '@/app-shell/startup/lazy-with-retry'
 import { translate } from '@/i18n/i18n'
 import { detectLanguage } from '../../../../shared/editor-language/editor-language-detect'
 import { SftpToolbarButton as ToolbarButton } from './sftp-toolbar-button'

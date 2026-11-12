@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { useAppStore } from '@/store'
 import { useActiveWorktreeId } from '@/store/workspaces/selection/use-selected-worktree'
 import { translate } from '@/i18n/i18n'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { Button } from '@/components/ui/button'
 import { SftpToolbarButton as ToolbarButton } from './sftp-toolbar-button'
 import {

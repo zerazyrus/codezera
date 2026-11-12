@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from './pms-i18n'
 import { pmsProjectLabel } from './pms-queue-row-parts'
 import { PmsStatusLabel } from './pms-status-label'

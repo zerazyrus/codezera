@@ -4,7 +4,7 @@ import { translate } from './pms-i18n'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { openAppHttpLink } from '@/lib/browser/navigation/app-http-link-open'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import type { PmsItem } from '../../../../shared/codezera/pms-types'
 import { PMS_NO_PROJECT, type PmsQueueRow } from '../../../../shared/codezera/pms-dashboard-types'
 

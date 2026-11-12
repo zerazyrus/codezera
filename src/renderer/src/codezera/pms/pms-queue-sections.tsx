@@ -3,7 +3,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { translate } from './pms-i18n'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import type { PmsItem } from '../../../../shared/codezera/pms-types'
 import type {
   PmsQueue,

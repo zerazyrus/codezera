@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
-import { isWebClientLocation } from '@/lib/web-client-location'
+import { isPairedWebClientWindow } from '@/app-shell/chrome/desktop-window-chrome'
+import { isWebClientLocation } from '@/app-shell/platform/web-client-location'
 import type {
   PmsAccountInput,
   PmsItem,

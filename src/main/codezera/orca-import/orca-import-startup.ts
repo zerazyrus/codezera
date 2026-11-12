@@ -1,7 +1,7 @@
 import {
   acquireProfileStateRuntimeAdmission,
   type ProfileStateRuntimeAdmission
-} from '../../persistence/profile-state/profile-state-access'
+} from '../../persistence/profile-state/access/profile-state-access'
 import { applyStagedOrcaImport } from './orca-profile-import'
 
 /**

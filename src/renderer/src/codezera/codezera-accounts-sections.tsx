@@ -1,5 +1,5 @@
 import type React from 'react'
-import { isWebClientLocation } from '@/lib/web-client-location'
+import { isWebClientLocation } from '@/app-shell/platform/web-client-location'
 import { CkitAccountsSection, CKIT_SEARCH_KEYWORDS } from './ckit/CkitAccountsSection'
 
 /**

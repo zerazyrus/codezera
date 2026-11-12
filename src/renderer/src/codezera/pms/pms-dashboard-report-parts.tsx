@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from './pms-i18n'
 import { ticketUrl } from './pms-queue-row-parts'
 import { Pager } from './pms-queue-sections'

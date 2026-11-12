@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useMemo, useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from '@/i18n/i18n'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'

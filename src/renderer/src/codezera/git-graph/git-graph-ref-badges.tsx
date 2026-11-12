@@ -1,6 +1,6 @@
 import type React from 'react'
 import { Archive, Cloud, GitBranch, Tag } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from '@/i18n/i18n'
 import {
   ContextMenu,

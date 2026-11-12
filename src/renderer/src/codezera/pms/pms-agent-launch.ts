@@ -2,10 +2,10 @@ import { useAppStore } from '@/store'
 import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-record-fields'
 import { prepareDirectWorkItemSetup } from '@/lib/workspace/creation/work-item/direct-work-item-setup'
 import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
-import { launchAgentInNewTab } from '@/lib/agent-session/launch/new-tab/launch-agent-in-new-tab'
+import { launchAgentInNewTabWithOutcome } from '@/lib/agent-session/launch/new-tab/launch-agent-in-new-tab'
 import { resolveDefaultAgentForWorktreeNewTab } from '@/lib/agent-session/launch/shortcuts/agent-tab-shortcuts'
-import { newAgentLaunchRequestId } from '@/lib/agent-session/launch/routing/agent-launch-request-id'
 import { getRepoExecutionHostId } from '../../../../shared/execution-host'
+import { createNonSecureContextUuid } from '../../../../shared/non-secure-context-uuid'
 import { isGitRepoKind } from '../../../../shared/repo-kind'
 import { pickApprovedSetupHashes } from '../../../../shared/worktree/approved-setup-hashes'
 import type { Repo } from '../../../../shared/repo-types'
@@ -48,8 +48,8 @@ async function startAgent(worktreeId: string, prompt: string): Promise<void> {
     activateAndRevealWorktree(worktreeId, { sidebarRevealBehavior: 'auto' })
     return
   }
-  launchAgentInNewTab({
-    requestId: newAgentLaunchRequestId(),
+  launchAgentInNewTabWithOutcome({
+    requestId: createNonSecureContextUuid(),
     agent,
     worktreeId,
     prompt,

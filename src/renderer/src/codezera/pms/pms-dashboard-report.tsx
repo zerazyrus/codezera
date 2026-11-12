@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import { translate } from './pms-i18n'
 import { PmsPicker } from './pms-picker'
 import { pmsProjectLabel } from './pms-queue-row-parts'

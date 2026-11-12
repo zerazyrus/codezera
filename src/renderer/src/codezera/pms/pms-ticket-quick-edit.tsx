@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { PmsPicker } from './pms-picker'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/class-names'
 import type {
   PmsDetailSectionKey,
   PmsItemDetail,
