@@ -164,16 +164,16 @@
     {
       "name": "orca-pms",
       "sourcePath": "skills/orca-pms",
-      "packageDigest": "037efa5799aff65bf69172e0ba38a5db10e78e5f2d3c24016c2266d8501b59ac",
+      "packageDigest": "284aee9fc20b4a68ac9b9dee01df4b8e4c5ea19b581a49291228d96618436dc1",
       "files": [
         {
           "path": "SKILL.md",
-          "size": 1774,
+          "size": 2119,
           "executable": false,
           "classification": "text",
-          "exactSha256": "328ebca2e4867a21f44c9e055973dde4a36028c4be27593020ec72e2fc9863a5",
-          "textNormalizedSha256": "328ebca2e4867a21f44c9e055973dde4a36028c4be27593020ec72e2fc9863a5",
-          "identitySha256": "328ebca2e4867a21f44c9e055973dde4a36028c4be27593020ec72e2fc9863a5"
+          "exactSha256": "ad87f8a164e99f2d9dd04c89d31c1a74646ffa7a34c08d24c6e42014b6e0395c",
+          "textNormalizedSha256": "ad87f8a164e99f2d9dd04c89d31c1a74646ffa7a34c08d24c6e42014b6e0395c",
+          "identitySha256": "ad87f8a164e99f2d9dd04c89d31c1a74646ffa7a34c08d24c6e42014b6e0395c"
         }
       ]
     },
