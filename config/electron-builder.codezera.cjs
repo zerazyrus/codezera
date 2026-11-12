@@ -18,9 +18,10 @@ function writeMacCliShims(context) {
 }
 
 // `codezera` is the product's own command, so it never collides with Orca's `orca` on PATH.
-function writeLinuxCliShim(context) {
+// Both launchers find the app relative to themselves, so a renamed copy works as is.
+function writeResourcesCliCopy(context, launcher, copy) {
   const binDir = join(context.appOutDir, 'resources', 'bin')
-  copyFileSync(join(binDir, 'orca-ide'), join(binDir, 'codezera'))
+  copyFileSync(join(binDir, launcher), join(binDir, copy))
 }
 
 const { publisherName: _signPathPublisher, ...unsignedSigntoolOptions } =
@@ -42,7 +43,9 @@ module.exports = {
     if (context.electronPlatformName === 'darwin') {
       writeMacCliShims(context)
     } else if (context.electronPlatformName === 'linux') {
-      writeLinuxCliShim(context)
+      writeResourcesCliCopy(context, 'orca-ide', 'codezera')
+    } else if (context.electronPlatformName === 'win32') {
+      writeResourcesCliCopy(context, 'orca.exe', 'codezera.exe')
     }
   },
   productName,

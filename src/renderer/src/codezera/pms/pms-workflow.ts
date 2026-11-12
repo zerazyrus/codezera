@@ -25,8 +25,19 @@ export const DEFAULT_PMS_WORKFLOW = `Quy trình xử lý (bắt buộc theo th�
      Chi tiết: <1-3 câu: đã sửa gì, vì sao an toàn, giới hạn còn lại>
    - Thời gian: ước lượng số giờ đã làm, để tôi Log giờ.`
 
+// Overrides saved before the `codezera` command named `orca pms`, which Orca's CLI does not have.
+const LEGACY_PMS_COMMAND = /\borca (pms|skills get orca-pms)\b/g
+
 export function loadPmsWorkflow(): string {
-  return localStorage.getItem(WORKFLOW_KEY) ?? DEFAULT_PMS_WORKFLOW
+  const saved = localStorage.getItem(WORKFLOW_KEY)
+  if (saved === null) {
+    return DEFAULT_PMS_WORKFLOW
+  }
+  const migrated = saved.replace(LEGACY_PMS_COMMAND, 'codezera $1')
+  if (migrated !== saved) {
+    savePmsWorkflow(migrated)
+  }
+  return migrated
 }
 
 /** Saving the default text (or blank) clears the override, so later default updates still apply. */

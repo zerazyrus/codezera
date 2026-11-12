@@ -51,7 +51,12 @@ fn main() {
         ))
     };
 
-    let electron_path = app_directory.join("Orca.exe");
+    // Codezera builds name the app after their product, so accept those executables too.
+    let electron_path = ["Orca.exe", "Codezera.exe", "CodezeraReview.exe"]
+        .iter()
+        .map(|name| app_directory.join(name))
+        .find(|path| path.is_file())
+        .unwrap_or_else(|| app_directory.join("Orca.exe"));
     if !electron_path.is_file() {
         fail(&format!(
             "Unable to locate Orca.exe next to \"{}\"",
