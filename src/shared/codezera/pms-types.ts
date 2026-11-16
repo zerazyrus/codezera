@@ -223,7 +223,7 @@ export type PmsReportPreview = {
   entries: PmsReportEntry[]
   /** Reports of mine already filed for this period. */
   existing: { id: string; number: string; status: string; url: string }[]
-  /** My managers (PMS `report_to`); every report is assigned to them, as on the web form. */
+  /** My managers (PMS `report_to`); the web form prefills every report with them. */
   managerIds: string[]
   name: string
   /** One task per line, grouped by project; a starting point to edit or rewrite. */
@@ -238,6 +238,8 @@ export type PmsReportSubmitArgs = {
   description: string
   /** Who receives it besides me and my managers (PMS user ids). */
   recipientIds: string[]
+  /** Managers to leave out; the web form lets you remove them too. */
+  excludedManagerIds?: string[]
   draft: boolean
 }
 

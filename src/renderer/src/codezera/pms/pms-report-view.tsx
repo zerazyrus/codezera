@@ -13,6 +13,16 @@ import { PMS_DAY_HOURS, PmsReportSummary } from './pms-report-summary'
 import { pmsErrorText, pmsFormatHours, pmsToday, usePmsStore } from './pms-store'
 
 const RECIPIENTS_KEY = 'codezera.pms.reportRecipients'
+const EXCLUDED_MANAGERS_KEY = 'codezera.pms.reportExcludedManagers'
+
+function readIds(key: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(key) ?? '[]')
+    return Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : []
+  } catch {
+    return []
+  }
+}
 
 function shiftDate(date: string, days: number): string {
   const next = new Date(`${date}T00:00:00`)
@@ -36,13 +46,10 @@ export function PmsReportView(): React.JSX.Element {
   const [notes, setNotes] = useState('')
   const [writing, setWriting] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [recipients, setRecipients] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(RECIPIENTS_KEY) ?? '[]') as string[]
-    } catch {
-      return []
-    }
-  })
+  const [recipients, setRecipients] = useState<string[]>(() => readIds(RECIPIENTS_KEY))
+  const [excludedManagers, setExcludedManagers] = useState<string[]>(() =>
+    readIds(EXCLUDED_MANAGERS_KEY)
+  )
   const latest = useRef(0)
 
   useEffect(() => {
@@ -81,6 +88,11 @@ export function PmsReportView(): React.JSX.Element {
     setRecipients(next)
   }
 
+  const saveExcludedManagers = (next: string[]): void => {
+    localStorage.setItem(EXCLUDED_MANAGERS_KEY, JSON.stringify(next))
+    setExcludedManagers(next)
+  }
+
   const write = async (): Promise<void> => {
     setWriting(true)
     try {
@@ -108,6 +120,7 @@ export function PmsReportView(): React.JSX.Element {
         name,
         description,
         recipientIds: recipients,
+        excludedManagerIds: excludedManagers,
         draft
       })
       toast.success(
@@ -133,6 +146,7 @@ export function PmsReportView(): React.JSX.Element {
 
   const short = !!preview && preview.type === 'day' && preview.totalHours < PMS_DAY_HOURS
   const extraRecipients = recipients.filter((id) => !preview?.managerIds.includes(id))
+  const activeManagers = (preview?.managerIds ?? []).filter((id) => !excludedManagers.includes(id))
   const filed = (preview?.existing.length ?? 0) > 0
   const canSubmit =
     !!preview &&
@@ -309,19 +323,27 @@ export function PmsReportView(): React.JSX.Element {
                 {translate('codezera.pms.report.recipients', 'Recipients (besides you)')}
               </span>
               <div className="flex flex-wrap items-center gap-1.5">
-                {preview.managerIds.map((id) => (
+                {activeManagers.map((id) => (
                   <span
                     key={id}
                     title={translate(
                       'codezera.pms.report.managerHint',
-                      'Your manager in PMS, always receives the report'
+                      'Your manager in PMS, added to every report by default'
                     )}
-                    className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-[13px]"
+                    className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 py-0.5 pr-1 pl-2.5 text-[13px]"
                   >
                     {users?.find((user) => user.id === id)?.name ?? `#${id}`}
                     <span className="text-[11px] text-muted-foreground">
                       {translate('codezera.pms.report.manager', 'Manager')}
                     </span>
+                    <button
+                      type="button"
+                      className="rounded-full p-0.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+                      aria-label={translate('codezera.pms.report.removeRecipient', 'Remove')}
+                      onClick={() => saveExcludedManagers([...excludedManagers, id])}
+                    >
+                      <X className="size-3" />
+                    </button>
                   </span>
                 ))}
                 {extraRecipients.map((id) => (
@@ -342,7 +364,11 @@ export function PmsReportView(): React.JSX.Element {
                 ))}
                 <PmsPicker
                   value=""
-                  onChange={(id) => saveRecipients([...recipients, id])}
+                  onChange={(id) =>
+                    preview.managerIds.includes(id)
+                      ? saveExcludedManagers(excludedManagers.filter((entry) => entry !== id))
+                      : saveRecipients([...recipients, id])
+                  }
                   disabled={!users}
                   placeholder={translate('codezera.pms.report.addRecipient', 'Add recipient')}
                   className="h-7 w-44"
@@ -351,7 +377,7 @@ export function PmsReportView(): React.JSX.Element {
                       (user) =>
                         user.id !== myId &&
                         !recipients.includes(user.id) &&
-                        !preview.managerIds.includes(user.id)
+                        !activeManagers.includes(user.id)
                     )
                     .map((user) => ({ value: user.id, label: user.name }))}
                 />

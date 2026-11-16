@@ -17,6 +17,7 @@ const SubmitArgsSchema = z.object({
   name: z.string().trim().min(1).max(255),
   description: z.string().trim().min(1).max(20_000),
   recipientIds: z.array(IdSchema).max(20),
+  excludedManagerIds: z.array(IdSchema).max(20).default([]),
   draft: z.boolean()
 })
 
@@ -263,7 +264,8 @@ export async function submitPmsReport(input: unknown): Promise<PmsReportSubmitRe
   if (entries.length === 0) {
     throw new Error('No time logged in this period.')
   }
-  const owners = [...new Set([me, ...pms.managerIds, ...args.recipientIds])]
+  const managers = pms.managerIds.filter((id) => !args.excludedManagerIds.includes(id))
+  const owners = [...new Set([me, ...managers, ...args.recipientIds])]
   const created = await pms.openApi(
     'create',
     { module: 'CPReportTask' },

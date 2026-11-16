@@ -26304,7 +26304,7 @@
         "removeRecipient": "Remove",
         "addRecipient": "Add recipient",
         "manager": "Manager",
-        "managerHint": "Your manager in PMS, always receives the report",
+        "managerHint": "Your manager in PMS, added to every report by default",
         "saveDraft": "Save draft",
         "submitShort": "Submit anyway",
         "submit": "Submit report"
