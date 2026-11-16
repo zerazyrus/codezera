@@ -1,4 +1,4 @@
-import type { TextGenerationFailureFields } from '../text-generation-failure-copy'
+import type { TextGenerationFailureFields } from '../text-generation/text-generation-failure-copy'
 import type {
   PmsDashboardDrill,
   PmsDashboardDrillArgs,

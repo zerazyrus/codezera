@@ -3,7 +3,7 @@ import { z } from 'zod'
 import type { PmsReportPreview, PmsReportWriteResult } from '../../../shared/codezera/pms-types'
 import { LOCAL_COMMIT_MESSAGE_HOST_KEY } from '../../../shared/source-control/ai/generation/commit-message-host-key'
 import { cleanGeneratedCommitMessage } from '../../../shared/source-control/ai/generation/commit-message-agent-output'
-import { textGenerationFailureCodeFields } from '../../../shared/text-generation-failure-copy'
+import { textGenerationFailureCodeFields } from '../../../shared/text-generation/text-generation-failure-copy'
 import type { Store } from '../../persistence/loading-store/store'
 import { runGenerationRequest } from '../../text-generation/agent-generation-request'
 import {
