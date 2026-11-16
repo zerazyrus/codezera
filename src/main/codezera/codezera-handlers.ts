@@ -1,5 +1,5 @@
 import type { Store } from '../persistence/loading-store/store'
-import type { CommitMessageAgentEnvironmentResolvers } from '../text-generation/commit-message-agent-environment'
+import type { CommitMessageAgentEnvironmentResolvers } from '../text-generation/execution/commit-message-agent-environment'
 import { registerCodezeraGitGraphHandlers } from './git-graph/git-graph-handlers'
 import { registerCodezeraOrcaImportHandlers } from './orca-import/orca-import-handlers'
 import { registerCodezeraCkitHandlers } from './ckit/ckit-handlers'

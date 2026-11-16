@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { OnboardingInlineCommandTerminal } from '@/components/onboarding/OnboardingInlineCommandTerminal'
-import { barColor } from '@/components/status-bar/provider-extra-usage-section'
+import { usageBarClass } from '@/components/status-bar/usage/usage-health-tone'
 import { translate } from '@/i18n/i18n'
 import { isWindowsDesktopClient } from '@/lib/files/os-open/windows-path-access'
 import type { CkitQuotaStatus } from '../../../../shared/codezera/ckit-types'
@@ -263,7 +263,7 @@ export function CkitAccountsSection(): React.JSX.Element {
                     <span className="w-10 shrink-0 font-medium">{ckitWindowLabel(w)}</span>
                     <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
                       <div
-                        className={`h-full rounded-full ${w.exceeded ? 'bg-red-500' : barColor(used)}`}
+                        className={`h-full rounded-full ${w.exceeded ? 'bg-red-500' : usageBarClass(used)}`}
                         style={{ width: `${used}%` }}
                       />
                     </div>

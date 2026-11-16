@@ -4,7 +4,7 @@ import { useRepoById } from '@/store/repos/use-repository-catalog'
 import { useWorktreeById } from '@/store/workspaces/selection/use-selected-worktree'
 import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/source-control/sync/worktree-git-owner-target'
 import type { OpenFile } from '@/store/slices/editor/types/open-file'
-import { isFolderRepo } from '../../../shared/repo-kind'
+import { isFolderRepo } from '../../../shared/repository/repo-kind'
 import { GitGraphView } from './git-graph/git-graph-view'
 import { SftpCompareTab } from './sftp/sftp-compare-view'
 

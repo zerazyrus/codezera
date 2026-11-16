@@ -3,8 +3,8 @@ import { AlertTriangle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
-import { WindowLabel } from '@/components/status-bar/StatusBarProviderSegment'
-import { normalizeUsagePercentageDisplay } from '../../../../shared/usage-percentage-display'
+import { WindowLabel } from '@/components/status-bar/usage/StatusBarProviderSegment'
+import { normalizeUsagePercentageDisplay } from '../../../../shared/agent-usage/display/usage-percentage-display'
 import { useCkitQuotaPolling, useCkitQuotaStore } from './ckit-quota-store'
 import {
   CKIT_USAGE_TEXT_CLASS,

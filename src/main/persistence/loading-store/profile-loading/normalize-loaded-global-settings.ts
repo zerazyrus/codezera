@@ -4,15 +4,15 @@ import { getDefaultVoiceSettings } from '../../../../shared/constants'
 import { normalizePRBotAuthorOverrides } from '../../../../shared/source-control/review-comments/pr-bot-author-overrides'
 import { normalizeTerminalQuickCommands } from '../../../../shared/terminal/quick-commands/terminal-quick-commands'
 import { normalizeOpenInApplications } from '../../../../shared/open-in-applications'
-import '../../../../shared/keybindings'
+
 import { normalizeTerminalShortcutPolicy } from '../../../../shared/keybindings/effective'
-import { normalizeAppIconId } from '../../../../shared/app-icon'
+import { normalizeAppIconId } from '../../../../shared/app-lifecycle/identity/app-icon'
 import { normalizeTerminalCustomThemes } from '../../../../shared/terminal-themes/terminal-custom-themes'
 import { normalizePluginOwnedSettings } from '../../../../shared/plugins/capabilities/plugin-owned-settings'
 import {
   hasLegacyMatchTerminalSidebar,
   syncLegacyMatchTerminalSidebar
-} from '../../../../shared/plugin-theme-settings'
+} from '../../../../shared/plugins/appearance/plugin-theme-settings'
 import { normalizeTerminalDefaultShell } from '../../../../shared/shell/launch/terminal-default-shell'
 import { projectSourceControlAiToLegacyCommitMessageAi } from '../../../../shared/source-control/ai/settings/source-control-ai-legacy-projection'
 import { normalizeNativeChatShellEnvironmentVariables } from '../../../../shared/native-chat/native-chat-shell-environment'
@@ -22,11 +22,12 @@ import {
   stripRetiredGlobalSettings
 } from '../../applying-settings/terminal-settings-migrations'
 import { readLegacySidekickFlag } from '../../applying-settings/onboarding-normalization'
-import { normalizeMachineName } from '../../../../shared/machine-name'
+import { normalizeMachineName } from '../../../../shared/remote-runtime/host-metadata/machine-name'
+import { normalizeWorkspaceCleanupRules } from '../../../../shared/workspace-cleanup/workspace-cleanup-policy'
 import { replaceRetiredSpeechModelId } from '../../../speech/model-catalog'
 import type { PersistedState } from '../../../../shared/persisted-state-types'
-import type { VoiceSettings } from '../../../../shared/speech-types'
-import { dictationShortcutModeSettings } from '../../../../shared/dictation-shortcut-mode'
+import type { VoiceSettings } from '../../../../shared/speech/speech-types'
+import { dictationShortcutModeSettings } from '../../../../shared/speech/dictation/dictation-shortcut-mode'
 import type { PreparedLoadedTerminalSettings } from './prepare-loaded-terminal-settings'
 import type { PreparedLoadedProfileSettings } from './prepare-loaded-profile-settings'
 
@@ -98,6 +99,7 @@ export function normalizeLoadedGlobalSettings(
       parsed.settings?.nativeChatAppearance
     ),
     worktreeVisibilityDefaults: migratedExternalVisibility.defaults,
+    workspaceCleanupPolicy: normalizeWorkspaceCleanupRules(parsed.settings?.workspaceCleanupPolicy),
     prBotAuthorOverrides: normalizePRBotAuthorOverrides(parsed.settings?.prBotAuthorOverrides),
     // Only fresh profiles take the on default; a stored profile saved before the key existed was off.
     artifactSharingEnabled: parsed.settings?.artifactSharingEnabled === true,

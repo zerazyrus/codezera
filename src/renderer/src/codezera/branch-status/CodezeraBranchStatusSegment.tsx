@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/command'
 import { useWorktreeGitOwnerTarget } from '@/components/right-sidebar/source-control/sync/worktree-git-owner-target'
 import { splitRemoteBranchName } from '../../../../shared/git/remotes/git-remote-branch-name'
-import { isFolderRepo } from '../../../../shared/repo-kind'
+import { isFolderRepo } from '../../../../shared/repository/repo-kind'
 import { shouldForcePushWithLeaseForUpstream } from '../../../../shared/git/remotes/git-upstream-status'
 import {
   DEFAULT_GIT_GRAPH_REPO_SETTINGS,

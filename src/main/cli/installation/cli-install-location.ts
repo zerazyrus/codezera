@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
-import { getAppEnvironment } from '../../../shared/app-environment'
+import { getAppEnvironment } from '../../../shared/app-lifecycle/app-environment'
 import { PACKAGED_CLI_COMMAND_NAME } from '../../../shared/codezera-identity'
-import type { CliInstallStatus } from '../../../shared/cli-install-types'
+import type { CliInstallStatus } from '../../../shared/cli/cli-install-types'
 import {
   hasAppImagePathEnvironment,
   resolveAppImageRuntimeIdentity

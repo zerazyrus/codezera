@@ -1,14 +1,17 @@
 import { useAppStore } from '@/store'
 import { selectWorktreesByRepo } from '@/store/workspaces/catalog/workspace-record-fields'
-import { prepareDirectWorkItemSetup } from '@/lib/workspace/creation/work-item/direct-work-item-setup'
+import {
+  confirmDirectWorkItemSetup,
+  prepareDirectWorkItemSetup
+} from '@/lib/workspace/creation/work-item/direct-work-item-setup'
 import { activateAndRevealWorktree } from '@/lib/workspace/activation/worktree-activation'
 import { launchAgentInNewTabWithOutcome } from '@/lib/agent-session/launch/new-tab/launch-agent-in-new-tab'
 import { resolveDefaultAgentForWorktreeNewTab } from '@/lib/agent-session/launch/shortcuts/agent-tab-shortcuts'
 import { getRepoExecutionHostId } from '../../../../shared/execution-host'
-import { createNonSecureContextUuid } from '../../../../shared/non-secure-context-uuid'
-import { isGitRepoKind } from '../../../../shared/repo-kind'
-import { pickApprovedSetupHashes } from '../../../../shared/worktree/approved-setup-hashes'
-import type { Repo } from '../../../../shared/repo-types'
+import { createNonSecureContextUuid } from '../../../../shared/identifiers/non-secure-context-uuid'
+import { isGitRepoKind } from '../../../../shared/repository/repo-kind'
+import { pickApprovedSetupHashes } from '../../../../shared/worktree/creation/approved-setup-hashes'
+import type { Repo } from '../../../../shared/repository/repo-types'
 
 const PROJECT_REPOS_KEY = 'codezera.pms.projectRepos'
 
@@ -84,8 +87,12 @@ export async function startPmsWorktree(args: {
     throw new Error(`${repo.displayName} is a folder, not a git repository.`)
   }
   const hostId = getRepoExecutionHostId(repo)
-  const setup = await prepareDirectWorkItemSetup(repo, hostId)
-  if (setup === 'cancelled' || setup === 'review-request') {
+  const decision = await prepareDirectWorkItemSetup(repo, hostId)
+  if (decision === 'cancelled' || decision === 'review-request') {
+    return false
+  }
+  const setup = await confirmDirectWorkItemSetup(repo, hostId, decision, { kind: 'base' })
+  if (setup === 'cancelled') {
     return false
   }
   const store = useAppStore.getState()

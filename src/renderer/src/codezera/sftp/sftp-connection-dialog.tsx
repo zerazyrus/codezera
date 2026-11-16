@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { HostCombobox } from '@/components/host-picker/HostCombobox'
-import type { SshTarget } from '../../../../shared/ssh-types'
+import type { SshTarget } from '../../../../shared/remote-runtime/ssh/ssh-types'
 import {
   DEFAULT_SFTP_IGNORE,
   DEFAULT_SFTP_TERMINAL_COMMAND,

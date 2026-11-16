@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { SshTarget } from '../../../shared/ssh-types'
+import type { SshTarget } from '../../../shared/remote-runtime/ssh/ssh-types'
 import type { SftpConnectionProfile } from '../../../shared/codezera/sftp-types'
 import { withSavedSftpProfile, withoutSftpProfile } from './sftp-profile-editing'
 

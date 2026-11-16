@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs'
 import { basename, posix } from 'node:path'
-import type { SshTarget } from '../../../shared/ssh-types'
+import type { SshTarget } from '../../../shared/remote-runtime/ssh/ssh-types'
 import { quotePosixShellUnlessPlain } from '../../../shared/shell/launch/shell-argument-quoting'
 import {
   DEFAULT_SFTP_TERMINAL_COMMAND,

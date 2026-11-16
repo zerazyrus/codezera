@@ -9,10 +9,10 @@ import { runGenerationRequest } from '../../text-generation/agent-generation-req
 import {
   prepareLocalCommitMessageAgentEnv,
   type CommitMessageAgentEnvironmentResolvers
-} from '../../text-generation/commit-message-agent-environment'
-import { resolveTextGenerationParams } from '../../text-generation/commit-message-text-generation'
-import { spawnSourceControlAgent } from '../../text-generation/source-control-agent-launch'
-import { cancelLocalGeneration } from '../../text-generation/source-control-generation-lanes'
+} from '../../text-generation/execution/commit-message-agent-environment'
+import { resolveCommitMessageSettings } from '../../text-generation/commit-message-text-generation'
+import { spawnSourceControlAgent } from '../../text-generation/execution/source-control-agent-launch'
+import { cancelLocalGeneration } from '../../text-generation/execution/source-control-generation-lanes'
 import { groupByProject, pmsReportPreview } from './pms-reports'
 
 // Orca's jira-issue-summary lane keeps multi-line output; our own cwd keeps it off Jira's lane.
@@ -60,7 +60,7 @@ export async function writePmsReport(
   if (preview.entries.length === 0) {
     return { success: false, error: 'No time logged in this period.' }
   }
-  const resolved = resolveTextGenerationParams(
+  const resolved = resolveCommitMessageSettings(
     store.getSettings(),
     LOCAL_COMMIT_MESSAGE_HOST_KEY,
     'pullRequest',

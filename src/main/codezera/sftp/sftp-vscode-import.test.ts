@@ -2,7 +2,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import type { SshTarget, SshTargetCreateInput } from '../../../shared/ssh-types'
+import type { SshTarget, SshTargetCreateInput } from '../../../shared/remote-runtime/ssh/ssh-types'
 import {
   decideSshTarget,
   importVsCodeSftpConfig,

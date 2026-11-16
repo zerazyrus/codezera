@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { ServerCog } from 'lucide-react'
 import { translate } from '@/i18n/i18n'
-import type { ActivityBarItem } from '@/components/right-sidebar/activity-bar-buttons'
+import type { ActivityBarItem } from '@/components/right-sidebar/activity-bar/activity-bar-buttons'
 import { useSftpWorkspacePath } from './sftp-store'
 
 /** Right-sidebar SFTP tab, present for every workspace on this computer. */

@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
-import type { SshTarget, SshTargetCreateInput } from '../../../shared/ssh-types'
-import { normalizeSshConfigAlias } from '../../../shared/ssh-config-alias'
+import type { SshTarget, SshTargetCreateInput } from '../../../shared/remote-runtime/ssh/ssh-types'
+import { normalizeSshConfigAlias } from '../../../shared/remote-runtime/ssh/ssh-config-alias'
 import type {
   SftpConnectionProfile,
   SftpVsCodeImportResult,

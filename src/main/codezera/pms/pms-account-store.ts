@@ -4,7 +4,7 @@ import { readFile, rm } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { z } from 'zod'
-import { getSecretStore } from '../../../shared/secret-store'
+import { getSecretStore } from '../../../shared/secure-storage/secret-store'
 import { writeCredentialFileAtomic } from '../../credentials/integration-credential-file'
 import type { PmsAccountInput } from '../../../shared/codezera/pms-types'
 

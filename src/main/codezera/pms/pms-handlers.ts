@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import type { Store } from '../../persistence/loading-store/store'
-import type { CommitMessageAgentEnvironmentResolvers } from '../../text-generation/commit-message-agent-environment'
+import type { CommitMessageAgentEnvironmentResolvers } from '../../text-generation/execution/commit-message-agent-environment'
 import { connectPms, connectPmsFromSkillConfig, disconnectPms } from './pms-service'
 import { pmsDashboardDrill, pmsDashboardOverview, pmsDashboardReport } from './pms-dashboard'
 import { cancelWritePmsReport, writePmsReport } from './pms-report-ai'

@@ -7,7 +7,7 @@ import { translate } from './pms-i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PmsPicker } from './pms-picker'
-import { isGitRepoKind } from '../../../../shared/repo-kind'
+import { isGitRepoKind } from '../../../../shared/repository/repo-kind'
 import type {
   PmsFormField,
   PmsItemDetail,

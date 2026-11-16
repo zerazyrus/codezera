@@ -4,7 +4,7 @@ import type { CkitQuotaWindow } from '../../../../shared/codezera/ckit-types'
 import {
   getDisplayedUsagePercentage,
   type UsagePercentageDisplay
-} from '../../../../shared/usage-percentage-display'
+} from '../../../../shared/agent-usage/display/usage-percentage-display'
 import cloudgoLogoUrl from './cloudgo-logo.png?url'
 
 export function CloudgoLogo({ size, className }: { size: number; className?: string }) {
