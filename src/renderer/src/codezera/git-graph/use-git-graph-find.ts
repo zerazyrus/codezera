@@ -8,7 +8,7 @@ import {
   type RefObject
 } from 'react'
 import { useAppStore } from '@/store'
-import { useShortcutLabel } from '@/hooks/useShortcutLabel'
+import { useShortcutLabel } from '@/lib/keyboard/useShortcutLabel'
 import { EditorCommandOwnerContext } from '@/components/editor/commands/editor-command-owner-context'
 import { usePdfViewerFindShortcut as useEditorFindShortcut } from '@/components/editor/pdf/use-pdf-viewer-find-shortcut'
 import type { GitHistoryItem } from '../../../../shared/git/history/git-history-types'

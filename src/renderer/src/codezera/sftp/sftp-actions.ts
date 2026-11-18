@@ -1,7 +1,7 @@
 import { toast } from 'sonner'
 import { translate } from '@/i18n/i18n'
 import { useAppStore } from '@/store'
-import { createNewTerminalTab } from '@/components/terminal/terminal-tab-create'
+import { createNewTerminalTab } from '@/components/terminal/tab-lifecycle/terminal-tab-create'
 import {
   SFTP_SUDO_PASSWORD_REQUIRED,
   SFTP_SUDO_PASSWORD_WRONG,

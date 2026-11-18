@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { IntegrationStatusPill } from '@/components/integration-status-pill'
+import { IntegrationStatusPill } from '@/components/integrations/presentation/integration-status-pill'
 import { IntegrationCardDetails } from '@/components/integrations/presentation/integration-card-shell'
 import { SkillUnsupportedStatusPill } from '@/components/skills/freshness/SkillFreshnessStatusPill'
 import { BundledSkillInstallStatus } from '@/components/skills/setup/BundledSkillInstallStatus'

@@ -78,7 +78,8 @@ export const StatusBarItem = z.enum([
   'muse',
   'ssh',
   'resource-usage',
-  'ports'
+  'ports',
+  'git-blame'
 ])
 
 export const WorkspaceStatusDefinition = z.object({
@@ -180,6 +181,7 @@ export const UiUpdateFields = z
       )
       .optional(),
     showDotfilesByWorktree: z.record(z.string(), z.boolean()).optional(),
+    notificationsMutedByWorktree: z.record(z.string(), z.boolean()).optional(),
     collapsedGroups: StringArray.optional(),
     uiZoomLevel: z.number().finite().optional(),
     editorFontZoomLevel: z.number().finite().optional(),
@@ -204,6 +206,7 @@ export const UiUpdateFields = z
     _cursorStatusBarDefaultAdded: z.boolean().optional(),
     _zcodeStatusBarDefaultAdded: z.boolean().optional(),
     _museStatusBarDefaultAdded: z.boolean().optional(),
+    _gitBlameStatusBarDefaultAdded: z.boolean().optional(),
     statusBarVisible: z.boolean().optional(),
     usagePercentageDisplay: z.enum(['used', 'remaining']).optional(),
     statusBarUsageMode: z.enum(['verbose', 'compact']).optional(),
@@ -255,6 +258,7 @@ export const UiUpdateFields = z
         rightFraction: z.number().finite()
       })
       .optional(),
+    browserExtensionSidePanelWidth: z.number().finite().optional(),
     windowBounds: z
       .object({
         x: z.number().finite(),
@@ -285,6 +289,7 @@ export const UiUpdateFields = z
     codexTerminalServerIsolationNoticeSeen: z.boolean().optional(),
     codexSharedSettingsNoticeSeen: z.boolean().optional(),
     worktreeCardsUpdateNoticeSeen: z.boolean().optional(),
+    worktreeCardsIntroNoticeSeen: z.boolean().optional(),
     speechModelUpdateNoticeSeen: z.boolean().optional(),
     claudeDiffPanelNoticeSeen: z.boolean().optional(),
     claudeAccountSignInNoticeSeen: z.boolean().optional(),
