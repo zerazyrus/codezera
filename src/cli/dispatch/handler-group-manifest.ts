@@ -1,4 +1,6 @@
 import type { CommandHandler } from './dispatch'
+import { AUTH_HANDLER_GROUP } from '../accounts/auth-handler-group'
+import { BOT_HANDLER_GROUPS } from '../bots/bot-handler-groups'
 import { BROWSER_HANDLER_GROUPS } from '../browser/browser-handler-groups'
 import { JIRA_HANDLER_GROUP } from '../jira/jira-handler-group'
 import { CODEZERA_PMS_HANDLER_GROUP } from '../codezera/codezera-pms-handler-group'
@@ -43,6 +45,7 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     keys: ['account add', 'account list', 'account select', 'account rm'],
     load: async () => (await import('../accounts/account.js')).ACCOUNT_HANDLERS
   },
+  AUTH_HANDLER_GROUP,
   {
     name: 'artifacts',
     keys: [
@@ -63,7 +66,8 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
       'automations edit',
       'automations remove',
       'automations run',
-      'automations runs'
+      'automations runs',
+      'automations trigger-options'
     ],
     load: async () => (await import('../automations/automations.js')).AUTOMATION_HANDLERS
   },
@@ -228,19 +232,7 @@ export const HANDLER_GROUPS: readonly HandlerGroup[] = [
     keys: ['chat rename'],
     load: async () => (await import('../agents/chat.js')).CHAT_HANDLERS
   },
-  {
-    name: 'connector',
-    keys: [
-      'connector start',
-      'connector send',
-      'connector prompt',
-      'connector answer',
-      'connector cancel',
-      'connector watch',
-      'connector reply'
-    ],
-    load: async () => (await import('../connectors/connector.js')).CONNECTOR_HANDLERS
-  },
+  ...BOT_HANDLER_GROUPS,
   {
     name: 'profile-state',
     keys: ['profile state exports', 'profile state rollback'],

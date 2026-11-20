@@ -80,6 +80,10 @@ export function normalizeRightSidebarTab(tab: unknown): PersistedState['ui']['ri
     tab === 'source-control' ||
     tab === 'checks' ||
     tab === 'ports' ||
+    tab === 'bot-activity' ||
+    tab === 'bot-automations' ||
+    tab === 'bot-connectors' ||
+    tab === 'bot-chats' ||
     tab === 'sftp'
   ) {
     return tab

@@ -92,16 +92,24 @@ export type TaskResumeState = {
   jiraQuery?: string
 }
 
+export const STATIC_RIGHT_SIDEBAR_TABS = [
+  'explorer',
+  'search',
+  'vault',
+  'workspaces',
+  'pr-checks',
+  'source-control',
+  'checks',
+  'ports',
+  'bot-activity',
+  'bot-automations',
+  'bot-connectors',
+  'bot-chats',
+  'sftp'
+] as const
+export type StaticRightSidebarTab = (typeof STATIC_RIGHT_SIDEBAR_TABS)[number]
 export type RightSidebarTab =
-  | 'explorer'
-  | 'search'
-  | 'vault'
-  | 'workspaces'
-  | 'pr-checks'
-  | 'source-control'
-  | 'checks'
-  | 'ports'
-  | 'sftp'
+  | StaticRightSidebarTab
   // Plugin IDs encode their dynamic panel namespace without opening the static tab union.
   | `plugin:${string}`
 export type ActiveRightSidebarTab = Exclude<RightSidebarTab, 'search'>

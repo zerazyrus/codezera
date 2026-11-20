@@ -16,9 +16,9 @@ export abstract class UpdaterUnsignedMac extends UpdaterDownloadInstall {
   private unsignedMacDownload: Promise<void> | null = null
   private unsignedMacStaged: { version: string; appPath: string } | null = null
 
-  protected downloadUpdate(): void {
+  protected downloadUpdate(automatic = false): void {
     if (!isUnsignedMacApp()) {
-      super.downloadUpdate()
+      super.downloadUpdate(automatic)
       return
     }
     if (this.unsignedMacDownload || this.quitAndInstallInProgress) {
@@ -33,6 +33,7 @@ export abstract class UpdaterUnsignedMac extends UpdaterDownloadInstall {
     if (!version) {
       return
     }
+    this.automaticDownloadVersion = automatic ? version : null
     this.unsignedMacDownload = this.runUnsignedMacDownload(version).finally(() => {
       this.unsignedMacDownload = null
     })
@@ -46,7 +47,7 @@ export abstract class UpdaterUnsignedMac extends UpdaterDownloadInstall {
         this.sendStatus({ state: 'downloading', percent, version })
       )
       this.unsignedMacStaged = { version, appPath }
-      this.sendStatus({ state: 'downloaded', version })
+      this.publishDownloadStatus({ state: 'downloaded', version })
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       recordUpdaterLifecycle(
@@ -58,18 +59,21 @@ export abstract class UpdaterUnsignedMac extends UpdaterDownloadInstall {
     }
   }
 
-  protected quitAndInstall(): void {
+  protected quitAndInstall(automatic = false): void {
     if (!isUnsignedMacApp()) {
-      super.quitAndInstall()
+      super.quitAndInstall(automatic)
       return
     }
-    void this.runUnsignedMacInstall()
+    void this.runUnsignedMacInstall(automatic)
   }
 
-  private async runUnsignedMacInstall(): Promise<void> {
+  private async runUnsignedMacInstall(automatic: boolean): Promise<void> {
     const staged = this.unsignedMacStaged
     if (!staged || this.quitAndInstallInProgress) {
       this.sendToMainWindow('updater:quitAndInstallAborted')
+      return
+    }
+    if (!this.canProceedWithInstall(staged.version, automatic)) {
       return
     }
     const target = getRunningAppBundlePath()
