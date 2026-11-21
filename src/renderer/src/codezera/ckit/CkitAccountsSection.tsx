@@ -15,15 +15,25 @@ import { CloudgoLogo, ckitResetLabel, ckitWindowLabel } from './ckit-quota-prese
 export const CKIT_SEARCH_KEYWORDS = ['ckit', 'cloudgo', 'gateway', 'quota', 'usage', 'omp', 'key']
 
 const CKIT_RAW = 'https://raw.githubusercontent.com/dante241/ckit_agent/main'
+// A fresh Mac's /usr/bin/git is a stub until Command Line Tools are installed; ckit clones skill packs
+// and serena with git, so stop early instead of finishing half set up.
+const MAC_CLT_CHECK = `{ [ "$(uname)" != Darwin ] || xcode-select -p >/dev/null 2>&1 || { xcode-select --install; echo "Install the Command Line Tools in the dialog that opened, then run this command again."; false; }; }`
 // The installer's bin dirs may not be on PATH yet in this shell; `harness global` applies the team omp rules.
-const CKIT_INSTALL_COMMAND = `export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && curl -fsSL ${CKIT_RAW}/install.sh | sh && ckit setup --no-profile && ckit harness global`
-// Windows PowerShell 5.1 has no `&&`. Installers run in child shells so an `exit` inside them keeps this one;
-// ckit setup needs Bun there to install omp and codegraph.
+const CKIT_INSTALL_COMMAND = `${MAC_CLT_CHECK} && export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH" && curl -fsSL ${CKIT_RAW}/install.sh | sh && ckit setup --no-profile && ckit harness global`
+// Windows PowerShell 5.1 has no `&&`. Installers run in child shells so an `exit` inside them keeps this one.
+// ckit setup does not install git (skill packs clone with it) or codebase-memory-mcp on Windows, and it
+// aborts when winget reports an already-installed gh unless run unattended (`--full`, skip-on-error).
 const CKIT_WINDOWS_INSTALL_COMMAND = [
+  'foreach ($p in @(@("git", "Git.Git"), @("uv", "astral-sh.uv"))) { if (-not (Get-Command $p[0] -ErrorAction SilentlyContinue)) { winget install --silent --accept-package-agreements --accept-source-agreements -e --id $p[1] } }',
   'if (-not (Get-Command bun -ErrorAction SilentlyContinue)) { powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://bun.sh/install.ps1 | iex" }',
   `powershell -NoProfile -ExecutionPolicy Bypass -Command "irm ${CKIT_RAW}/install.ps1 | iex"`,
-  '$env:Path = "$env:USERPROFILE\\.bun\\bin;$env:LOCALAPPDATA\\Programs\\ckit;$env:Path"',
-  'ckit setup --no-profile',
+  '$cbm = "$env:LOCALAPPDATA\\Programs\\codebase-memory-mcp"',
+  'if (-not (Test-Path "$cbm\\codebase-memory-mcp.exe")) { powershell -NoProfile -ExecutionPolicy Bypass -Command "& ([scriptblock]::Create((irm https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.ps1))) --skip-config" }',
+  '$userPath = "" + [Environment]::GetEnvironmentVariable("Path", "User")',
+  'if (($userPath -split ";") -notcontains $cbm) { [Environment]::SetEnvironmentVariable("Path", ($userPath.TrimEnd(";") + ";" + $cbm).TrimStart(";"), "User") }',
+  // Pick up what the installers just added to PATH without reopening the terminal.
+  '$env:Path = "$env:USERPROFILE\\.bun\\bin;$env:LOCALAPPDATA\\Programs\\ckit;$cbm;" + [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")',
+  'ckit setup --full --no-profile',
   'if ($LASTEXITCODE -eq 0) { ckit harness global }'
 ].join('; ')
 
@@ -133,6 +143,7 @@ function SetupSteps({
 }): React.JSX.Element {
   const refresh = useCkitQuotaStore((s) => s.refresh)
   const windows = isWindowsDesktopClient()
+  const [rerun, setRerun] = useState(false)
 
   return (
     <div className="space-y-5 rounded-lg border border-border/60 bg-muted/20 p-4">
@@ -140,9 +151,17 @@ function SetupSteps({
         <StepTitle step={1} done={status.ckitInstalled}>
           {translate('codezera.ckit.step1', 'Install ckit')}
         </StepTitle>
-        {status.ckitInstalled ? (
+        {status.ckitInstalled && !rerun ? (
           <p className="text-xs text-muted-foreground">
-            {translate('codezera.ckit.installed', 'ckit is installed on this computer.')}
+            {translate('codezera.ckit.installed', 'ckit is installed on this computer.')}{' '}
+            <Button
+              variant="link"
+              size="sm"
+              className="h-auto p-0 text-xs"
+              onClick={() => setRerun(true)}
+            >
+              {translate('codezera.ckit.rerunSetup', 'Run setup again')}
+            </Button>
           </p>
         ) : (
           <OnboardingInlineCommandTerminal
@@ -153,7 +172,7 @@ function SetupSteps({
               windows
                 ? translate(
                     'codezera.ckit.installHintWindows',
-                    'Press Enter to install Bun (if missing), ckit and its agent harness (omp, skills, codegraph, MCP servers) in PowerShell.'
+                    'Press Enter to install Git, uv and Bun (if missing), ckit and its agent harness (omp, skills, codegraph, codebase-memory-mcp, serena) in PowerShell.'
                   )
                 : translate(
                     'codezera.ckit.installHint',

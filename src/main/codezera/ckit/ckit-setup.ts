@@ -145,10 +145,45 @@ async function writeDocument(path: string, doc: Document): Promise<void> {
   })
 }
 
+// ckit setup seeds 9router-cc/9router-cx from a template whose URL/key placeholders only
+// `ckit harness gateway apply` fills; left as-is, omp lists their models but none can answer.
+const SEEDED_PLACEHOLDER = '__NINE_ROUTER_'
+
+const ProvidersFile = z.object({
+  providers: z.record(
+    z.string(),
+    z
+      .object({
+        baseUrl: z.unknown(),
+        apiKey: z.unknown(),
+        models: z.array(z.object({ id: z.string() })).catch([])
+      })
+      .catch({ baseUrl: undefined, apiKey: undefined, models: [] })
+  )
+})
+
+function readProviders(doc: Document): z.infer<typeof ProvidersFile>['providers'] {
+  const parsed = ProvidersFile.safeParse(doc.toJS())
+  return parsed.success ? parsed.data.providers : {}
+}
+
+function dropSeededPlaceholderProviders(doc: Document): boolean {
+  const seeded = Object.entries(readProviders(doc))
+    .filter(([, { baseUrl, apiKey }]) =>
+      [baseUrl, apiKey].some((v) => typeof v === 'string' && v.includes(SEEDED_PLACEHOLDER))
+    )
+    .map(([name]) => name)
+  for (const name of seeded) {
+    doc.deleteIn(['providers', name])
+  }
+  return seeded.length > 0
+}
+
 /** Existing gateway providers (cloudgo-cc, cloudgo-cx, …) keep their tuned models; only the key rotates. */
 async function saveProvider(apiKey: string, models: GatewayModel[]): Promise<void> {
   const path = getCkitModelsPath()
   const doc = await readDocument(path)
+  dropSeededPlaceholderProviders(doc)
   const parsed = z
     .object({
       providers: z.record(z.string(), z.object({ baseUrl: z.string() }).catch({ baseUrl: '' }))
@@ -177,8 +212,8 @@ async function saveProvider(apiKey: string, models: GatewayModel[]): Promise<voi
 
 // ckit setup seeds roles on its 9router catalog, which this gateway does not serve. Those roles
 // and missing team roles move to the team routing on cloudgo-cc; roles the user picked stay.
-function routeModelRoles(doc: Document, models: GatewayModel[]): boolean {
-  const ids = new Set(models.map((m) => m.id))
+function routeModelRoles(doc: Document, modelIds: string[]): boolean {
+  const ids = new Set(modelIds)
   const parsed = z
     .object({ modelRoles: z.record(z.string(), z.unknown()).optional() })
     .safeParse(doc.toJS())
@@ -190,7 +225,7 @@ function routeModelRoles(doc: Document, models: GatewayModel[]): boolean {
     const replaceable =
       value === undefined || (typeof value === 'string' && value.startsWith('9router-'))
     const preset = TEAM_MODEL_ROLES[role] ?? TEAM_MODEL_ROLES.default
-    const model = preset.models.find((id) => ids.has(id)) ?? models[0]?.id
+    const model = preset.models.find((id) => ids.has(id)) ?? modelIds[0]
     if (!replaceable || !model) {
       continue
     }
@@ -249,17 +284,30 @@ async function turnOffCkitAdvisor(): Promise<void> {
   }
 }
 
+async function fileExists(path: string): Promise<boolean> {
+  return access(path).then(
+    () => true,
+    () => false
+  )
+}
+
 /** Brings an existing ckit install up to the team settings; runs on launch and after a ckit update. */
 export async function applyCkitTeamSettings(): Promise<void> {
+  let teamModelIds: string[] = []
+  const modelsPath = getCkitModelsPath()
+  if (await fileExists(modelsPath)) {
+    const models = await readDocument(modelsPath)
+    if (dropSeededPlaceholderProviders(models)) {
+      await writeDocument(modelsPath, models)
+    }
+    teamModelIds = readProviders(models)[CKIT_PROVIDER]?.models.map((m) => m.id) ?? []
+  }
   const path = getOmpConfigPath()
-  if (
-    await access(path).then(
-      () => true,
-      () => false
-    )
-  ) {
+  if (await fileExists(path)) {
     const doc = await readDocument(path)
-    if (applyTeamSettings(doc, false)) {
+    // Without a cloudgo-cc catalog there is nothing to route 9router roles to yet.
+    const rolesChanged = teamModelIds.length > 0 && routeModelRoles(doc, teamModelIds)
+    if (applyTeamSettings(doc, false) || rolesChanged) {
       await writeDocument(path, doc)
     }
   }
@@ -280,7 +328,10 @@ export async function saveCkitApiKey(rawKey: unknown, rawOptions: unknown): Prom
   // One write so the .codezera-bak backup holds the file as it was before Codezera touched it.
   const path = getOmpConfigPath()
   const doc = await readDocument(path)
-  const rolesChanged = routeModelRoles(doc, models)
+  const rolesChanged = routeModelRoles(
+    doc,
+    models.map((m) => m.id)
+  )
   if (applyTeamSettings(doc, autoApprove) || rolesChanged) {
     await writeDocument(path, doc)
   }
