@@ -2,7 +2,7 @@ import { NO_RESOURCE_EVIDENCE } from '@/lib/workspace/ownership/workspace-copy-o
 import { useDiffCommentView } from '../../../diff-comments/use-diff-comment-owner'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { DiffEditor, type DiffOnMount } from '@monaco-editor/react'
-import type { editor } from 'monaco-editor'
+import type { IDisposable, editor } from 'monaco-editor'
 import { useAppStore } from '@/store/index'
 import {
   diffViewStateCache,
@@ -34,6 +34,7 @@ import {
   syncDiffEditorOriginalWordWrap
 } from './diff-editor-word-wrap-options'
 import { buildDiffEditorHideUnchangedOptions } from './diff-editor-hide-unchanged-options'
+import { restoreDiffViewStateWhileLayoutSettles } from './diff-view-state-restore'
 import { useDiffEditorRegistration } from '../review/diff-navigation-context'
 import { preserveDiffViewStateAcrossModelSwaps } from './diff-model-swap-view-state'
 import { monacoFindOptions } from '../../monaco/monaco-find-options'
@@ -44,7 +45,7 @@ import {
   applyModelLanguage
 } from '@/lib/monaco-languages/plugin-syntax-editor-options'
 import { useMonacoTheme } from '@/lib/editor/appearance/use-monaco-theme'
-import { setCodezeraSnippetEditorPath } from '@/codezera/snippets/snippet-completions'
+import { useCodezeraSnippetEditorPath } from '@/codezera/snippets/use-codezera-snippet-editor-path'
 import { cn } from '@/lib/class-names'
 import { wholeFileDiffTintClass } from './whole-file-diff-tint'
 
@@ -107,10 +108,7 @@ export default function DiffViewer({
     const models = diffEditorRef.current?.getModel()
     applyModelLanguage([models?.original, models?.modified], language)
   }, [modifiedEditor, language])
-  useEffect(
-    () => setCodezeraSnippetEditorPath(modifiedEditor, filePath),
-    [modifiedEditor, filePath]
-  )
+  useCodezeraSnippetEditorPath(modifiedEditor, filePath)
 
   const renderLimit = useMemo(
     () => largeDiffRenderLimit ?? getLargeDiffRenderLimit({ originalContent, modifiedContent }),
@@ -202,6 +200,14 @@ export default function DiffViewer({
     onPendingScrollConsumed: () => setScrollToDiffCommentId(null)
   })
 
+  // Note navigation scrolls after the cached restore; end the settle window so it can't pull the view back.
+  const viewStateRestoreRef = useRef<IDisposable | null>(null)
+  useEffect(() => {
+    if (pendingScrollForThisViewer) {
+      viewStateRestoreRef.current?.dispose()
+    }
+  }, [pendingScrollForThisViewer, modifiedEditor])
+
   useDiffViewerFirstChangeAutoScroll({
     diffEditorRef,
     modifiedEditor,
@@ -216,6 +222,7 @@ export default function DiffViewer({
     cancelAnimationFrame(wordWrapMountFrameRef.current)
     wordWrapOptionsSubRef.current?.dispose()
     wordWrapOptionsSubRef.current = null
+    viewStateRestoreRef.current = null
     // Capture the exact instance before clearing; unregister ignores stale identities.
     const fallenBackEditor = diffEditorRef.current
     diffEditorRef.current = null
@@ -273,6 +280,7 @@ export default function DiffViewer({
         lineNumberOptionsSubRef.current = null
         wordWrapOptionsSubRef.current?.dispose()
         wordWrapOptionsSubRef.current = null
+        viewStateRestoreRef.current = null
         unregisterDiffEditor(diffEditor)
         diffEditorRef.current = null
         setModifiedEditor(null)
@@ -285,9 +293,9 @@ export default function DiffViewer({
 
       // Restore cursor and selection across both panes alongside scroll.
       const savedViewState = diffViewStateCache.get(modelKey)
-      if (savedViewState) {
-        requestAnimationFrame(() => diffEditor.restoreViewState(savedViewState))
-      }
+      viewStateRestoreRef.current = savedViewState
+        ? restoreDiffViewStateWhileLayoutSettles(diffEditor, savedViewState)
+        : null
       // Auto-scroll runs separately after decorator view zones mount.
 
       if (editable) {
