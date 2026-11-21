@@ -2,6 +2,8 @@
 
 Codezera ships from `zerazyrus/codezera` (branch `codezera`), merged from `stablyai/orca` `main` on each release run.
 
+New machine or new to the repo: start with [`CODEZERA-HANDOFF.md`](CODEZERA-HANDOFF.md) (setup, feature map, sync runbook, machine-local data).
+
 ## Pipeline (`.github/workflows/codezera-release.yml`)
 
 Manual only: **Actions → codezera-release → Run workflow** (`force` rebuilds even without changes).
