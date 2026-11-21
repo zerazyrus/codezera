@@ -154,12 +154,7 @@ function SetupSteps({
         {status.ckitInstalled && !rerun ? (
           <p className="text-xs text-muted-foreground">
             {translate('codezera.ckit.installed', 'ckit is installed on this computer.')}{' '}
-            <Button
-              variant="link"
-              size="sm"
-              className="h-auto p-0 text-xs"
-              onClick={() => setRerun(true)}
-            >
+            <Button variant="link" size="inlineText" onClick={() => setRerun(true)}>
               {translate('codezera.ckit.rerunSetup', 'Run setup again')}
             </Button>
           </p>
