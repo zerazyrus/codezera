@@ -32,7 +32,6 @@ import { useUsageRowWidths } from './composition/use-usage-row-widths'
 import { UsageUnitLabel, usageChipShowsPercentage } from './usage/usage-unit-label'
 import type { useStatusBarController } from './composition/use-status-bar-controller'
 import { isOwnerNotSetUpPlaceholder } from './usage/owner-usage-rate-limits'
-import { getAccountOwnerKey } from './accounts/owner-account-rows'
 import { useCkitTracksUsage } from '@/codezera/status-bar/CodezeraStatusBarSegments'
 
 type StatusBarController = NonNullable<ReturnType<typeof useStatusBarController>>
@@ -118,6 +117,7 @@ export function StatusBarUsageArea({
                   data-usage-trigger=""
                   className="inline-flex items-center gap-3 rounded px-1 py-0.5 hover:bg-accent/70"
                   aria-label={t('auto.components.status.bar.UsageRosterPanel.title', 'Usage')}
+                  title={remoteOwner?.label}
                 >
                   {showUnitLabel ? <UsageUnitLabel display={usagePercentageDisplay} /> : null}
                   {shownProviders.map((p) => (
@@ -151,6 +151,8 @@ export function StatusBarUsageArea({
                 onCloseAutoFocus={usageMenuFocusHandoff.onCloseAutoFocus}
               >
                 <UsageRosterPanel
+                  actionsAvailable={remoteOwner === null || remoteOwner.environmentId !== null}
+                  unavailableReason={remoteOwner?.unavailableReason}
                   providers={rosterProviders}
                   display={usagePercentageDisplay}
                   statusBarUsageMode={statusBarUsageMode}
@@ -191,7 +193,6 @@ export function StatusBarUsageArea({
                     if (p.provider === 'codex') {
                       return (
                         <CodexSwitcherMenu
-                          key={getAccountOwnerKey(ownerUsage.owner)}
                           codex={p}
                           ownerUsage={ownerUsage}
                           asSubmenu

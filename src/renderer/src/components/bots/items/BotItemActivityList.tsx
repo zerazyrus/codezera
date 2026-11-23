@@ -25,13 +25,15 @@ import {
 } from '../../../../../shared/bots/bot-item-activity'
 import { botItemActorName } from '../../../../../shared/bots/bot-item-actor-name'
 import { botItemStatusName } from './bot-item-status-name'
-import { BOT_ITEM_COMMENT_ATTRIBUTE, BotItemCommentCard } from './BotItemCommentCard'
+import { BotItemCommentCard } from './BotItemCommentCard'
+import { revealBotItemComment } from './bot-item-comment-reveal'
 import type { BotItemQuickReplyActions } from './use-bot-item-question-steps'
 import { NativeChatMessageTimestamp } from '../../native-chat/messages/rows/NativeChatMessageTimestamp'
 import { BotItemStatusIcon } from './BotItemStatusIcon'
 import { BotItemLinkedRefs } from './BotItemLinkedRefs'
 import { formatBotItemSnoozeTime } from './bot-item-snooze-time'
 import type { BotItemPendingComments } from '../../../../../shared/bots/bot-item-pending-comments'
+import { NATIVE_CHAT_QUOTE_SOURCE_PROPS } from '../../../../../shared/native-chat/input/quotes/native-chat-quote-selection'
 
 const ACTOR = 'font-medium text-foreground/80'
 // Where a linked event's refs go in its translated sentence.
@@ -260,24 +262,18 @@ export function BotItemActivityList({
   const t = useTranslate()
   const entries = botItemActivity(item, events)
   const list = useRef<HTMLDivElement | null>(null)
-  // A reply's quote leads to its question: centred, so the sticky header never covers it, and
-  // focused, so Tab goes on from there.
-  const jump = useCallback((eventId: string) => {
-    const target = list.current?.querySelector<HTMLElement>(
-      `[${BOT_ITEM_COMMENT_ATTRIBUTE}="${CSS.escape(eventId)}"]`
-    )
-    if (!target) {
-      return
-    }
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    target.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' })
-    target.focus({ preventScroll: true })
-  }, [])
+  // A reply's quote leads to its question, focused so Tab goes on from there.
+  const jump = useCallback(
+    (eventId: string) => revealBotItemComment(list.current, eventId, 'focus'),
+    []
+  )
   // The rail runs through the event glyphs; each glyph and card sits on the panel fill over it.
   return (
     <>
       <div
         ref={list}
+        // Comments and events quote into the item's comment box, as replies do into chat's composer.
+        {...NATIVE_CHAT_QUOTE_SOURCE_PROPS}
         className="relative flex flex-col before:absolute before:inset-y-2.5 before:left-[9.5px] before:w-px before:bg-foreground/12"
       >
         {entries.map((entry) => {
