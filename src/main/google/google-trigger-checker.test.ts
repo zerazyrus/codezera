@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { AutomationGoogleTrigger } from '../../shared/automation-google-triggers'
 import type { GoogleApi } from './google-api-client'
 import { GoogleTriggerChecker, type GoogleTriggerCheckerDeps } from './google-trigger-checker'
@@ -55,7 +55,7 @@ describe('Calendar timers follow their rule', () => {
       ],
       bots: () => [{ id: 'b1', google: true }],
       accounts: () => ['a@x.com', 'b@x.com'],
-      defaultAccount: async () => 'a@x.com',
+      defaultAccount: async () => ({ email: 'a@x.com' }),
       api: (account) => calendarApi(account),
       runForEvent: async () => undefined,
       readState: () => state,
@@ -90,6 +90,51 @@ describe('Calendar timers follow their rule', () => {
     checker.stop()
   })
 
+  it("starts a timer's run only while its account is still on the bot", async () => {
+    let bot: { id: string; google: boolean; googleAccounts?: string[] } = {
+      id: 'b1',
+      google: true,
+      googleAccounts: ['a@x.com']
+    }
+    const runs: ((() => void) | undefined)[] = []
+    const runForEvent = vi.fn(async () => undefined)
+    const checker = new GoogleTriggerChecker({
+      automations: () => [
+        {
+          id: 'auto',
+          enabled: true,
+          bot: { botId: 'b1', runsIn: 'new', resultsTo: 'chat' },
+          on: [rule('r1', 'a@x.com', 10)]
+        }
+      ],
+      bots: () => [bot],
+      accounts: () => ['a@x.com', 'b@x.com'],
+      defaultAccount: async () => ({ email: 'a@x.com' }),
+      api: (account) => calendarApi(account),
+      runForEvent,
+      readState: () => ({ accounts: {}, listeners: {} }),
+      writeState: () => {},
+      now: () => NOW,
+      tickMs: 120_000,
+      setTimer: (run) => {
+        runs.push(run)
+        return setTimeout(() => {}, 0)
+      }
+    })
+    await checker.tick()
+    expect(runs).toHaveLength(1)
+    bot = { ...bot, googleAccounts: ['b@x.com'] }
+    runs[0]?.()
+    await Promise.resolve()
+    expect(runForEvent).not.toHaveBeenCalled()
+    // Given back before the timer fires, the account starts its run.
+    bot = { ...bot, googleAccounts: ['A@x.com'] }
+    runs[0]?.()
+    await Promise.resolve()
+    expect(runForEvent).toHaveBeenCalledTimes(1)
+    checker.stop()
+  })
+
   it("keeps a sibling rule's timer for the same meeting when one rule moves", async () => {
     let rules = [rule('r1', 'a@x.com', 10), rule('r2', 'a@x.com', 10)]
     const created: ReturnType<typeof setTimeout>[] = []
@@ -106,7 +151,7 @@ describe('Calendar timers follow their rule', () => {
       ],
       bots: () => [{ id: 'b1', google: true }],
       accounts: () => ['a@x.com', 'b@x.com'],
-      defaultAccount: async () => 'a@x.com',
+      defaultAccount: async () => ({ email: 'a@x.com' }),
       api: (account) => calendarApi(account),
       runForEvent: async () => undefined,
       readState: () => state,
@@ -137,5 +182,49 @@ describe('Calendar timers follow their rule', () => {
     // r2 still waits on a without being set again; r1 moved to b.
     expect(siblingTimer.every((timer) => pending.has(timer))).toBe(true)
     checker.stop()
+  })
+})
+
+describe('rules without an account', () => {
+  it('warns once while an unreadable default pauses them, and again after it recovers', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    let fallback: Awaited<ReturnType<GoogleTriggerCheckerDeps['defaultAccount']>> = {
+      unreadable: 'The saved file is damaged.',
+      accounts: ['a@x.com', 'b@x.com']
+    }
+    let state: GoogleTriggerState = { accounts: {}, listeners: {} }
+    const accountless: AutomationGoogleTrigger = { id: 'r', source: 'gmail', event: 'new_email' }
+    const checker = new GoogleTriggerChecker({
+      automations: () => [
+        {
+          id: 'auto',
+          enabled: true,
+          bot: { botId: 'b1', runsIn: 'new', resultsTo: 'chat' },
+          on: [accountless]
+        }
+      ],
+      bots: () => [{ id: 'b1', google: true }],
+      accounts: () => ['a@x.com', 'b@x.com'],
+      defaultAccount: async () => fallback,
+      api: (account) => calendarApi(account),
+      runForEvent: async () => undefined,
+      readState: () => state,
+      writeState: (next) => {
+        state = next
+      },
+      now: () => NOW,
+      tickMs: 120_000
+    })
+    const paused = () => warn.mock.calls.filter(([line]) => String(line).includes('paused')).length
+    await checker.tick()
+    await checker.tick()
+    expect(paused()).toBe(1)
+    fallback = { email: 'a@x.com' }
+    await checker.tick()
+    fallback = { unreadable: 'The saved file is damaged.', accounts: ['a@x.com', 'b@x.com'] }
+    await checker.tick()
+    expect(paused()).toBe(2)
+    checker.stop()
+    warn.mockRestore()
   })
 })

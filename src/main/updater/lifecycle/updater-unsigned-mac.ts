@@ -3,6 +3,7 @@ import { recordUpdaterLifecycle } from '../updater-lifecycle-diagnostics'
 import { armUpdateInstallExitWatchdog } from '../update-install-exit-watchdog'
 import { UpdaterDownloadInstall } from './updater-download-install'
 import { releaseSessionsForInstaller } from './updater-installer-session-release'
+import type { UpdateInstallTrigger } from './updater-state'
 import {
   canReplaceBundle,
   downloadUnsignedMacUpdate,
@@ -59,21 +60,32 @@ export abstract class UpdaterUnsignedMac extends UpdaterDownloadInstall {
     }
   }
 
-  protected quitAndInstall(automatic = false): void {
+  protected quitAndInstall(
+    trigger: UpdateInstallTrigger = 'manual',
+    isCurrentTeamRestart?: () => boolean
+  ): void {
     if (!isUnsignedMacApp()) {
-      super.quitAndInstall(automatic)
+      super.quitAndInstall(trigger, isCurrentTeamRestart)
       return
     }
-    void this.runUnsignedMacInstall(automatic)
+    void this.runUnsignedMacInstall(trigger, isCurrentTeamRestart)
   }
 
-  private async runUnsignedMacInstall(automatic: boolean): Promise<void> {
+  private async runUnsignedMacInstall(
+    trigger: UpdateInstallTrigger,
+    isCurrentTeamRestart?: () => boolean
+  ): Promise<void> {
     const staged = this.unsignedMacStaged
     if (!staged || this.quitAndInstallInProgress) {
       this.sendToMainWindow('updater:quitAndInstallAborted')
       return
     }
-    if (!this.canProceedWithInstall(staged.version, automatic)) {
+    if (isCurrentTeamRestart && !isCurrentTeamRestart()) {
+      this.cancelAutomaticInstall(staged.version)
+      this.sendToMainWindow('updater:quitAndInstallAborted')
+      return
+    }
+    if (!this.canProceedWithInstall(staged.version, trigger)) {
       return
     }
     const target = getRunningAppBundlePath()

@@ -4,7 +4,7 @@ import { APP_RELEASE_REPO, APP_RELEASE_REPO_PATTERN } from '../../../shared/code
 import {
   FETCH_TIMEOUT_MS,
   getPlatformManifestReadiness,
-  requestGitHubReleaseHead
+  requestReleaseHead
 } from './updater-release-readiness'
 
 import {
@@ -86,7 +86,7 @@ export async function fetchLatestStableReleaseTag(): Promise<string | null> {
   try {
     // Resolve only the release-page redirect; installer redirects continue on to signed storage URLs.
     const latestUrl = `${RELEASES_URL}/latest`
-    const response = await requestGitHubReleaseHead(latestUrl)
+    const response = await requestReleaseHead(latestUrl)
     if (!response?.redirectUrl || response.statusCode < 300 || response.statusCode >= 400) {
       return null
     }
@@ -112,6 +112,7 @@ type FetchNewerReleaseTagOptions = {
   releaseFilter?: 'perf'
   /** User update delay: only releases public at least this long are offered. */
   minReleaseAgeMs?: number
+  minimumVersion?: string
   now?: number
 }
 
@@ -154,9 +155,27 @@ export async function fetchNewerReleaseTagsWithReadiness(
     return { tags: [], state: 'unavailable', unavailableReason: 'feed' }
   }
 
-  const channelCandidates = selectChannelCandidates(tags, includePrerelease, options.releaseFilter)
+  const minimum = options.minimumVersion
+  const candidates = (list: ReleaseFeedTag[]): ReleaseFeedTag[] => {
+    const channel = selectChannelCandidates(list, includePrerelease, options.releaseFilter)
+    return minimum
+      ? channel.filter(({ version }) => compareVersions(version, minimum) >= 0)
+      : channel
+  }
+  const channelCandidates = candidates(tags)
   if (!options.minReleaseAgeMs || options.minReleaseAgeMs <= 0) {
-    return resolveNewerReleaseTags(channelCandidates, currentVersion, maxTags)
+    if (channelCandidates.length || !minimum) {
+      return resolveNewerReleaseTags(channelCandidates, currentVersion, maxTags)
+    }
+    const older = await fetchOlderReleaseTags(
+      (list) => candidates(list).length > 0,
+      options.now ?? Date.now()
+    )
+    return resolveNewerReleaseTags(
+      candidates(mergeReleaseTags(tags, older ?? [])),
+      currentVersion,
+      maxTags
+    )
   }
   const now = options.now ?? Date.now()
   const cutoff = now - options.minReleaseAgeMs
@@ -164,27 +183,33 @@ export async function fetchNewerReleaseTagsWithReadiness(
   // line's recent maintenance release does not prove that history is complete.
   const settlesDelay = (list: ReleaseFeedTag[]): boolean =>
     list.some(({ version }) => compareVersions(version, currentVersion) === 0) ||
-    selectChannelCandidates(list, includePrerelease, options.releaseFilter).some(
+    candidates(list).some(
       (entry) =>
         isReleaseOldEnough(entry, cutoff) && compareVersions(entry.version, currentVersion) > 0
-    )
+    ) ||
+    (minimum !== undefined &&
+      candidates(list).some(({ version }) => compareVersions(version, minimum) === 0))
   // Atom keeps only ~10 entries, so an aged-out release may predate it.
   // Judge REST pages through the merge so Atom's later `updated` time wins, as it does below.
   const olderTags = settlesDelay(tags)
     ? null
     : await fetchOlderReleaseTags((older) => settlesDelay(mergeReleaseTags(tags, older)), now)
   const allTags = olderTags ? mergeReleaseTags(tags, olderTags) : tags
+  const allCandidates = candidates(allTags)
   const { eligible, releaseDelay } = applyReleaseDelay(
-    selectChannelCandidates(allTags, includePrerelease, options.releaseFilter),
+    allCandidates,
     allTags,
     currentVersion,
     options.minReleaseAgeMs,
     now
   )
-  return {
-    ...(await resolveNewerReleaseTags(eligible, currentVersion, maxTags)),
-    releaseDelay
-  }
+  const bypassDelayForMinimum = minimum !== undefined && eligible.length === 0
+  const result = await resolveNewerReleaseTags(
+    bypassDelayForMinimum ? allCandidates.toReversed() : eligible,
+    currentVersion,
+    bypassDelayForMinimum ? 1 : maxTags
+  )
+  return { ...result, releaseDelay }
 }
 
 // Perf builds require explicit opt-in, even when semver considers them newer.

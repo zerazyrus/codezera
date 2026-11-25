@@ -22,6 +22,7 @@ import {
   prepareCodexSessionResumeForLaunch
 } from '../agent-accounts/codex-session-resume-launch'
 import { isRecoveryReloadInFlight } from './main-window-lifecycle-flags'
+import { quitFromUserCommand } from './main-window-actions'
 
 let attachmentTail: Promise<void> = Promise.resolve()
 
@@ -108,8 +109,12 @@ async function installMainWindowCoreServices(
       onBeforeRelaunch: async () => {
         state.isQuitting = true
         fenceMainProcessCloudOnQuit()
-        await preserveAgentAuthBeforeRestart({ codexRuntimeHome, store })
+        await Promise.all([
+          preserveAgentAuthBeforeRestart({ codexRuntimeHome, store }),
+          state.core.runtime?.bots.slackIcons.shownRecords.finalSave()
+        ])
       },
+      onQuit: quitFromUserCommand,
       orcaAccount,
       rendererCheckpoint: state.core.rendererCheckpoint ?? undefined
     },
