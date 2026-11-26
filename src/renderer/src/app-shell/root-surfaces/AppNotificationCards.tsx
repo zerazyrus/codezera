@@ -1,5 +1,6 @@
 import { Suspense, type JSX } from 'react'
 import type { TopLevelView } from '../../../../shared/ui-chrome/ui-chrome-types'
+import { AgentCliUpdateCard } from '../../components/agent-cli-update/AgentCliUpdateCard'
 import { lazyWithRetry as lazy } from '@/app-shell/startup/lazy-with-retry'
 import { CodexSharedSettingsNoticeCard } from '../../components/terminal-pane/provider-notices/codex-settings/CodexSharedSettingsNoticeCard'
 import { CkitToolUpdateCard } from '../../codezera/ckit/CkitToolUpdateCard'
@@ -24,6 +25,9 @@ const UnexpectedSignoutCard = lazy(() =>
   }))
 )
 
+// Temporarily disabled while fixing a bug where the card can stay stuck open.
+const AGENT_CLI_UPDATE_CARD_ENABLED = false
+
 /** The bottom-right notification stack and every card that shares it. */
 export function AppNotificationCards({
   activeView,
@@ -44,6 +48,11 @@ export function AppNotificationCards({
             <ChatUiHereCornerCard onClose={onChatUiHereCornerCardClose} />
           </OverlayBoundary>
         </Suspense>
+      ) : null}
+      {AGENT_CLI_UPDATE_CARD_ENABLED ? (
+        <OverlayBoundary boundaryId="overlay.agent-cli-update-card" resetKey={activeView}>
+          <AgentCliUpdateCard />
+        </OverlayBoundary>
       ) : null}
       {shouldMountUpdateCard ? (
         <Suspense fallback={null}>
