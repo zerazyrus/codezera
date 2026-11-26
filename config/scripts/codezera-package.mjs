@@ -193,6 +193,17 @@ function packageApp(platform) {
     run('pnpm', ['run', 'build:release'], env)
   }
   if (platform === 'mac') {
+    // macOS keys notification authorization to the helper's embedded bundle id; the upstream build
+    // embeds com.stablyai.orca, which reads "not-determined" and blocks every Codezera banner.
+    run(
+      'node',
+      [
+        'config/scripts/native-build/macos/build-notification-status-macos.mjs',
+        '--bundle-id',
+        review ? 'net.thezera.codezera.review' : 'net.thezera.codezera'
+      ],
+      env
+    )
     run(
       'node',
       [
