@@ -334,10 +334,8 @@ export function enableMainProcessGpuFeatures(): void {
     return
   }
 
-  if (process.platform === 'darwin') {
-    // Graphite can retain corrupt Metal tiles after idle. Keep this macOS fix unconditional if GPU fallback ever expands beyond win32.
-    app.commandLine.appendSwitch('disable-skia-graphite')
-  }
+  // Keep Skia Graphite on macOS: since Electron 45 it is the only GPU raster path there, so
+  // `disable-skia-graphite` turns compositing, raster, video decode and WebGL to software.
 
   // Each terminal consumes WebGL context capacity; raise the default 16 limit while keeping leaks bounded.
   app.commandLine.appendSwitch('max-active-webgl-contexts', '128')
