@@ -60,6 +60,7 @@ import { createWebLinkPreviewApi } from './preload-api/browser/web-link-preview-
 import { createWebWorkspaceSessionApi } from './preload-api/workspaces/web-workspace-session-api'
 import { createWorktreesApi } from './preload-api/workspaces/web-worktrees-api'
 import { readStoredWebRuntimeEnvironment } from './pairing/web-runtime-environment'
+import { createWebOrcaImportApi } from '../codezera/orca-import/web-orca-import-api'
 
 export function installWebPreloadApi(): void {
   webRuntimeState.activeEnvironment = readStoredWebRuntimeEnvironment()
@@ -68,10 +69,14 @@ export function installWebPreloadApi(): void {
   window.api = withFallback(createWebPreloadApi(), []) as PreloadApi
 }
 
-function createWebPreloadApi(): Omit<Partial<PreloadApi>, 'settings' | 'plugins' | 'speech'> & {
+function createWebPreloadApi(): Omit<
+  Partial<PreloadApi>,
+  'settings' | 'plugins' | 'speech' | 'codezera'
+> & {
   settings: Partial<PreloadApi['settings']>
   plugins: Partial<PreloadApi['plugins']>
   speech: Partial<PreloadApi['speech']>
+  codezera: Partial<PreloadApi['codezera']>
 } {
   return {
     ...createWebAppApi(),
@@ -80,6 +85,7 @@ function createWebPreloadApi(): Omit<Partial<PreloadApi>, 'settings' | 'plugins'
     ...createWebWorkspacePortsApi(),
     linkPreview: createWebLinkPreviewApi(),
     ...createWebOrcaProfilesApi(),
+    codezera: { orcaImport: createWebOrcaImportApi() },
     ...createWebE2EApi(),
     ...createWebSettingsApi(),
     keybindings: createWebKeybindingsApi(),
