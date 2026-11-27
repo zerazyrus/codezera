@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- Why: upstream sits at the cap; Codezera's snippet-path hook is a one-line call so upstream merges stay conflict-free. */
 import { NO_RESOURCE_EVIDENCE } from '@/lib/workspace/ownership/workspace-copy-owner'
 import { useDiffCommentView } from '../../../diff-comments/use-diff-comment-owner'
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
@@ -234,9 +235,11 @@ export default function DiffViewer({
   }, [unregisterDiffEditor])
 
   const onSaveRef = useRef(onSave)
-  onSaveRef.current = onSave
   const onContentChangeRef = useRef(onContentChange)
-  onContentChangeRef.current = onContentChange
+  useLayoutEffect(() => {
+    onSaveRef.current = onSave
+    onContentChangeRef.current = onContentChange
+  })
 
   const { setupCopy, toastNode } = useContextualCopySetup()
 

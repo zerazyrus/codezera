@@ -105,22 +105,15 @@ export function SourceControlPanelReady(props: SourceControlPanelReadyProps) {
       {...props}
       graphSupported={graphSupport.support === true}
       filter={embedded ? null : filter}
-      graphControl={
+      overflowMenu={
         embedded ? null : (
           <>
             <OpenGitGraphButton className="size-5 text-muted-foreground hover:text-foreground" />
-            <GitGraphOpenButton
-              worktreeId={currentWorktreeId}
-              support={graphSupport}
-              onOpen={openGraph}
-              iconOnly
+            <SourceControlHeaderOverflowMenu
+              panelActions={panelActions}
+              triggerClassName="size-5"
             />
           </>
-        )
-      }
-      overflowMenu={
-        embedded ? null : (
-          <SourceControlHeaderOverflowMenu panelActions={panelActions} triggerClassName="size-5" />
         )
       }
     />
