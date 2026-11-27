@@ -65,16 +65,17 @@ A conflict only happens where Codezera and Orca edit the same lines of an Orca f
 - Union-type conflicts (editor `mode`, `EDITOR_VIEW_MODES`, `ModeIcon` arms, monaco setup steps): keep both sides — Orca's new members plus Codezera's `codezera-panel` lines. Orca's own Git Graph tab (`mode: 'git-graph'`, view-only) coexists with Codezera's Git Graph panel (`codezera-panel`, with checkout/merge/stash actions).
 - Orca moves renderer modules often (e.g. `@/store/selectors` → `@/store/workspaces/selection/use-selected-worktree`); fix Codezera imports by finding the symbol's new home in the upstream commit that deleted the old file. Orca's new English keys also need `vi.json` entries or `verify:localization-catalogs` fails.
 
-## Unsigned macOS
+## macOS signing
 
-- First install: `xattr -cr /Applications/Codezera.app`.
-- Squirrel.Mac rejects ad-hoc signatures, so `src/main/updater/updater-unsigned-mac.ts` handles download/install on unsigned builds. It downloads the zip from the release (sha512 from `latest-mac.yml`), and a detached script swaps the bundle after quit, restoring the old one on failure. Signed builds use Orca's updater unchanged.
+- mac builds are signed with `Apple Development: zerazyrus@gmail.com (BNNTWJD6GP)` (team `H87PNBF43K`, expires 2027-11-24), set as `CSC_NAME` by `codezera-package.mjs`, which stops the build if the identity is not in the keychain. Ad-hoc signatures are keyed to the cdhash, so each update made macOS forget Full Disk Access (Safari cookie import) and the `codezera Safe Storage` Keychain item; this certificate-based identity survives updates. CI imports it from secrets `CODEZERA_MAC_CERT_P12` (base64 `.p12` exported from the login keychain) and `CODEZERA_MAC_CERT_PASSWORD`. Renewing the certificate: export the new identity, update both secrets.
+- Not notarized: first install still needs `xattr -cr /Applications/Codezera.app`.
+- Squirrel.Mac expects a notarized Developer ID build, so `src/main/updater/codezera-unsigned-mac-update.ts` handles download/install whenever the app has no `Developer ID Application` authority. It downloads the zip from the release (sha512 from `latest-mac.yml`), and a detached script swaps the bundle after quit, restoring the old one on failure. Developer ID builds would use Orca's updater unchanged.
 - Windows: unsigned NSIS; `verifyUpdateCodeSignature: false`, so electron-updater accepts unsigned updates.
 
 ## Local build
 
 ```sh
-CSC_IDENTITY_AUTO_DISCOVERY=false node config/scripts/codezera-package.mjs mac --arch arm64 [--version X] [--skip-build]
+node config/scripts/codezera-package.mjs mac --arch arm64 [--version X] [--skip-build]
 ```
 
 Output: `dist/`. Needs `pnpm install` and `pnpm -C mobile install --frozen-lockfile`.

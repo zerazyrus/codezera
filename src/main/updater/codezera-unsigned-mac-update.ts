@@ -1,6 +1,6 @@
-// Codezera: unsigned macOS builds cannot use Squirrel.Mac, which requires the new bundle to match a
-// Developer ID signature. Download the release zip ourselves (no browser quarantine flag), then swap
-// the bundle from a detached script after this process exits.
+// Codezera: builds without a notarized Developer ID signature (ad-hoc or Apple Development) cannot use
+// Squirrel.Mac. Download the release zip ourselves (no browser quarantine flag), then swap the bundle
+// from a detached script after this process exits.
 import { app, net } from 'electron'
 import { execFileSync, spawn, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -17,17 +17,19 @@ const SWAP_WAIT_FOR_EXIT_SECONDS = 120
 
 let unsignedMacApp: boolean | null = null
 
-/** Packaged macOS build without a Developer ID team (ad-hoc or unsigned). */
+/** Packaged macOS build without a Developer ID Application signature (ad-hoc or Apple Development). */
 export function isUnsignedMacApp(): boolean {
   if (unsignedMacApp === null) {
     unsignedMacApp = false
     const bundlePath = getRunningAppBundlePath()
     if (process.platform === 'darwin' && app.isPackaged && bundlePath.endsWith('.app')) {
-      // codesign prints details on stderr; an unsigned bundle exits 1 with no TeamIdentifier.
+      // codesign prints the certificate chain on stderr as Authority= lines.
       const result = spawnSync('codesign', ['--display', '--verbose=2', bundlePath], {
         encoding: 'utf8'
       })
-      unsignedMacApp = !/^TeamIdentifier=(?!not set)\S+/m.test(`${result.stderr}${result.stdout}`)
+      unsignedMacApp = !/^Authority=Developer ID Application:/m.test(
+        `${result.stderr}${result.stdout}`
+      )
     }
   }
   return unsignedMacApp

@@ -128,7 +128,7 @@ jobs:
     env:
       NODE_OPTIONS: --max-old-space-size=4096
       ORCA_BACKGROUND_LAUNCH: '1'
-      # Unsigned builds: never pick up a stray keychain identity.
+      # Only the explicit CSC_NAME identity signs (see codezera-package.mjs); never a stray keychain one.
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
       - uses: actions/checkout@v6
@@ -157,6 +157,30 @@ jobs:
           command: pnpm install --frozen-lockfile ${{ matrix.platform == 'mac' && '--cpu=current,x64,arm64' || '' }}
 
       - uses: ./.github/actions/install-mobile-dependencies
+
+      # A stable signing identity keeps macOS privacy grants (Full Disk Access, Keychain) across updates.
+      - name: Import the macOS signing certificate
+        if: matrix.platform == 'mac'
+        env:
+          CERT_P12: ${{ secrets.CODEZERA_MAC_CERT_P12 }}
+          CERT_PASSWORD: ${{ secrets.CODEZERA_MAC_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [[ -n "$CERT_P12" ]] || { echo "::error::Missing secret CODEZERA_MAC_CERT_P12"; exit 1; }
+          keychain="$RUNNER_TEMP/codezera-signing.keychain-db"
+          keychain_password="$(openssl rand -hex 24)"
+          printf %s "$CERT_P12" | base64 --decode >"$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$RUNNER_TEMP/cert.p12" -k "$keychain" -P "$CERT_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -k "$keychain_password" "$keychain" >/dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/cert.p12"
+          # The p12 holds only the leaf; codesign needs Apple's WWDR intermediate to trust it.
+          curl -fsSL https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o "$RUNNER_TEMP/wwdr.cer"
+          security import "$RUNNER_TEMP/wwdr.cer" -k "$keychain" || true
+          security find-identity -v -p codesigning "$keychain"
 
       - name: Build and upload to the draft release
         shell: bash

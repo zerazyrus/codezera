@@ -6,6 +6,9 @@ import { resolve } from 'node:path'
 
 const MAX_BUILDS_PER_ORCA_VERSION = 99
 const MAX_LISTED_ORCA_CHANGES = 400
+// A stable identity keeps macOS privacy grants (Full Disk Access, Keychain) across updates; ad-hoc
+// signatures are keyed to the cdhash, so every build lost them. CI imports it from repo secrets.
+const MAC_SIGN_IDENTITY = 'Apple Development: zerazyrus@gmail.com (BNNTWJD6GP)'
 
 function git(args) {
   return execFileSync('git', args, { encoding: 'utf8' }).trim()
@@ -143,11 +146,25 @@ function releaseNotes() {
     '',
     '## Cài đặt',
     '',
-    '**macOS (chưa ký):** kéo Codezera vào Applications rồi chạy một lần `xattr -cr /Applications/Codezera.app`. Các bản sau cập nhật ngay trong app.',
+    '**macOS (chưa notarize):** kéo Codezera vào Applications rồi chạy một lần `xattr -cr /Applications/Codezera.app`. Các bản sau cập nhật ngay trong app và giữ nguyên quyền đã cấp (Full Disk Access…).',
     '',
     '**Windows:** SmartScreen cảnh báo thì bấm *More info → Run anyway*.'
   )
   return lines.join('\n')
+}
+
+// electron-builder silently falls back to ad-hoc when the identity is missing; fail before building.
+function requireMacSignIdentity() {
+  const identity = process.env.CSC_NAME || MAC_SIGN_IDENTITY
+  const valid = execFileSync('security', ['find-identity', '-v', '-p', 'codesigning'], {
+    encoding: 'utf8'
+  })
+  if (!valid.includes(`"${identity}"`)) {
+    throw new Error(
+      `Signing identity "${identity}" is not a valid codesigning identity in the keychain`
+    )
+  }
+  return identity
 }
 
 function run(command, args, env) {
@@ -185,7 +202,8 @@ function packageApp(platform) {
     ORCA_BUILD_SOURCE_COMMIT: process.env.ORCA_BUILD_SOURCE_COMMIT || upstreamCommit(),
     ORCA_LOCAL_BUILD_VERSION: version,
     ...(arch ? { CODEZERA_MAC_ARCHS: arch } : {}),
-    ...(review ? { CODEZERA_FLAVOR: 'review' } : {})
+    ...(review ? { CODEZERA_FLAVOR: 'review' } : {}),
+    ...(platform === 'mac' ? { CSC_NAME: requireMacSignIdentity() } : {})
   }
   console.log(`[codezera] ${platform} ${version} (skills @ ${env.ORCA_BUILD_SOURCE_COMMIT})`)
   // Same sequence as Orca's release-mac-build / dev-channel-win-build workflows.
