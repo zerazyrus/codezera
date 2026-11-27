@@ -131,37 +131,19 @@
     },
     "pairConfirm": {
       "backToHome": "홈으로 돌아가기",
-      "connectTimedOut": "{{seconds}}초 내에 연결하지 못했습니다. 어느 단계에서 멈췄는지 아래 로그를 확인하세요.",
       "connecting": "연결 중…",
-      "description": "데스크톱의 페어링 링크를 열었습니다. 확인하면 이 데스크톱이 호스트 목록에 추가됩니다.",
       "pairButton": "페어링",
-      "pairingFailed": "페어링 실패: {{error}}",
-      "pairingLog": "페어링 로그",
-      "title": "이 데스크톱과 페어링하시겠습니까?"
+      "pairingFailed": "페어링 실패: {{error}}"
     },
     "pairScan": {
-      "cameraDisabledDescription": "설정에서 카메라 접근을 허용하거나 페어링 코드를 붙여넣으세요.",
-      "cameraDisabledTitle": "카메라 접근 비활성화",
-      "cameraPermissionDescription": "데스크톱의 Orca에 표시된 QR 코드를 스캔하거나 페어링 코드를 붙여넣으세요.",
-      "connectTimedOut": "{{seconds}}초 내에 연결하지 못했습니다. 어느 단계에서 멈췄는지 아래 로그를 확인하세요.",
       "connecting": "연결 중…",
       "invalidPairingCode": "유효한 페어링 코드가 아닙니다. 컴퓨터에서 코드를 복사해 다시 붙여넣으세요.",
       "invalidQrCode": "유효한 Orca QR 코드가 아닙니다.",
-      "downloadQrCode": "다운로드용 코드입니다. 데스크톱의 2단계에 있는 페어링 코드를 스캔하세요.",
-      "openDesktopStep": "컴퓨터에서 Orca를 실행하세요",
-      "openMobileSettingsStep": "설정 → 모바일로 이동하세요",
       "openSettings": "설정 열기",
       "pairingFailed": "페어링 실패: {{error}}",
-      "pairingLog": "페어링 로그",
       "pasteCodeMessage": "컴퓨터의 QR 코드 아래에 표시된 코드를 복사하세요.",
       "pasteCodePlaceholder": "orca://pair?code=... 또는 코드 붙여넣기",
       "pasteCodeTitle": "페어링 코드 붙여넣기",
-      "pasteInstead": "대신 코드 붙여넣기",
-      "pastePairingCode": "페어링 코드 붙여넣기",
-      "scanCodeStep": "QR 코드를 스캔하세요",
-      "title": "데스크톱과 페어링",
-      "tryAgain": "다시 시도",
-      "codeNoLongerValid": "이 페어링 코드는 만료되었거나 이미 사용되었거나 교체되었습니다. 데스크톱에서 새 코드를 표시한 후 다시 스캔하세요.",
       "runtimeAccessLink": "이 링크는 다른 Orca 앱용입니다. 컴퓨터의 설정 → 모바일에서 코드를 스캔하거나, 서버에서 orca pair --mobile을 실행하세요."
     },
     "terminalSettings": {
@@ -2263,17 +2245,6 @@
       "toggleFailed": "{{name}}을(를) 업데이트할 수 없습니다",
       "updateDesktop": "자동화를 사용하려면 {{desktop}}의 Orca를 업데이트하세요."
     },
-    "emptyState": {
-      "connectedDescription": "데스크톱이 여기에 표시됩니다. 모든 데이터는 종단 간 암호화로 보호됩니다.",
-      "connectedTitle": "연결 완료",
-      "description": "컴퓨터의 Orca와 페어링하여 에이전트 상태를 확인하고, 원하는 터미널에 접속하고, 휴대폰으로 작업을 진행하세요.",
-      "pairDesktopButton": "데스크톱 페어링",
-      "scanCodeBelowDescription": "아래 데스크톱 페어링을 탭한 다음, 화면에 표시된 QR 코드를 카메라로 비추세요.",
-      "openDesktopDescription": "설정 → 모바일에서 페어링 QR 코드를 생성하세요.",
-      "openDesktopTitle": "Orca 데스크톱 앱 열기",
-      "scanCodeTitle": "코드 스캔",
-      "title": "데스크톱을 연결하세요"
-    },
     "listFooter": {
       "hostPickerTitle": "작업을 열 호스트"
     },
@@ -2585,16 +2556,11 @@
       "waitingOnYou": "응답을 기다리고 있습니다."
     },
     "onboardingPage": {
-      "enableAgentNotifications": "에이전트 알림 켜기",
       "enableNotifications": "알림 켜기",
       "keepTerminal": "터미널 유지",
       "notNow": "나중에",
-      "notificationsDescription": "앱을 사용하지 않아도 에이전트가 작업을 마치거나 대기 중이면 이 휴대폰으로 알림을 받습니다.",
-      "notificationsDisclosure": "데스크톱을 3분 동안 사용하지 않으면 Orca 푸시 서비스를 통해 알림이 전달됩니다. 언제든지 설정에서 변경할 수 있습니다.",
       "notificationsTitle": "에이전트의 요청을 놓치지 마세요",
-      "openInChatUi": "채팅 UI에서 세션 열기",
       "openInTerminal": "터미널에서 세션 열기",
-      "sessionViewDescription": "지원되는 에이전트 세션을 이 기기에서 터미널로 열지, 채팅 UI로 열지 선택하세요. 세션 탭을 길게 눌러 보기를 전환하거나, 언제든지 설정 → 채팅 UI에서 기본값을 변경할 수 있습니다.",
       "sessionViewTitle": "세션을 어떻게 열까요?",
       "skipNotifications": "지금은 알림 설정 건너뛰기",
       "useChatUi": "채팅 UI 사용"
@@ -2943,7 +2909,6 @@
       "creatingTab": "만드는 중…",
       "fileTitle": "파일",
       "loadingTerminal": "터미널 로드 중",
-      "retryLoadingTerminal": "터미널 로드 재시도",
       "terminalTakingLonger": "터미널 준비가 예상보다 오래 걸리고 있습니다."
     },
     "agentChildRow": {
@@ -3729,14 +3694,9 @@
     "terminalLayoutSheet": {
       "title": "터미널 레이아웃",
       "oneTerminal": "터미널 하나",
-      "selected": "선택됨",
       "auto": "자동",
-      "autoHint": "사용 가능한 공간에 맞게 분할",
       "sideBySide": "나란히",
-      "sideBySideHint": "사이드바를 열어도 두 열로 표시",
-      "stacked": "위아래로",
-      "stackedHint": "화면 방향에 관계없이 두 행으로 표시",
-      "selectedHint": "선택됨 · {{hint}}"
+      "stacked": "위아래로"
     },
     "terminalSplitLayout": {
       "saveFailedTitle": "레이아웃을 저장할 수 없습니다",
@@ -3757,8 +3717,7 @@
     "terminalPaneView": {
       "focusedPane": "{{title}}, 포커스됨",
       "terminal": "터미널",
-      "tapToFocusPane": "{{title}}, 탭하여 포커스",
-      "inputPane": "{{title}} · 입력"
+      "tapToFocusPane": "{{title}}, 탭하여 포커스"
     },
     "structuredOpen": {
       "goneGeneric": "에이전트의 채팅이 더 이상 이 호스트에 없어 여기서 다시 열 수 없습니다.",
@@ -4651,32 +4610,18 @@
     },
     "pagination": {
       "pageUnreachable": "{{page}}페이지는 GitHub 검색에서 반환할 수 있는 범위를 벗어났습니다.",
-      "loadPageFailed": "GitHub에서 {{page}}페이지를 불러오지 못했습니다.",
-      "noMoreResults": "{{page}}페이지에 더 이상 결과가 없습니다."
+      "loadPageFailed": "GitHub에서 {{page}}페이지를 불러오지 못했습니다."
     },
     "filterSheet": {
-      "sortBy": "정렬 기준",
       "issueSource": "이슈 소스",
-      "issueSourceRow": "업스트림 또는 origin",
       "view": "보기",
-      "projectView": "프로젝트 보기",
-      "projectItems_one": "항목 {{count}}개",
-      "projectItems_other": "항목 {{count}}개",
-      "chooseView": "선택",
       "showOnRows": "행에 표시",
-      "projectFields": "프로젝트 필드",
       "workspace": "워크스페이스",
-      "linearWorkspace": "Linear 워크스페이스",
       "layout": "레이아웃",
       "groupBy": "그룹화 기준",
       "orderBy": "정렬 순서",
-      "displayProperties": "표시 속성",
       "title": "필터 및 표시",
-      "done": "완료",
-      "jqlReplacesPreset": "JQL 검색 중에는 Jira 필터가 적용되지 않습니다. 필터를 다시 선택하려면 검색을 지우세요."
-    },
-    "jiraViewControls": {
-      "jqlSearch": "JQL 검색"
+      "done": "완료"
     },
     "itemComments": {
       "noComments": "아직 댓글이 없습니다",
@@ -4713,24 +4658,11 @@
     "filterPickers": {
       "allTeams": "모든 팀",
       "changeStatus": "상태 변경",
-      "fieldHidden": "카드에서 숨김",
-      "fieldShown": "카드에 표시됨",
-      "fieldsSubtitle": "항목 카드에 표시할 프로젝트 필드를 선택하세요.",
-      "fieldsTitle": "프로젝트 필드",
-      "gitlabFilter": "GitLab 필터",
-      "gitlabView": "GitLab 보기",
-      "jiraFilter": "Jira 필터",
-      "jiraSite": "Jira 사이트",
       "statesFailed": "상태를 불러오지 못했습니다. 닫았다가 다시 열어 보세요.",
-      "linearFilter": "Linear 필터",
       "linearIssue": "Linear 이슈",
-      "linearWorkspace": "Linear 워크스페이스",
       "loadingStates": "상태 로드 중…",
-      "noFields": "이 보기에는 표시할 추가 필드가 없습니다.",
       "noStates": "사용 가능한 상태가 없습니다.",
       "switchWorkspaceFailed": "워크스페이스를 전환하지 못했습니다.",
-      "teamsSubtitle": "작업 화면에 표시할 팀을 선택하세요.",
-      "teamsTitle": "Linear 팀",
       "teams_one": "팀 {{count}}개",
       "teams_other": "팀 {{count}}개"
     },
@@ -4869,9 +4801,6 @@
     "linearList": {
       "changeStatusFrom": "상태 변경(현재: {{status}})"
     },
-    "listDisplayPickers": {
-      "displayPropertiesTitle": "표시 속성"
-    },
     "listSurface": {
       "connectLinearButton": "Linear 연결",
       "connectLinearMessage": "작업 화면에서 할당받은 Linear 이슈를 바로 살펴보고 작업을 시작하세요.",
@@ -4925,7 +4854,6 @@
       "projectMergeRequests": "프로젝트 MR",
       "projectMergeRequestsDescription": "저장소별 MR 및 이슈",
       "projects": "프로젝트",
-      "pullRequests": "PR",
       "repository": "저장소",
       "repositorySortDescription": "저장소별로 그룹화한 후 최근 활동순 정렬",
       "reviewRequestsDescription": "나에게 할당된 리뷰 요청",
@@ -5044,42 +4972,8 @@
       "reviewers": "리뷰어",
       "viewFile": "보기"
     },
-    "providerControls": {
-      "myTodos": "내 할 일",
-      "reposLabel": "저장소: {{repos}}",
-      "filterCount": "필터 · {{count}}",
-      "filter": "필터",
-      "filterLabel": "필터 및 표시",
-      "projectMergeRequests": "프로젝트 MR"
-    },
-    "providerItemList": {
-      "intoBranch": "{{base}}(으)로",
-      "kindAndStatus": "{{kind}}, {{status}}",
-      "nextPage": "다음 페이지",
-      "page": "{{page}}페이지",
-      "pageOfTotal": "{{page}} / {{total}}페이지",
-      "previousPage": "이전 페이지",
-      "selectPage": "페이지 선택, {{page}}페이지",
-      "selectPageOfTotal": "페이지 선택, 전체 {{total}}페이지 중 {{page}}페이지"
-    },
     "providerPickers": {
-      "allRepositories": "모든 저장소",
-      "githubView": "GitHub 보기",
-      "issueSources": "GitHub 이슈 소스",
-      "issueSourcesDescription": "각 저장소에서 이슈 조회와 작업 생성에 사용할 소스를 upstream과 origin 중에서 선택하세요.",
-      "issues": "이슈",
-      "noIssueSources": "사용할 수 있는 다른 이슈 소스가 없습니다.",
-      "origin": "origin",
-      "pageHint": "로드되었거나 로드 가능한 결과 페이지로 이동하세요.",
-      "pageLoaded": "로드됨",
-      "pageNotLoaded": "이전 결과를 로드합니다.",
-      "pageNumber": "{{page}}페이지",
-      "pages": "GitHub 페이지",
-      "pullRequests": "PR",
-      "queryingSource": "조회 대상: {{source}}",
-      "repoDescription": "조회할 저장소를 선택하세요.",
-      "repos": "저장소",
-      "upstream": "업스트림"
+      "allRepositories": "모든 저장소"
     },
     "providerViewProjection": {
       "all": "모두",
@@ -5088,7 +4982,6 @@
       "allWorkspaces": "모든 워크스페이스",
       "chooseProject": "프로젝트 선택",
       "default": "기본",
-      "defaultSubtitle": "{{subtitle}} · 기본",
       "issues": "이슈",
       "openState": "열림",
       "projects": "프로젝트",
@@ -5104,15 +4997,7 @@
     "screenChrome": {
       "newGitHubIssue": "새 GitHub 이슈",
       "newLinearIssue": "새 Linear 이슈",
-      "refreshGitHub": "GitHub 작업 새로 고침",
-      "refreshGitLab": "GitLab 작업 항목 새로 고침",
-      "refreshJira": "Jira 이슈 새로 고침",
-      "refreshLinear": "Linear 새로고침",
       "title": "작업"
-    },
-    "searchControl": {
-      "projectPlaceholder": "프로젝트 보기 검색…",
-      "providerPlaceholder": "{{provider}} 작업 검색…"
     },
     "smartSourceModes": {
       "allStates": "모두",
@@ -5259,7 +5144,6 @@
     },
     "webviewEngineErrorState": {
       "code": "코드 {{code}}",
-      "reload": "새로고침",
       "rendererCrashed": "렌더러 비정상 종료",
       "status": "상태 {{statusCode}}",
       "title": "터미널 로드 실패"
@@ -5368,7 +5252,6 @@
   },
   "automations": {
     "mobile": {
-      "extraAgentArguments": "추가 에이전트 인수",
       "allAutomations": "모든 자동화",
       "schedule": "일정",
       "agent": "에이전트",
@@ -5381,8 +5264,6 @@
       "cancel": "취소",
       "name": "이름",
       "back": "뒤로",
-      "continue": "계속",
-      "createAutomation": "자동화 생성",
       "automations": "자동화",
       "runs": "실행",
       "refresh": "새로고침",
@@ -5406,40 +5287,17 @@
       "host": "호스트",
       "pending": "대기 중",
       "starting": "시작 중",
-      "baseBranchOptional": "기준 브랜치(선택 사항)",
-      "workspaceSetupScript": "작업 공간 설정 스크립트",
-      "useProjectSettings": "프로젝트 설정 사용",
-      "runSetupScript": "설정 스크립트 실행",
-      "skipSetupScript": "설정 스크립트 건너뛰기",
       "reuseAgentSession": "에이전트 세션 재사용",
-      "precheckCommandOptional": "사전 검사 명령(선택 사항)",
-      "precheckTimeoutSeconds": "사전 검사 제한 시간(초)",
-      "missedRunGraceMinutes": "누락된 실행 유예(분)",
-      "choose": "선택…",
       "runOnSchedule": "{{name}} 일정에 따라 실행",
       "noNextScheduledRun": "다음 예약 실행 없음",
-      "newWorkspacePerRun": "실행마다 새 작업 공간",
       "instructions": "지침",
       "runNow": "지금 실행",
-      "savedAgent": "{{agent}}(저장됨)",
       "chooseAProjectSetUpOnThisHost": "이 호스트에 설정된 프로젝트를 선택하세요.",
       "newAutomation": "새 자동화",
-      "editorStep": "{{step}}/3 · {{section}}",
-      "retryProjectLoading": "프로젝트 다시 불러오기",
-      "loadingProjects": "프로젝트 불러오는 중…",
-      "projectAndHostSetup": "프로젝트 및 호스트 설정",
       "savedTarget": "저장된 대상",
-      "useAnExistingWorkspace": "기존 작업 공간 사용",
-      "existingWorkspace": "기존 작업 공간",
       "savedWorkspace": "저장된 작업 공간",
       "loadMoreWorkspaces": "작업 공간 더 불러오기",
-      "thisHostSWorkspaceInventoryIsIncompleteRefreshOrLoadMoreWorkspaces": "이 호스트의 작업 공간 목록이 불완전합니다. 새로 고치거나 작업 공간을 더 불러오세요.",
-      "agentDetecting": "에이전트 · 감지 중…",
       "installAndEnableAnAgentOnThisHostThenRetry": "이 호스트에 에이전트를 설치하고 활성화한 후 다시 시도하세요.",
-      "hideAdvancedOptions": "고급 옵션 숨기기",
-      "advancedOptions": "고급 옵션",
-      "chooseAnAgent": "에이전트 선택",
-      "saveChanges": "변경 사항 저장",
       "loadingAutomations": "자동화 불러오는 중…",
       "letYourAgentsWorkOnASchedule": "에이전트가 일정에 따라 작업하도록 하세요",
       "createAnAutomationToRunATaskOnThisHost": "이 호스트에서 작업을 실행할 자동화를 만드세요.",
@@ -5470,12 +5328,7 @@
       "scheduled": "예약됨",
       "loadMoreRuns": "실행 더 불러오기",
       "customCronOrRRULE": "사용자 지정 Cron 또는 RRULE",
-      "cronOrRRULE": "Cron 또는 RRULE",
-      "minuteFromHHMM": "분(HH:MM에서)",
-      "timeHHMM24Hour": "시간(HH:MM, 24시간제)",
-      "useATimeSuchAs0900": "09:00과 같은 시간을 사용하세요.",
       "timeZone": "시간대",
-      "runsOnTheSelectedHostKeepThatHostAvailableAtTheScheduledTime": "선택한 호스트에서 실행됩니다. 예약된 시간에 해당 호스트를 사용할 수 있도록 하세요.",
       "pairedHost": "페어링된 호스트",
       "chooseHost": "{{host}}의 자동화, 다른 호스트 선택",
       "selectedServerUnavailable": "선택한 서버(사용 불가)",
@@ -5504,15 +5357,12 @@
       "unknownResult": "알 수 없는 결과",
       "notReported": "보고되지 않음",
       "searchOptions": "옵션 검색",
-      "task": "작업",
-      "review": "확인",
       "discardChangesTitle": "변경 사항을 버릴까요?",
       "discardChangesMessage": "이 자동화에서 저장하지 않은 변경 사항이 사라집니다.",
       "discard": "버리기",
       "keepEditing": "계속 편집",
       "on": "사용",
       "repeats": "반복",
-      "newOnePerRun": "실행마다 새 워크스페이스",
       "moreActions": "추가 작업",
       "noRunsYet": "아직 실행이 없습니다",
       "nextRunToday": "다음 실행: 오늘 {{time}}",
@@ -5629,7 +5479,6 @@
         }
       },
       "TaskPage": {
-        "99c2755218": "이슈 검색 또는 JQL 입력, 예: project = ABC",
         "jiraTextMatchesNotice": "텍스트 일치 결과를 표시합니다. Jira에서 이 검색을 JQL로 실행할 수 없습니다."
       },
       "editor": {
@@ -6011,10 +5860,6 @@
     },
     "memoryHistory": {
       "tidyUp": "정리"
-    },
-    "section": {
-      "reorderTitle": "봇 순서 변경",
-      "reorder": "순서 변경…"
     },
     "link": {
       "pairTitle": "컴퓨터 페어링",

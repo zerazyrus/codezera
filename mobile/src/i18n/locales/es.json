@@ -135,37 +135,19 @@
     },
     "pairConfirm": {
       "backToHome": "Volver al inicio",
-      "connectTimedOut": "No se pudo conectar en {{seconds}} s; consulta el registro de abajo para ver dónde se detuvo.",
       "connecting": "Conectando…",
-      "description": "Has abierto un enlace de emparejamiento desde tu escritorio. Confirma para añadirlo a tus hosts.",
       "pairButton": "Emparejar",
-      "pairingFailed": "Error de emparejamiento: {{error}}",
-      "pairingLog": "Registro de emparejamiento",
-      "title": "¿Emparejar con este escritorio?"
+      "pairingFailed": "Error de emparejamiento: {{error}}"
     },
     "pairScan": {
-      "cameraDisabledDescription": "Activa el acceso a la cámara en Ajustes o pega el código de emparejamiento.",
-      "cameraDisabledTitle": "Acceso a la cámara desactivado",
-      "cameraPermissionDescription": "Escanea el código QR de Orca en tu escritorio o pega el código de emparejamiento.",
-      "connectTimedOut": "No se pudo conectar en {{seconds}} s; consulta el registro de abajo para ver dónde se detuvo.",
       "connecting": "Conectando…",
       "invalidPairingCode": "No es un código de emparejamiento válido; cópialo de tu ordenador y vuelve a pegarlo.",
       "invalidQrCode": "No es un código QR de Orca válido",
-      "downloadQrCode": "Ese es el código de descarga. Escanea el código de emparejamiento del paso 2 en tu ordenador.",
-      "openDesktopStep": "Abre Orca en tu ordenador",
-      "openMobileSettingsStep": "Ve a Ajustes → Móvil",
       "openSettings": "Abrir Ajustes",
       "pairingFailed": "Error de emparejamiento: {{error}}",
-      "pairingLog": "Registro de emparejamiento",
       "pasteCodeMessage": "Copia el código que aparece debajo del QR en tu ordenador.",
       "pasteCodePlaceholder": "orca://pair?code=... o pega el código",
       "pasteCodeTitle": "Pegar código de emparejamiento",
-      "pasteInstead": "Pegar código en su lugar",
-      "pastePairingCode": "Pegar código de emparejamiento",
-      "scanCodeStep": "Escanea el código QR",
-      "title": "Emparejar con un escritorio",
-      "tryAgain": "Reintentar",
-      "codeNoLongerValid": "Este código de emparejamiento caducó, ya se usó o se reemplazó. Muestra un código nuevo en tu ordenador y vuelve a escanear.",
       "runtimeAccessLink": "Este enlace es para otra app de Orca. Escanea el código en Ajustes → Móvil en tu equipo o ejecuta orca pair --mobile en tu servidor."
     },
     "terminalSettings": {
@@ -2030,17 +2012,6 @@
       "toggleFailed": "No se pudo actualizar {{name}}",
       "updateDesktop": "Actualiza Orca en {{desktop}} para usar las automatizaciones."
     },
-    "emptyState": {
-      "connectedDescription": "Tu escritorio aparecerá aquí. Todo está cifrado de extremo a extremo.",
-      "connectedTitle": "Ya tienes conexión",
-      "description": "Empareja tu teléfono con Orca en tu ordenador para supervisar a tus agentes, acceder a cualquier terminal y gestionar el trabajo desde el móvil.",
-      "pairDesktopButton": "Emparejar escritorio",
-      "scanCodeBelowDescription": "Toca Emparejar escritorio abajo y apunta con la cámara al código QR de tu pantalla.",
-      "openDesktopDescription": "Ve a Ajustes → Móvil y genera un código QR de emparejamiento.",
-      "openDesktopTitle": "Abre Orca en el escritorio",
-      "scanCodeTitle": "Escanea el código",
-      "title": "Conecta tu escritorio"
-    },
     "listFooter": {
       "hostPickerTitle": "Abrir tareas en"
     },
@@ -2347,16 +2318,11 @@
       "waitingOnYou": "Te está esperando."
     },
     "onboardingPage": {
-      "enableAgentNotifications": "Activar notificaciones de agentes",
       "enableNotifications": "Activar notificaciones",
       "keepTerminal": "Mantener el terminal",
       "notNow": "Ahora no",
-      "notificationsDescription": "Recibe una notificación en este teléfono cuando un agente termine o esté esperando, aunque no estés usando la aplicación.",
-      "notificationsDisclosure": "Se envían a través del servicio de notificaciones push de Orca cuando tu escritorio lleva 3 minutos inactivo. Puedes cambiarlo cuando quieras en Ajustes.",
       "notificationsTitle": "Entérate cuando un agente te necesite",
-      "openInChatUi": "Abrir sesiones en la interfaz de chat",
       "openInTerminal": "Abrir sesiones en el terminal",
-      "sessionViewDescription": "Elige si las sesiones de agentes compatibles se abren en el terminal o en la interfaz de chat de este dispositivo. Mantén pulsada la pestaña de una sesión para cambiar su vista, o cambia la opción predeterminada cuando quieras en Ajustes → Interfaz de chat.",
       "sessionViewTitle": "¿Cómo quieres abrir las sesiones?",
       "skipNotifications": "Omitir las notificaciones por ahora",
       "useChatUi": "Usar interfaz de chat"
@@ -2727,7 +2693,6 @@
       "creatingTab": "Creando…",
       "fileTitle": "Archivo",
       "loadingTerminal": "Cargando terminal",
-      "retryLoadingTerminal": "Reintentar cargar la terminal",
       "terminalTakingLonger": "La terminal está tardando más de lo esperado"
     },
     "agentChildRow": {
@@ -3532,14 +3497,9 @@
     "terminalLayoutSheet": {
       "title": "Diseño del terminal",
       "oneTerminal": "Un terminal",
-      "selected": "Seleccionado",
       "auto": "Automático",
-      "autoHint": "Dividir según el espacio disponible",
       "sideBySide": "En paralelo",
-      "sideBySideHint": "Dos columnas, incluso con la barra lateral abierta",
-      "stacked": "Apilados",
-      "stackedHint": "Dos filas en cualquier orientación",
-      "selectedHint": "Seleccionado · {{hint}}"
+      "stacked": "Apilados"
     },
     "terminalSplitLayout": {
       "saveFailedTitle": "No se pudo guardar el diseño",
@@ -3560,8 +3520,7 @@
     "terminalPaneView": {
       "focusedPane": "{{title}}, enfocado",
       "terminal": "Terminal",
-      "tapToFocusPane": "{{title}}, toca para enfocar",
-      "inputPane": "{{title}} · Entrada"
+      "tapToFocusPane": "{{title}}, toca para enfocar"
     },
     "structuredOpen": {
       "worktreeDeleted": "El worktree se eliminó.",
@@ -4453,33 +4412,18 @@
     },
     "pagination": {
       "pageUnreachable": "La página {{page}} está fuera del alcance de la búsqueda de GitHub.",
-      "loadPageFailed": "No se pudo cargar la página {{page}} desde GitHub.",
-      "noMoreResults": "No hay más resultados en la página {{page}}."
+      "loadPageFailed": "No se pudo cargar la página {{page}} desde GitHub."
     },
     "filterSheet": {
-      "sortBy": "Ordenar por",
       "issueSource": "Fuente de issues",
-      "issueSourceRow": "Upstream u origin",
       "view": "Vista",
-      "projectView": "Vista del proyecto",
-      "projectItems_many": "{{count}} elementos",
-      "projectItems_one": "{{count}} elemento",
-      "projectItems_other": "{{count}} elementos",
-      "chooseView": "Elegir",
       "showOnRows": "Mostrar en las filas",
-      "projectFields": "Campos del proyecto",
       "workspace": "Espacio de trabajo",
-      "linearWorkspace": "Espacio de trabajo de Linear",
       "layout": "Diseño",
       "groupBy": "Agrupar por",
       "orderBy": "Ordenar por",
-      "displayProperties": "Propiedades de visualización",
       "title": "Filtrar y mostrar",
-      "done": "Listo",
-      "jqlReplacesPreset": "Tu búsqueda JQL reemplaza el filtro predefinido. Borra la búsqueda para volver a elegir uno."
-    },
-    "jiraViewControls": {
-      "jqlSearch": "Búsqueda JQL"
+      "done": "Listo"
     },
     "itemComments": {
       "noComments": "Aún no hay comentarios",
@@ -4517,24 +4461,11 @@
     "filterPickers": {
       "allTeams": "Todos los equipos",
       "changeStatus": "Cambiar estado",
-      "fieldHidden": "Oculto en las tarjetas",
-      "fieldShown": "Visible en las tarjetas",
-      "fieldsSubtitle": "Elige qué campos del proyecto aparecen en las tarjetas de los elementos.",
-      "fieldsTitle": "Campos del proyecto",
-      "gitlabFilter": "Filtro de GitLab",
-      "gitlabView": "Vista de GitLab",
-      "jiraFilter": "Filtro de Jira",
-      "jiraSite": "Sitio de Jira",
       "statesFailed": "No se pudieron cargar los estados. Vuelve a abrir para intentarlo de nuevo.",
-      "linearFilter": "Filtro de Linear",
       "linearIssue": "Issue de Linear",
-      "linearWorkspace": "Espacio de trabajo de Linear",
       "loadingStates": "Cargando estados…",
-      "noFields": "Esta vista no tiene campos adicionales que mostrar.",
       "noStates": "No hay estados disponibles",
       "switchWorkspaceFailed": "No se pudo cambiar de espacio de trabajo",
-      "teamsSubtitle": "Elige qué equipos aparecen en Tareas.",
-      "teamsTitle": "Equipos de Linear",
       "teams_many": "{{count}} equipos",
       "teams_one": "{{count}} equipo",
       "teams_other": "{{count}} equipos"
@@ -4676,9 +4607,6 @@
     "linearList": {
       "changeStatusFrom": "Cambiar el estado actual: {{status}}"
     },
-    "listDisplayPickers": {
-      "displayPropertiesTitle": "Propiedades visibles"
-    },
     "listSurface": {
       "connectLinearButton": "Conectar Linear",
       "connectLinearMessage": "Consulta los issues de Linear que tienes asignados y empieza a trabajar en ellos directamente desde Tareas.",
@@ -4732,7 +4660,6 @@
       "projectMergeRequests": "MRs del proyecto",
       "projectMergeRequestsDescription": "Solicitudes de fusión e issues por repositorio",
       "projects": "Proyectos",
-      "pullRequests": "PRs",
       "repository": "Repositorio",
       "repositorySortDescription": "Agrupar por repositorio y luego por actividad más reciente",
       "reviewRequestsDescription": "Solicitudes de revisión asignadas a ti",
@@ -4854,42 +4781,8 @@
       "reviewers": "Revisores",
       "viewFile": "Ver"
     },
-    "providerControls": {
-      "myTodos": "Mis tareas pendientes",
-      "reposLabel": "Repositorios: {{repos}}",
-      "filterCount": "Filtrar · {{count}}",
-      "filter": "Filtrar",
-      "filterLabel": "Filtrar y mostrar",
-      "projectMergeRequests": "MR del proyecto"
-    },
-    "providerItemList": {
-      "intoBranch": "en {{base}}",
-      "kindAndStatus": "{{kind}}, {{status}}",
-      "nextPage": "Página siguiente",
-      "page": "Página {{page}}",
-      "pageOfTotal": "Página {{page}} de {{total}}",
-      "previousPage": "Página anterior",
-      "selectPage": "Seleccionar página, página {{page}}",
-      "selectPageOfTotal": "Seleccionar página, página {{page}} de {{total}}"
-    },
     "providerPickers": {
-      "allRepositories": "Todos los repositorios",
-      "githubView": "Vista de GitHub",
-      "issueSources": "Fuentes de issues de GitHub",
-      "issueSourcesDescription": "Elige si usar upstream u origin para consultar y crear issues en cada repositorio.",
-      "issues": "Issues",
-      "noIssueSources": "No hay fuentes alternativas de issues disponibles.",
-      "origin": "Origen",
-      "pageHint": "Ve a una página de resultados cargada o disponible.",
-      "pageLoaded": "Cargada",
-      "pageNotLoaded": "Carga resultados anteriores",
-      "pageNumber": "Página {{page}}",
-      "pages": "Páginas de GitHub",
-      "pullRequests": "Pull requests",
-      "queryingSource": "Consultando {{source}}",
-      "repoDescription": "Elige qué repositorios consultar.",
-      "repos": "Repositorios",
-      "upstream": "Upstream"
+      "allRepositories": "Todos los repositorios"
     },
     "providerViewProjection": {
       "all": "Todo",
@@ -4898,7 +4791,6 @@
       "allWorkspaces": "Todos los espacios de trabajo",
       "chooseProject": "Elige proyecto",
       "default": "Predeterminado",
-      "defaultSubtitle": "{{subtitle}} · Predeterminado",
       "issues": "Issues",
       "openState": "Abierto",
       "projects": "Proyectos",
@@ -4915,15 +4807,7 @@
     "screenChrome": {
       "newGitHubIssue": "Nuevo issue de GitHub",
       "newLinearIssue": "Nuevo issue de Linear",
-      "refreshGitHub": "Actualizar trabajo de GitHub",
-      "refreshGitLab": "Actualizar elementos de trabajo de GitLab",
-      "refreshJira": "Actualizar issues de Jira",
-      "refreshLinear": "Actualizar Linear",
       "title": "Tareas"
-    },
-    "searchControl": {
-      "projectPlaceholder": "Buscar en la vista del proyecto…",
-      "providerPlaceholder": "Buscar tareas de {{provider}}…"
     },
     "smartSourceModes": {
       "allStates": "Todo",
@@ -5071,7 +4955,6 @@
     },
     "webviewEngineErrorState": {
       "code": "código {{code}}",
-      "reload": "Recargar",
       "rendererCrashed": "el proceso de renderizado se cerró inesperadamente",
       "status": "estado {{statusCode}}",
       "title": "No se pudo cargar la terminal"
@@ -5183,7 +5066,6 @@
   },
   "automations": {
     "mobile": {
-      "extraAgentArguments": "Argumentos adicionales del agente",
       "allAutomations": "Todas las automatizaciones",
       "schedule": "Cronograma",
       "agent": "Agente",
@@ -5196,8 +5078,6 @@
       "cancel": "Cancelar",
       "name": "Nombre",
       "back": "Atrás",
-      "continue": "Continuar",
-      "createAutomation": "Crear automatización",
       "automations": "Automatizaciones",
       "runs": "Ejecuciones",
       "refresh": "Actualizar",
@@ -5221,40 +5101,17 @@
       "host": "Anfitrión",
       "pending": "Pendientes",
       "starting": "Iniciando",
-      "baseBranchOptional": "Rama base (opcional)",
-      "workspaceSetupScript": "Script de configuración del espacio de trabajo",
-      "useProjectSettings": "Usar configuración del proyecto",
-      "runSetupScript": "Ejecutar script de configuración",
-      "skipSetupScript": "Omitir script de configuración",
       "reuseAgentSession": "Reutilizar sesión del agente",
-      "precheckCommandOptional": "Comando de comprobación previa (opcional)",
-      "precheckTimeoutSeconds": "Tiempo de espera de la comprobación previa (segundos)",
-      "missedRunGraceMinutes": "Margen para ejecuciones omitidas (minutos)",
-      "choose": "Elegir…",
       "runOnSchedule": "Ejecutar {{name}} según la programación",
       "noNextScheduledRun": "No hay próxima ejecución programada",
-      "newWorkspacePerRun": "Nuevo espacio de trabajo por ejecución",
       "instructions": "Instrucciones",
       "runNow": "Ejecutar ahora",
-      "savedAgent": "{{agent}} (guardado)",
       "chooseAProjectSetUpOnThisHost": "Elige un proyecto configurado en este host.",
       "newAutomation": "Nueva automatización",
-      "editorStep": "{{step}} de 3 · {{section}}",
-      "retryProjectLoading": "Reintentar carga de proyectos",
-      "loadingProjects": "Cargando proyectos…",
-      "projectAndHostSetup": "Configuración de proyecto y host",
       "savedTarget": "Destino guardado",
-      "useAnExistingWorkspace": "Usar un espacio de trabajo existente",
-      "existingWorkspace": "Espacio de trabajo existente",
       "savedWorkspace": "Espacio de trabajo guardado",
       "loadMoreWorkspaces": "Cargar más espacios de trabajo",
-      "thisHostSWorkspaceInventoryIsIncompleteRefreshOrLoadMoreWorkspaces": "El inventario de espacios de trabajo de este host está incompleto. Actualiza o carga más espacios de trabajo.",
-      "agentDetecting": "Agente · detectando…",
       "installAndEnableAnAgentOnThisHostThenRetry": "Instala y habilita un agente en este host y vuelve a intentarlo.",
-      "hideAdvancedOptions": "Ocultar opciones avanzadas",
-      "advancedOptions": "Opciones avanzadas",
-      "chooseAnAgent": "Elige un agente",
-      "saveChanges": "Guardar cambios",
       "loadingAutomations": "Cargando automatizaciones…",
       "letYourAgentsWorkOnASchedule": "Deja que tus agentes trabajen según una programación",
       "createAnAutomationToRunATaskOnThisHost": "Crea una automatización para ejecutar una tarea en este host.",
@@ -5285,12 +5142,7 @@
       "scheduled": "Programada",
       "loadMoreRuns": "Cargar más ejecuciones",
       "customCronOrRRULE": "Cron o RRULE personalizado",
-      "cronOrRRULE": "Cron o RRULE",
-      "minuteFromHHMM": "Minuto (de HH:MM)",
-      "timeHHMM24Hour": "Hora (HH:MM, 24 horas)",
-      "useATimeSuchAs0900": "Usa una hora como 09:00.",
       "timeZone": "Zona horaria",
-      "runsOnTheSelectedHostKeepThatHostAvailableAtTheScheduledTime": "Se ejecuta en el host seleccionado. Mantén ese host disponible a la hora programada.",
       "pairedHost": "Host vinculado",
       "chooseHost": "Automatizaciones en {{host}}, elegir otro host",
       "selectedServerUnavailable": "Servidor seleccionado (no disponible)",
@@ -5319,15 +5171,12 @@
       "unknownResult": "Resultado desconocido",
       "notReported": "No informado",
       "searchOptions": "Buscar opciones",
-      "task": "Tarea",
-      "review": "Revisar",
       "discardChangesTitle": "¿Descartar cambios?",
       "discardChangesMessage": "Se perderán los cambios no guardados de esta automatización.",
       "discard": "Descartar",
       "keepEditing": "Seguir editando",
       "on": "Activada",
       "repeats": "Se repite",
-      "newOnePerRun": "Uno nuevo por ejecución",
       "moreActions": "Más acciones",
       "noRunsYet": "Aún no hay ejecuciones",
       "nextRunToday": "Próxima ejecución hoy a las {{time}}",
@@ -5403,7 +5252,6 @@
         }
       },
       "TaskPage": {
-        "99c2755218": "Busca issues o escribe JQL, p. ej. project = ABC",
         "jiraTextMatchesNotice": "Mostrando coincidencias de texto. Jira no pudo ejecutar esta búsqueda como JQL."
       },
       "editor": {

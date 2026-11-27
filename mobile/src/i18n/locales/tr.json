@@ -131,37 +131,19 @@
     },
     "pairConfirm": {
       "backToHome": "Ana ekrana dön",
-      "connectTimedOut": "{{seconds}} saniye içinde bağlantı kurulamadı — işlemin nerede takıldığını görmek için aşağıdaki günlüğe bakın",
       "connecting": "Bağlanılıyor…",
-      "description": "Masaüstünüzden bir eşleştirme bağlantısı açtınız. Bu masaüstünü sunucu listenize eklemek için onaylayın.",
       "pairButton": "Eşleştir",
-      "pairingFailed": "Eşleştirme yapılamadı: {{error}}",
-      "pairingLog": "Eşleştirme günlüğü",
-      "title": "Bu masaüstüyle eşleştirilsin mi?"
+      "pairingFailed": "Eşleştirme yapılamadı: {{error}}"
     },
     "pairScan": {
-      "cameraDisabledDescription": "Ayarlar bölümünde kamera erişimini etkinleştirin veya eşleştirme kodunu yapıştırın.",
-      "cameraDisabledTitle": "Kamera Erişimi Devre Dışı",
-      "cameraPermissionDescription": "Masaüstünüzdeki Orca'da gösterilen QR kodunu tarayın veya eşleştirme kodunu yapıştırın.",
-      "connectTimedOut": "{{seconds}} saniye içinde bağlantı kurulamadı — işlemin nerede takıldığını görmek için aşağıdaki günlüğe bakın",
       "connecting": "Bağlanılıyor…",
       "invalidPairingCode": "Geçerli bir eşleştirme kodu değil — bilgisayarınızdan kopyalayıp yeniden yapıştırın",
       "invalidQrCode": "Geçerli bir Orca QR kodu değil",
-      "downloadQrCode": "Bu indirme kodu. Bilgisayarınızdaki 2. adımda bulunan eşleştirme kodunu tarayın.",
-      "openDesktopStep": "Bilgisayarınızda Orca'yı açın",
-      "openMobileSettingsStep": "Ayarlar → Mobil bölümüne gidin",
       "openSettings": "Ayarları Aç",
       "pairingFailed": "Eşleştirme yapılamadı: {{error}}",
-      "pairingLog": "Eşleştirme günlüğü",
       "pasteCodeMessage": "Bilgisayarınızda QR kodunun altında gösterilen kodu kopyalayın.",
       "pasteCodePlaceholder": "orca://pair?code=... veya kodu yapıştırın",
       "pasteCodeTitle": "Eşleştirme kodunu yapıştır",
-      "pasteInstead": "Bunun yerine kod yapıştır",
-      "pastePairingCode": "Eşleştirme kodunu yapıştır",
-      "scanCodeStep": "QR kodunu tarayın",
-      "title": "Masaüstüyle eşleştir",
-      "tryAgain": "Tekrar Dene",
-      "codeNoLongerValid": "Bu eşleştirme kodunun süresi doldu, kod zaten kullanıldı veya değiştirildi. Bilgisayarınızda yeni bir kod gösterip tekrar tarayın.",
       "runtimeAccessLink": "Bu bağlantı başka bir Orca uygulaması için. Bilgisayarınızda Ayarlar → Mobil bölümündeki kodu tarayın veya sunucunuzda orca pair --mobile komutunu çalıştırın."
     },
     "terminalSettings": {
@@ -2316,17 +2298,6 @@
       "toggleFailed": "{{name}} güncellenemedi",
       "updateDesktop": "Otomasyonları kullanmak için {{desktop}} üzerindeki Orca'yı güncelleyin."
     },
-    "emptyState": {
-      "connectedDescription": "Masaüstünüz burada görünecek. Her şey uçtan uca şifrelenir.",
-      "connectedTitle": "Bağlandınız",
-      "description": "Ajanlarınızı takip etmek, istediğiniz terminale erişmek ve işlerinizi telefonunuzdan yönetmek için bilgisayarınızdaki Orca ile eşleştirin.",
-      "openDesktopDescription": "Ayarlar → Mobil bölümüne gidin ve eşleştirme için bir QR kodu oluşturun.",
-      "openDesktopTitle": "Orca masaüstü uygulamasını açın",
-      "scanCodeTitle": "Kodu tarayın",
-      "title": "Masaüstünüzü bağlayın",
-      "pairDesktopButton": "Bilgisayarı eşleştir",
-      "scanCodeBelowDescription": "Aşağıdaki Bilgisayarı eşleştir düğmesine dokunun, ardından kameranızı ekrandaki QR koduna tutun."
-    },
     "listFooter": {
       "hostPickerTitle": "Görevlerin Açılacağı Sunucu"
     },
@@ -2654,16 +2625,11 @@
       "waitingOnYou": "Sizden yanıt bekleniyor."
     },
     "onboardingPage": {
-      "enableAgentNotifications": "Ajan bildirimlerini etkinleştir",
       "enableNotifications": "Bildirimleri etkinleştir",
       "keepTerminal": "Terminalle devam et",
       "notNow": "Şimdi değil",
-      "notificationsDescription": "Uygulamayı kullanmasanız bile bir ajan işini bitirdiğinde veya beklediğinde bu telefonda bildirim alın.",
-      "notificationsDisclosure": "Bilgisayarınız 3 dakika boşta kaldıktan sonra Orca'nın anlık bildirim hizmeti üzerinden iletilir. Bunu Ayarlar bölümünden istediğiniz zaman değiştirebilirsiniz.",
       "notificationsTitle": "Bir ajanın size ihtiyacı olduğunda haberdar olun",
-      "openInChatUi": "Oturumları Sohbet Arayüzü ile aç",
       "openInTerminal": "Oturumları terminalde aç",
-      "sessionViewDescription": "Bu cihazda desteklenen ajan oturumlarının terminalde mi yoksa Sohbet Arayüzü ile mi açılacağını seçin. Görünümünü değiştirmek için oturum sekmesine uzun basın veya varsayılanı istediğiniz zaman Ayarlar → Sohbet Arayüzü bölümünden değiştirin.",
       "sessionViewTitle": "Oturumlar nasıl açılsın?",
       "skipNotifications": "Bildirimleri şimdilik atla",
       "useChatUi": "Sohbet Arayüzünü kullan"
@@ -3012,7 +2978,6 @@
       "creatingTab": "Oluşturuluyor…",
       "fileTitle": "Dosya",
       "loadingTerminal": "Terminal yükleniyor",
-      "retryLoadingTerminal": "Terminali yüklemeyi yeniden dene",
       "terminalTakingLonger": "Terminalin yüklenmesi beklenenden uzun sürüyor"
     },
     "agentChildRow": {
@@ -3799,14 +3764,9 @@
     "terminalLayoutSheet": {
       "title": "Terminal düzeni",
       "oneTerminal": "Tek terminal",
-      "selected": "Seçili",
       "auto": "Otomatik",
-      "autoHint": "Kullanılabilir alana sığacak şekilde böl",
       "sideBySide": "Yan yana",
-      "sideBySideHint": "Kenar çubuğu açıkken bile iki sütun",
-      "stacked": "Alt alta",
-      "stackedHint": "Her yönlendirmede iki satır",
-      "selectedHint": "Seçili · {{hint}}"
+      "stacked": "Alt alta"
     },
     "terminalSplitLayout": {
       "saveFailedTitle": "Düzen kaydedilemedi",
@@ -3827,8 +3787,7 @@
     "terminalPaneView": {
       "focusedPane": "{{title}}, odakta",
       "terminal": "Terminal",
-      "tapToFocusPane": "{{title}}, odaklamak için dokunun",
-      "inputPane": "{{title}} · Girdi"
+      "tapToFocusPane": "{{title}}, odaklamak için dokunun"
     },
     "structuredOpen": {
       "worktreeDeleted": "Çalışma ağacı silindi.",
@@ -4721,8 +4680,7 @@
     },
     "pagination": {
       "pageUnreachable": "{{page}}. sayfa GitHub aramasının döndürebileceği aralığın dışında.",
-      "loadPageFailed": "{{page}}. sayfa GitHub’dan yüklenemedi.",
-      "noMoreResults": "{{page}}. sayfada başka sonuç yok."
+      "loadPageFailed": "{{page}}. sayfa GitHub’dan yüklenemedi."
     },
     "composerSource": {
       "baseFailed": "Temel branch çözümlenemedi.",
@@ -4743,23 +4701,10 @@
     "filterPickers": {
       "allTeams": "Tüm takımlar",
       "changeStatus": "Durumu Değiştir",
-      "fieldHidden": "Kartlarda gizli",
-      "fieldShown": "Kartlarda gösteriliyor",
-      "fieldsSubtitle": "Öğe kartlarında gösterilecek Proje alanlarını seçin.",
-      "fieldsTitle": "Proje Alanları",
-      "gitlabFilter": "GitLab Filtresi",
-      "gitlabView": "GitLab Görünümü",
-      "jiraFilter": "Jira Filtresi",
-      "jiraSite": "Jira Sitesi",
-      "linearFilter": "Linear Filtresi",
       "linearIssue": "Linear sorunu",
-      "linearWorkspace": "Linear Çalışma Alanı",
       "loadingStates": "Durumlar yükleniyor…",
-      "noFields": "Bu görünümde gösterilecek ek alan yok.",
       "noStates": "Kullanılabilir durum yok",
       "switchWorkspaceFailed": "Çalışma alanı değiştirilemedi",
-      "teamsSubtitle": "Görevler bölümünde hangi takımların görüneceğini seçin.",
-      "teamsTitle": "Linear Takımları",
       "teams_one": "{{count}} takım",
       "teams_other": "{{count}} takım",
       "statesFailed": "Durumlar yüklenemedi. Yeniden denemek için kapatıp açın."
@@ -4899,9 +4844,6 @@
     "linearList": {
       "changeStatusFrom": "Durumu değiştir (şu an: {{status}})"
     },
-    "listDisplayPickers": {
-      "displayPropertiesTitle": "Gösterilecek Özellikler"
-    },
     "listSurface": {
       "connectLinearButton": "Linear'ı bağla",
       "connectLinearMessage": "Doğrudan Görevler bölümünden size atanan Linear sorunlarına göz atın ve üzerlerinde çalışmaya başlayın.",
@@ -4955,7 +4897,6 @@
       "projectMergeRequests": "Proje MR'ları",
       "projectMergeRequestsDescription": "Repository'ye göre merge request'ler ve sorunlar",
       "projects": "Projeler",
-      "pullRequests": "PR'lar",
       "repository": "Repository",
       "repositorySortDescription": "Repository'ye göre gruplama, en yeni etkinlik önce",
       "reviewRequestsDescription": "Size atanan inceleme istekleri",
@@ -5074,42 +5015,8 @@
       "reviewers": "İnceleyenler",
       "viewFile": "Görüntüle"
     },
-    "providerControls": {
-      "myTodos": "Yapılacaklarım",
-      "projectMergeRequests": "Proje MR'ları",
-      "reposLabel": "Repository'ler: {{repos}}",
-      "filterCount": "Filtrele · {{count}}",
-      "filter": "Filtrele",
-      "filterLabel": "Filtrele ve göster"
-    },
-    "providerItemList": {
-      "intoBranch": "{{base}} branch'ine",
-      "nextPage": "Sonraki sayfa",
-      "page": "Sayfa {{page}}",
-      "pageOfTotal": "Sayfa {{page}} / {{total}}",
-      "previousPage": "Önceki sayfa",
-      "selectPage": "Sayfa seç, sayfa {{page}}",
-      "selectPageOfTotal": "Sayfa seç, {{total}} sayfadan {{page}}. sayfa",
-      "kindAndStatus": "{{kind}}, {{status}}"
-    },
     "providerPickers": {
-      "allRepositories": "Tüm repository'ler",
-      "githubView": "GitHub Görünümü",
-      "issueSources": "GitHub Sorun Kaynakları",
-      "issueSourcesDescription": "Her repository'nin sorgulama ve iş oluşturma için upstream mi yoksa origin mi kullanacağını seçin.",
-      "issues": "Sorunlar",
-      "noIssueSources": "Alternatif sorun kaynağı yok.",
-      "origin": "Origin",
-      "pageHint": "Yüklenmiş veya kullanılabilir bir sonuç sayfasına geçin.",
-      "pageLoaded": "Yüklendi",
-      "pageNotLoaded": "Daha eski sonuçları yükler",
-      "pageNumber": "Sayfa {{page}}",
-      "pages": "GitHub Sayfaları",
-      "pullRequests": "Pull Request'ler",
-      "queryingSource": "{{source}} sorgulanıyor",
-      "repoDescription": "Sorgulanacak repository'leri seçin.",
-      "repos": "Repository'ler",
-      "upstream": "Upstream"
+      "allRepositories": "Tüm repository'ler"
     },
     "providerViewProjection": {
       "all": "Tümü",
@@ -5118,7 +5025,6 @@
       "allWorkspaces": "Tüm çalışma alanları",
       "chooseProject": "Proje seç",
       "default": "Varsayılan",
-      "defaultSubtitle": "{{subtitle}} · Varsayılan",
       "issues": "Sorunlar",
       "openState": "Açık",
       "projects": "Projeler",
@@ -5134,15 +5040,7 @@
     "screenChrome": {
       "newGitHubIssue": "Yeni GitHub sorunu",
       "newLinearIssue": "Yeni Linear sorunu",
-      "refreshGitHub": "GitHub işini yenile",
-      "refreshGitLab": "GitLab iş öğelerini yenile",
-      "refreshJira": "Jira sorunlarını yenile",
-      "refreshLinear": "Linear'ı yenile",
       "title": "Görevler"
-    },
-    "searchControl": {
-      "projectPlaceholder": "Proje görünümünde ara…",
-      "providerPlaceholder": "{{provider}} görevlerinde ara…"
     },
     "smartSourceModes": {
       "allStates": "Tümü",
@@ -5260,28 +5158,15 @@
       "createFailed": "Çalışma alanı oluşturulamadı"
     },
     "filterSheet": {
-      "sortBy": "Sıralama ölçütü",
       "issueSource": "Sorun kaynağı",
-      "issueSourceRow": "Upstream veya origin",
       "view": "Görüntüle",
-      "projectView": "Proje görünümü",
-      "projectItems_one": "{{count}} öğe",
-      "projectItems_other": "{{count}} öğe",
-      "chooseView": "Seç",
       "showOnRows": "Satırlarda göster",
-      "projectFields": "Proje alanları",
       "workspace": "Çalışma alanı",
-      "linearWorkspace": "Linear çalışma alanı",
       "layout": "Düzen",
       "groupBy": "Gruplama ölçütü",
       "orderBy": "Sıralama ölçütü",
-      "displayProperties": "Görüntülenecek özellikler",
       "title": "Filtrele ve göster",
-      "done": "Tamam",
-      "jqlReplacesPreset": "JQL aramanız “Göster” bölümündeki hazır filtrenin yerini alır. Yeniden hazır filtre seçmek için aramayı temizleyin."
-    },
-    "jiraViewControls": {
-      "jqlSearch": "JQL araması"
+      "done": "Tamam"
     },
     "itemComments": {
       "noComments": "Henüz yorum yok",
@@ -5329,7 +5214,6 @@
     },
     "webviewEngineErrorState": {
       "code": "kod {{code}}",
-      "reload": "Yeniden yükle",
       "rendererCrashed": "görüntüleyici çöktü",
       "status": "durum {{statusCode}}",
       "title": "Terminal yüklenemedi"
@@ -5438,7 +5322,6 @@
   },
   "automations": {
     "mobile": {
-      "extraAgentArguments": "Ek ajan argümanları",
       "allAutomations": "Tüm otomasyonlar",
       "schedule": "Zamanlama",
       "agent": "Ajan",
@@ -5451,8 +5334,6 @@
       "cancel": "İptal",
       "name": "Ad",
       "back": "Geri",
-      "continue": "Devam Et",
-      "createAutomation": "Otomasyon oluştur",
       "automations": "Otomasyonlar",
       "runs": "Çalıştırmalar",
       "refresh": "Yenile",
@@ -5476,40 +5357,17 @@
       "host": "Sunucu",
       "pending": "Beklemede",
       "starting": "Başlatılıyor",
-      "baseBranchOptional": "Temel dal (isteğe bağlı)",
-      "workspaceSetupScript": "Çalışma alanı kurulum betiği",
-      "useProjectSettings": "Proje ayarlarını kullan",
-      "runSetupScript": "Kurulum betiğini çalıştır",
-      "skipSetupScript": "Kurulum betiğini atla",
       "reuseAgentSession": "Aracı oturumunu yeniden kullan",
-      "precheckCommandOptional": "Ön kontrol komutu (isteğe bağlı)",
-      "precheckTimeoutSeconds": "Ön kontrol zaman aşımı (saniye)",
-      "missedRunGraceMinutes": "Kaçırılan çalıştırma toleransı (dakika)",
-      "choose": "Seçin…",
       "runOnSchedule": "{{name}} zamanlamaya göre çalışsın",
       "noNextScheduledRun": "Sonraki zamanlanmış çalıştırma yok",
-      "newWorkspacePerRun": "Her çalıştırmada yeni çalışma alanı",
       "instructions": "Talimatlar",
       "runNow": "Şimdi çalıştır",
-      "savedAgent": "{{agent}} (kaydedildi)",
       "chooseAProjectSetUpOnThisHost": "Bu ana makinede kurulmuş bir proje seçin.",
       "newAutomation": "Yeni otomasyon",
-      "editorStep": "{{step}} / 3 · {{section}}",
-      "retryProjectLoading": "Projeleri yeniden yükle",
-      "loadingProjects": "Projeler yükleniyor…",
-      "projectAndHostSetup": "Proje ve ana makine kurulumu",
       "savedTarget": "Kaydedilen hedef",
-      "useAnExistingWorkspace": "Mevcut bir çalışma alanını kullan",
-      "existingWorkspace": "Mevcut çalışma alanı",
       "savedWorkspace": "Kaydedilen çalışma alanı",
       "loadMoreWorkspaces": "Daha fazla çalışma alanı yükle",
-      "thisHostSWorkspaceInventoryIsIncompleteRefreshOrLoadMoreWorkspaces": "Bu ana makinenin çalışma alanı envanteri eksik. Yenileyin veya daha fazla çalışma alanı yükleyin.",
-      "agentDetecting": "Aracı · algılanıyor…",
       "installAndEnableAnAgentOnThisHostThenRetry": "Bu ana makineye bir aracı yükleyip etkinleştirin, sonra tekrar deneyin.",
-      "hideAdvancedOptions": "Gelişmiş seçenekleri gizle",
-      "advancedOptions": "Gelişmiş seçenekler",
-      "chooseAnAgent": "Bir aracı seçin",
-      "saveChanges": "Değişiklikleri kaydet",
       "loadingAutomations": "Otomasyonlar yükleniyor…",
       "letYourAgentsWorkOnASchedule": "Aracılarınız bir programa göre çalışsın",
       "createAnAutomationToRunATaskOnThisHost": "Bu ana makinede görev çalıştırmak için bir otomasyon oluşturun.",
@@ -5540,12 +5398,7 @@
       "scheduled": "Zamanlandı",
       "loadMoreRuns": "Daha fazla çalıştırma yükle",
       "customCronOrRRULE": "Özel Cron veya RRULE",
-      "cronOrRRULE": "Cron veya RRULE",
-      "minuteFromHHMM": "Dakika (SS:DD biçiminden)",
-      "timeHHMM24Hour": "Saat (SS:DD, 24 saat)",
-      "useATimeSuchAs0900": "09:00 gibi bir saat kullanın.",
       "timeZone": "Saat dilimi",
-      "runsOnTheSelectedHostKeepThatHostAvailableAtTheScheduledTime": "Seçilen ana makinede çalışır. Zamanlanan saatte ana makineyi kullanılabilir tutun.",
       "pairedHost": "Eşleştirilmiş ana makine",
       "selectedServerUnavailable": "Seçilen sunucu (kullanılamıyor)",
       "addANameInstructionsAndAnAgent": "Bir ad, talimatlar ve bir aracı ekleyin.",
@@ -5573,15 +5426,12 @@
       "unknownResult": "Bilinmeyen sonuç",
       "notReported": "Bildirilmedi",
       "searchOptions": "Seçenekleri ara",
-      "task": "Görev",
-      "review": "İncele",
       "discardChangesTitle": "Değişiklikler atılsın mı?",
       "discardChangesMessage": "Bu otomasyondaki kaydedilmemiş düzenlemeler kaybolacak.",
       "discard": "Değişiklikleri at",
       "keepEditing": "Düzenlemeye devam et",
       "on": "Açık",
       "repeats": "Tekrar",
-      "newOnePerRun": "Her çalıştırmada yeni",
       "moreActions": "Diğer işlemler",
       "noRunsYet": "Henüz çalıştırma yok",
       "nextRunToday": "Sonraki çalıştırma bugün {{time}}",
@@ -5699,7 +5549,6 @@
         }
       },
       "TaskPage": {
-        "99c2755218": "Sorun arayın veya JQL girin; ör. project = ABC",
         "jiraTextMatchesNotice": "Metin eşleşmeleri gösteriliyor. Jira bu aramayı JQL olarak çalıştıramadı."
       },
       "editor": {

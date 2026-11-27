@@ -131,37 +131,19 @@
     },
     "pairConfirm": {
       "backToHome": "ホームに戻る",
-      "connectTimedOut": "{{seconds}} 秒以内に接続できませんでした。どこで処理が止まったか、下のログで確認してください。",
       "connecting": "接続中…",
-      "description": "デスクトップのペアリングリンクを開きました。確認すると、このデスクトップがホスト一覧に追加されます。",
       "pairButton": "ペアリング",
-      "pairingFailed": "ペアリングに失敗しました：{{error}}",
-      "pairingLog": "ペアリングログ",
-      "title": "このデスクトップとペアリングしますか？"
+      "pairingFailed": "ペアリングに失敗しました：{{error}}"
     },
     "pairScan": {
-      "cameraDisabledDescription": "設定でカメラへのアクセスを有効にするか、ペアリングコードを貼り付けてください。",
-      "cameraDisabledTitle": "カメラへのアクセスが無効",
-      "cameraPermissionDescription": "デスクトップの Orca に表示された QR コードをスキャンするか、ペアリングコードを貼り付けてください。",
-      "connectTimedOut": "{{seconds}} 秒以内に接続できませんでした。どこで処理が止まったか、下のログで確認してください。",
       "connecting": "接続中…",
       "invalidPairingCode": "ペアリングコードが無効です。コンピュータからコピーして、もう一度貼り付けてください。",
       "invalidQrCode": "Orca の有効な QR コードではありません",
-      "downloadQrCode": "これはダウンロード用のコードです。デスクトップのステップ2にあるペアリングコードをスキャンしてください。",
-      "openDesktopStep": "コンピュータで Orca を開く",
-      "openMobileSettingsStep": "「設定」→「モバイル」を開く",
       "openSettings": "設定を開く",
       "pairingFailed": "ペアリングに失敗しました：{{error}}",
-      "pairingLog": "ペアリングログ",
       "pasteCodeMessage": "コンピュータの QR コードの下に表示されているコードをコピーしてください。",
       "pasteCodePlaceholder": "orca://pair?code=... またはコードを貼り付け",
       "pasteCodeTitle": "ペアリングコードを貼り付け",
-      "pasteInstead": "代わりにコードを貼り付け",
-      "pastePairingCode": "ペアリングコードを貼り付け",
-      "scanCodeStep": "QR コードをスキャン",
-      "title": "デスクトップのペアリング",
-      "tryAgain": "再試行",
-      "codeNoLongerValid": "このペアリングコードは期限切れ、使用済み、または置き換え済みです。デスクトップで新しいコードを表示して、もう一度スキャンしてください。",
       "runtimeAccessLink": "このリンクは別の Orca アプリ用です。コンピュータの「設定」→「モバイル」にあるコードをスキャンするか、サーバーで orca pair --mobile を実行してください。"
     },
     "terminalSettings": {
@@ -1966,17 +1948,6 @@
       "toggleFailed": "{{name}} を更新できませんでした",
       "updateDesktop": "自動化を使用するには、{{desktop}} の Orca を更新してください。"
     },
-    "emptyState": {
-      "connectedDescription": "デスクトップがここに表示されます。すべての通信はエンドツーエンドで暗号化されます。",
-      "connectedTitle": "接続完了",
-      "description": "コンピュータ上の Orca とペアリングすると、スマートフォンから Agent の状況を確認したり、任意のターミナルを操作したりして、作業を進められます。",
-      "pairDesktopButton": "デスクトップとペアリング",
-      "scanCodeBelowDescription": "下の「デスクトップとペアリング」をタップし、画面に表示された QR コードにカメラを向けてください。",
-      "openDesktopDescription": "「設定」→「モバイル」を開き、ペアリング用の QR コードを生成してください。",
-      "openDesktopTitle": "デスクトップで Orca を開く",
-      "scanCodeTitle": "コードをスキャン",
-      "title": "デスクトップに接続"
-    },
     "listFooter": {
       "hostPickerTitle": "タスクを開くホスト"
     },
@@ -2281,16 +2252,11 @@
       "waitingOnYou": "対応を待っています。"
     },
     "onboardingPage": {
-      "enableAgentNotifications": "Agent の通知を有効にする",
       "enableNotifications": "通知を有効にする",
       "keepTerminal": "ターミナルのままにする",
       "notNow": "後で",
-      "notificationsDescription": "アプリを使用していないときでも、Agent の作業が完了したときや対応待ちになったときに、このスマートフォンに通知が届きます。",
-      "notificationsDisclosure": "デスクトップで3分間操作がないと、Orca のプッシュ通知サービスを通じて配信されます。「設定」でいつでも変更できます。",
       "notificationsTitle": "Agent からの呼びかけを見逃さない",
-      "openInChatUi": "セッションをチャット UI で開く",
       "openInTerminal": "セッションをターミナルで開く",
-      "sessionViewDescription": "この端末で、対応する Agent セッションをターミナルとチャット UI のどちらで開くか選択してください。セッションタブを長押しすると表示を切り替えられます。デフォルトはいつでも「設定」→「Chat UI」で変更できます。",
       "sessionViewTitle": "セッションの表示方法は？",
       "skipNotifications": "今は通知を有効にしない",
       "useChatUi": "チャット UI を使用"
@@ -2639,7 +2605,6 @@
       "creatingTab": "作成中…",
       "fileTitle": "ファイル",
       "loadingTerminal": "ターミナルを読み込み中…",
-      "retryLoadingTerminal": "ターミナルの読み込みを再試行",
       "terminalTakingLonger": "ターミナルの読み込みに予想以上の時間がかかっています。"
     },
     "agentChildRow": {
@@ -3424,14 +3389,9 @@
     "terminalLayoutSheet": {
       "title": "ターミナルのレイアウト",
       "oneTerminal": "ターミナル1つ",
-      "selected": "選択中",
       "auto": "自動",
-      "autoHint": "利用可能なスペースに合わせて分割",
       "sideBySide": "左右に並べる",
-      "sideBySideHint": "サイドバーを開いていても2列で表示",
-      "stacked": "上下に並べる",
-      "stackedHint": "画面の向きに関係なく2行で表示",
-      "selectedHint": "選択中 · {{hint}}"
+      "stacked": "上下に並べる"
     },
     "terminalSplitLayout": {
       "saveFailedTitle": "レイアウトを保存できませんでした",
@@ -3452,8 +3412,7 @@
     "terminalPaneView": {
       "focusedPane": "{{title}}、フォーカス中",
       "terminal": "ターミナル",
-      "tapToFocusPane": "{{title}}、タップしてフォーカス",
-      "inputPane": "{{title}} · 入力"
+      "tapToFocusPane": "{{title}}、タップしてフォーカス"
     },
     "structuredOpen": {
       "goneGeneric": "Agent のチャットはこのホスト上に存在しないため、ここで再度開くことはできません。",
@@ -4327,24 +4286,11 @@
     "filterPickers": {
       "allTeams": "全チーム",
       "changeStatus": "ステータスを変更",
-      "fieldHidden": "カードでは非表示",
-      "fieldShown": "カードに表示",
-      "fieldsSubtitle": "アイテムカードに表示するプロジェクトのフィールドを選択してください。",
-      "fieldsTitle": "プロジェクトのフィールド",
-      "gitlabFilter": "GitLab フィルター",
-      "gitlabView": "GitLab ビュー",
-      "jiraFilter": "Jira フィルター",
-      "jiraSite": "Jira サイト",
       "statesFailed": "状態を読み込めませんでした。開き直して再試行してください。",
-      "linearFilter": "Linear フィルター",
       "linearIssue": "Linear Issue",
-      "linearWorkspace": "Linear ワークスペース",
       "loadingStates": "ステータスを読み込み中…",
-      "noFields": "このビューに表示できる追加フィールドはありません。",
       "noStates": "利用可能なステータスがありません。",
       "switchWorkspaceFailed": "ワークスペースの切り替えに失敗しました",
-      "teamsSubtitle": "「タスク」に表示するチームを選択してください。",
-      "teamsTitle": "Linear チーム",
       "teams_one": "{{count}} チーム",
       "teams_other": "{{count}} チーム"
     },
@@ -4491,9 +4437,6 @@
     "linearList": {
       "changeStatusFrom": "状態を「{{status}}」から変更"
     },
-    "listDisplayPickers": {
-      "displayPropertiesTitle": "表示項目"
-    },
     "listSurface": {
       "connectLinearButton": "Linear に接続",
       "connectLinearMessage": "「タスク」から、担当する Linear の Issue を確認して作業を開始できます。",
@@ -4547,7 +4490,6 @@
       "projectMergeRequests": "プロジェクトの MR",
       "projectMergeRequestsDescription": "リポジトリ別の MR と Issue",
       "projects": "プロジェクト",
-      "pullRequests": "PR",
       "repository": "リポジトリ",
       "repositorySortDescription": "リポジトリ別にグループ化し、アクティビティが新しい順に表示",
       "reviewRequestsDescription": "私に割り当てられたレビュー依頼",
@@ -4558,32 +4500,18 @@
     },
     "pagination": {
       "pageUnreachable": "ページ {{page}} は GitHub 検索で取得できる範囲を超えています。",
-      "loadPageFailed": "ページ {{page}} を GitHub から読み込めませんでした。",
-      "noMoreResults": "ページ {{page}} にこれ以上の結果はありません。"
+      "loadPageFailed": "ページ {{page}} を GitHub から読み込めませんでした。"
     },
     "filterSheet": {
-      "sortBy": "並べ替え",
       "issueSource": "Issue ソース",
-      "issueSourceRow": "upstream または origin",
       "view": "表示",
-      "projectView": "プロジェクトビュー",
-      "projectItems_one": "{{count}} 件のアイテム",
-      "projectItems_other": "{{count}} 件のアイテム",
-      "chooseView": "選択",
       "showOnRows": "行に表示",
-      "projectFields": "プロジェクトのフィールド",
       "workspace": "ワークスペース",
-      "linearWorkspace": "Linear ワークスペース",
       "layout": "レイアウト",
       "groupBy": "グループ化",
       "orderBy": "並び順",
-      "displayProperties": "表示プロパティ",
       "title": "フィルターと表示",
-      "done": "完了",
-      "jqlReplacesPreset": "JQL 検索中は「表示」のプリセットが置き換えられます。プリセットを選び直すには、検索をクリアしてください。"
-    },
-    "jiraViewControls": {
-      "jqlSearch": "JQL 検索"
+      "done": "完了"
     },
     "itemComments": {
       "noComments": "コメントはまだありません",
@@ -4711,42 +4639,8 @@
       "reviewers": "レビュアー",
       "viewFile": "表示"
     },
-    "providerControls": {
-      "myTodos": "自分の ToDo",
-      "reposLabel": "リポジトリ: {{repos}}",
-      "filterCount": "フィルター · {{count}}",
-      "filter": "フィルター",
-      "filterLabel": "フィルターと表示",
-      "projectMergeRequests": "プロジェクトの MR"
-    },
-    "providerItemList": {
-      "intoBranch": "{{base}} へ",
-      "kindAndStatus": "{{kind}}、{{status}}",
-      "nextPage": "次のページ",
-      "page": "{{page}} ページ",
-      "pageOfTotal": "{{page}} / {{total}} ページ",
-      "previousPage": "前のページへ",
-      "selectPage": "ページを選択、{{page}} ページ",
-      "selectPageOfTotal": "ページを選択、全 {{total}} ページ中 {{page}} ページ"
-    },
     "providerPickers": {
-      "allRepositories": "すべてのリポジトリ",
-      "githubView": "GitHub の表示",
-      "issueSources": "GitHub Issue の取得元",
-      "issueSourcesDescription": "リポジトリごとに、検索や作業の作成に使うソースを upstream または origin から選択してください。",
-      "issues": "Issue",
-      "noIssueSources": "ほかに利用できる Issue の取得元はありません。",
-      "origin": "origin",
-      "pageHint": "読み込み済みまたは利用可能な結果ページに移動します。",
-      "pageLoaded": "読み込み済み",
-      "pageNotLoaded": "以前の結果を読み込み",
-      "pageNumber": "{{page}} ページ",
-      "pages": "GitHub の結果ページ",
-      "pullRequests": "PR",
-      "queryingSource": "検索対象: {{source}}",
-      "repoDescription": "検索対象のリポジトリを選択してください。",
-      "repos": "リポジトリ",
-      "upstream": "upstream"
+      "allRepositories": "すべてのリポジトリ"
     },
     "providerViewProjection": {
       "all": "全て",
@@ -4755,7 +4649,6 @@
       "allWorkspaces": "すべてのワークスペース",
       "chooseProject": "プロジェクトを選択",
       "default": "デフォルト",
-      "defaultSubtitle": "{{subtitle}} · デフォルト",
       "issues": "Issue",
       "openState": "オープン",
       "projects": "プロジェクト",
@@ -4771,15 +4664,7 @@
     "screenChrome": {
       "newGitHubIssue": "GitHub の新規 Issue",
       "newLinearIssue": "新規 Linear Issue",
-      "refreshGitHub": "GitHub の作業を更新する",
-      "refreshGitLab": "GitLab 作業項目を更新する",
-      "refreshJira": "Jira Issue を更新する",
-      "refreshLinear": "Linear を更新",
       "title": "タスク"
-    },
-    "searchControl": {
-      "projectPlaceholder": "プロジェクトビューを検索…",
-      "providerPlaceholder": "{{provider}} のタスクを検索…"
     },
     "smartSourceModes": {
       "allStates": "全て",
@@ -4926,7 +4811,6 @@
     },
     "webviewEngineErrorState": {
       "code": "コード {{code}}",
-      "reload": "再読み込み",
       "rendererCrashed": "レンダラーがクラッシュしました",
       "status": "ステータス {{statusCode}}",
       "title": "ターミナルの読み込みに失敗しました"
@@ -5035,7 +4919,6 @@
   },
   "automations": {
     "mobile": {
-      "extraAgentArguments": "追加の Agent 引数",
       "allAutomations": "すべての自動化",
       "schedule": "スケジュール",
       "project": "プロジェクト",
@@ -5047,8 +4930,6 @@
       "cancel": "キャンセル",
       "name": "名前",
       "back": "戻る",
-      "continue": "続行",
-      "createAutomation": "オートメーションの作成",
       "automations": "自動化",
       "runs": "実行履歴",
       "refresh": "更新",
@@ -5072,41 +4953,18 @@
       "host": "ホスト",
       "pending": "保留中",
       "starting": "起動中",
-      "baseBranchOptional": "ベースブランチ（任意）",
-      "workspaceSetupScript": "ワークスペースのセットアップスクリプト",
-      "useProjectSettings": "プロジェクト設定を使用",
-      "runSetupScript": "セットアップスクリプトを実行",
-      "skipSetupScript": "セットアップスクリプトをスキップ",
       "reuseAgentSession": "Agentセッションを再利用",
-      "precheckCommandOptional": "事前チェックコマンド（任意）",
-      "precheckTimeoutSeconds": "事前チェックのタイムアウト（秒）",
-      "missedRunGraceMinutes": "実行遅延の猶予（分）",
-      "choose": "選択…",
       "runOnSchedule": "{{name}} をスケジュール実行",
       "noNextScheduledRun": "次回の実行予定はありません",
       "agent": "Agent",
-      "newWorkspacePerRun": "実行ごとに新しいワークスペース",
       "instructions": "指示",
       "runNow": "今すぐ実行",
-      "savedAgent": "{{agent}}（保存済み）",
       "chooseAProjectSetUpOnThisHost": "このホストに設定されたプロジェクトを選択してください。",
       "newAutomation": "新しい自動化",
-      "editorStep": "{{step}} / 3 · {{section}}",
-      "retryProjectLoading": "プロジェクトを再読み込み",
-      "loadingProjects": "プロジェクトを読み込み中…",
-      "projectAndHostSetup": "プロジェクトとホストの設定",
       "savedTarget": "保存済みの対象",
-      "useAnExistingWorkspace": "既存のワークスペースを使用",
-      "existingWorkspace": "既存のワークスペース",
       "savedWorkspace": "保存済みのワークスペース",
       "loadMoreWorkspaces": "ワークスペースをさらに読み込む",
-      "thisHostSWorkspaceInventoryIsIncompleteRefreshOrLoadMoreWorkspaces": "このホストのワークスペース一覧は不完全です。更新するか、さらに読み込んでください。",
-      "agentDetecting": "Agent · 検出中…",
       "installAndEnableAnAgentOnThisHostThenRetry": "このホストにAgentをインストールして有効にし、再試行してください。",
-      "hideAdvancedOptions": "詳細オプションを隠す",
-      "advancedOptions": "詳細オプション",
-      "chooseAnAgent": "Agentを選択",
-      "saveChanges": "変更を保存",
       "loadingAutomations": "自動化を読み込み中…",
       "letYourAgentsWorkOnASchedule": "Agentをスケジュールに従って実行",
       "createAnAutomationToRunATaskOnThisHost": "このホストでタスクを実行する自動化を作成します。",
@@ -5137,12 +4995,7 @@
       "scheduled": "スケジュール実行",
       "loadMoreRuns": "実行をさらに読み込む",
       "customCronOrRRULE": "カスタム Cron または RRULE",
-      "cronOrRRULE": "Cron または RRULE",
-      "minuteFromHHMM": "分（HH:MM から）",
-      "timeHHMM24Hour": "時刻（HH:MM、24 時間制）",
-      "useATimeSuchAs0900": "09:00 のような時刻を使用してください。",
       "timeZone": "タイムゾーン",
-      "runsOnTheSelectedHostKeepThatHostAvailableAtTheScheduledTime": "選択したホストで実行します。予定時刻にホストを利用可能にしておいてください。",
       "pairedHost": "ペアリング済みホスト",
       "chooseHost": "{{host}} の自動化、別のホストを選択",
       "selectedServerUnavailable": "選択したサーバー（利用不可）",
@@ -5171,15 +5024,12 @@
       "unknownResult": "不明な結果",
       "notReported": "未報告",
       "searchOptions": "オプションを検索",
-      "task": "タスク",
-      "review": "確認",
       "discardChangesTitle": "変更を破棄しますか？",
       "discardChangesMessage": "この自動化への未保存の変更は失われます。",
       "discard": "破棄",
       "keepEditing": "編集を続ける",
       "on": "オン",
       "repeats": "繰り返し",
-      "newOnePerRun": "実行ごとに新規作成",
       "moreActions": "その他の操作",
       "noRunsYet": "実行はまだありません",
       "nextRunToday": "次回：今日 {{time}}",
@@ -5255,7 +5105,6 @@
         }
       },
       "TaskPage": {
-        "99c2755218": "Issue を検索するか JQL を入力、例: project = ABC",
         "jiraTextMatchesNotice": "テキスト一致を表示しています。Jira はこの検索を JQL として実行できませんでした。"
       },
       "editor": {

@@ -139,37 +139,19 @@
     },
     "pairConfirm": {
       "backToHome": "На главный экран",
-      "connectTimedOut": "Не удалось подключиться за {{seconds}} с — посмотрите в журнале ниже, на каком этапе остановилось подключение",
       "connecting": "Подключение…",
-      "description": "Вы открыли ссылку сопряжения, полученную с компьютера. Подтвердите, чтобы добавить его в список серверов.",
       "pairButton": "Выполнить сопряжение",
-      "pairingFailed": "Не удалось выполнить сопряжение: {{error}}",
-      "pairingLog": "Журнал сопряжения",
-      "title": "Выполнить сопряжение с этим компьютером?"
+      "pairingFailed": "Не удалось выполнить сопряжение: {{error}}"
     },
     "pairScan": {
-      "cameraDisabledDescription": "Разрешите доступ к камере в настройках или вставьте код сопряжения.",
-      "cameraDisabledTitle": "Доступ к камере отключён",
-      "cameraPermissionDescription": "Отсканируйте QR-код в Orca на компьютере или вставьте код сопряжения.",
-      "connectTimedOut": "Не удалось подключиться за {{seconds}} с — посмотрите в журнале ниже, на каком этапе остановилось подключение",
       "connecting": "Подключение…",
       "invalidPairingCode": "Неверный код сопряжения — скопируйте его с компьютера и вставьте ещё раз",
       "invalidQrCode": "Неверный QR-код Orca",
-      "downloadQrCode": "Это код для скачивания. Отсканируйте код сопряжения на шаге 2 на компьютере.",
-      "openDesktopStep": "Откройте Orca на компьютере",
-      "openMobileSettingsStep": "Перейдите в «Настройки → Мобильный доступ»",
       "openSettings": "Открыть настройки",
       "pairingFailed": "Не удалось выполнить сопряжение: {{error}}",
-      "pairingLog": "Журнал сопряжения",
       "pasteCodeMessage": "Скопируйте код, показанный под QR-кодом на компьютере.",
       "pasteCodePlaceholder": "orca://pair?code=... или вставьте код",
       "pasteCodeTitle": "Вставить код сопряжения",
-      "pasteInstead": "Вставить код",
-      "pastePairingCode": "Вставить код сопряжения",
-      "scanCodeStep": "Отсканируйте QR-код",
-      "title": "Сопряжение с компьютером",
-      "tryAgain": "Повторить попытку",
-      "codeNoLongerValid": "Этот код сопряжения истёк, уже использован или был заменён. Покажите новый код на компьютере и отсканируйте его снова.",
       "runtimeAccessLink": "Эта ссылка предназначена для другого приложения Orca. Отсканируйте код в «Настройки → Мобильный доступ» на компьютере или выполните orca pair --mobile на сервере."
     },
     "terminalSettings": {
@@ -2436,17 +2418,6 @@
       "toggleFailed": "Не удалось обновить {{name}}",
       "updateDesktop": "Обновите Orca на {{desktop}}, чтобы использовать автоматизации."
     },
-    "emptyState": {
-      "connectedDescription": "Здесь появится ваш компьютер. Все данные защищены сквозным шифрованием.",
-      "connectedTitle": "Вы подключены",
-      "description": "Подключитесь к Orca на компьютере, чтобы следить за агентами, открывать любой терминал и управлять работой с телефона.",
-      "openDesktopDescription": "Откройте «Настройки» → «Мобильный доступ» и создайте QR-код для сопряжения.",
-      "openDesktopTitle": "Откройте Orca на компьютере",
-      "scanCodeTitle": "Отсканируйте код",
-      "title": "Подключите компьютер",
-      "pairDesktopButton": "Сопрячь компьютер",
-      "scanCodeBelowDescription": "Нажмите «Сопрячь компьютер» ниже, затем наведите камеру на QR-код на экране."
-    },
     "listFooter": {
       "hostPickerTitle": "Открыть задачи на сервере"
     },
@@ -2786,16 +2757,11 @@
       "waitingOnYou": "Ожидает ваших действий."
     },
     "onboardingPage": {
-      "enableAgentNotifications": "Включить уведомления агентов",
       "enableNotifications": "Включить уведомления",
       "keepTerminal": "Оставить терминал",
       "notNow": "Не сейчас",
-      "notificationsDescription": "Получайте уведомления на этом телефоне, когда агент завершает работу или ждёт ваших действий, даже если вы не пользуетесь приложением.",
-      "notificationsDisclosure": "Уведомления доставляются через сервис push-уведомлений Orca после 3 минут бездействия на компьютере. Это можно в любой момент изменить в настройках.",
       "notificationsTitle": "Узнавайте, когда агенту нужна ваша помощь",
-      "openInChatUi": "Открывать сессии в интерфейсе чата",
       "openInTerminal": "Открывать сессии в терминале",
-      "sessionViewDescription": "Выберите, где на этом устройстве открывать поддерживаемые сессии агентов: в терминале или интерфейсе чата. Чтобы сменить режим просмотра, нажмите и удерживайте вкладку сессии. Режим по умолчанию можно изменить в любой момент в разделе Настройки → Интерфейс чата.",
       "sessionViewTitle": "Как открывать сессии?",
       "skipNotifications": "Пока не включать уведомления",
       "useChatUi": "Использовать чат"
@@ -3188,7 +3154,6 @@
       "creatingTab": "Создание…",
       "fileTitle": "Файл",
       "loadingTerminal": "Загрузка терминала",
-      "retryLoadingTerminal": "Повторить загрузку терминала",
       "terminalTakingLonger": "Загрузка терминала занимает больше времени, чем ожидалось"
     },
     "agentChildRow": {
@@ -4015,14 +3980,9 @@
     "terminalLayoutSheet": {
       "title": "Расположение терминалов",
       "oneTerminal": "Один терминал",
-      "selected": "Выбрано",
       "auto": "Авто",
-      "autoHint": "Разделить с учётом доступного места",
       "sideBySide": "Рядом",
-      "sideBySideHint": "Два столбца, даже при открытой боковой панели",
-      "stacked": "Друг над другом",
-      "stackedHint": "Две строки при любой ориентации",
-      "selectedHint": "Выбрано · {{hint}}"
+      "stacked": "Друг над другом"
     },
     "terminalSplitLayout": {
       "saveFailedTitle": "Не удалось сохранить расположение",
@@ -4043,8 +4003,7 @@
     "terminalPaneView": {
       "focusedPane": "{{title}}, в фокусе",
       "terminal": "Терминал",
-      "tapToFocusPane": "{{title}}, нажмите для фокусировки",
-      "inputPane": "{{title}} · Ввод"
+      "tapToFocusPane": "{{title}}, нажмите для фокусировки"
     },
     "structuredOpen": {
       "worktreeDeleted": "Рабочее дерево удалено.",
@@ -4991,8 +4950,7 @@
     },
     "pagination": {
       "pageUnreachable": "Страница {{page}} выходит за пределы результатов поиска GitHub.",
-      "loadPageFailed": "Не удалось загрузить страницу {{page}} из GitHub.",
-      "noMoreResults": "На странице {{page}} больше нет результатов."
+      "loadPageFailed": "Не удалось загрузить страницу {{page}} из GitHub."
     },
     "composerSource": {
       "baseFailed": "Не удалось определить базовую ветку.",
@@ -5015,23 +4973,10 @@
     "filterPickers": {
       "allTeams": "Все команды",
       "changeStatus": "Изменить статус",
-      "fieldHidden": "Скрыто на карточках",
-      "fieldShown": "Показано на карточках",
-      "fieldsSubtitle": "Выберите, какие поля проекта показывать на карточках элементов.",
-      "fieldsTitle": "Поля проекта",
-      "gitlabFilter": "Фильтр GitLab",
-      "gitlabView": "Представление GitLab",
-      "jiraFilter": "Фильтр Jira",
-      "jiraSite": "Сайт Jira",
-      "linearFilter": "Фильтр Linear",
       "linearIssue": "Задача Linear",
-      "linearWorkspace": "Рабочее пространство Linear",
       "loadingStates": "Загрузка статусов…",
-      "noFields": "В этом представлении нет дополнительных полей.",
       "noStates": "Нет доступных статусов",
       "switchWorkspaceFailed": "Не удалось сменить рабочее пространство",
-      "teamsSubtitle": "Выберите команды для отображения в разделе «Задачи».",
-      "teamsTitle": "Команды Linear",
       "teams_few": "{{count}} команды",
       "teams_many": "{{count}} команд",
       "teams_one": "{{count}} команда",
@@ -5177,9 +5122,6 @@
     "linearList": {
       "changeStatusFrom": "Изменить статус «{{status}}»"
     },
-    "listDisplayPickers": {
-      "displayPropertiesTitle": "Отображаемые поля"
-    },
     "listSurface": {
       "connectLinearButton": "Подключить Linear",
       "connectLinearMessage": "Просматривайте назначенные вам задачи Linear и начинайте работу над ними прямо в разделе «Задачи».",
@@ -5233,7 +5175,6 @@
       "projectMergeRequests": "MR проекта",
       "projectMergeRequestsDescription": "Запросы на слияние и задачи по репозиториям",
       "projects": "Проекты",
-      "pullRequests": "PR",
       "repository": "Репозиторий",
       "repositorySortDescription": "По репозиториям, внутри — сначала недавно обновлённые",
       "reviewRequestsDescription": "Запросы на проверку, назначенные вам",
@@ -5358,42 +5299,8 @@
       "reviewers": "Рецензенты",
       "viewFile": "Просмотреть"
     },
-    "providerControls": {
-      "myTodos": "Мои дела",
-      "projectMergeRequests": "MR проекта",
-      "reposLabel": "Репозитории: {{repos}}",
-      "filterCount": "Фильтр · {{count}}",
-      "filter": "Фильтр",
-      "filterLabel": "Фильтр и отображение"
-    },
-    "providerItemList": {
-      "intoBranch": "в {{base}}",
-      "nextPage": "Следующая страница",
-      "page": "Страница {{page}}",
-      "pageOfTotal": "Страница {{page}} из {{total}}",
-      "previousPage": "Предыдущая страница",
-      "selectPage": "Выбрать страницу, страница {{page}}",
-      "selectPageOfTotal": "Выбрать страницу, страница {{page}} из {{total}}",
-      "kindAndStatus": "{{kind}}, {{status}}"
-    },
     "providerPickers": {
-      "allRepositories": "Все репозитории",
-      "githubView": "Режим GitHub",
-      "issueSources": "Источники задач GitHub",
-      "issueSourcesDescription": "Выберите для каждого репозитория, где искать и создавать задачи: upstream или origin.",
-      "issues": "Задачи",
-      "noIssueSources": "Другие источники задач недоступны.",
-      "origin": "Исходный репозиторий",
-      "pageHint": "Перейдите на загруженную или доступную страницу результатов.",
-      "pageLoaded": "Загружена",
-      "pageNotLoaded": "Загрузит более ранние результаты",
-      "pageNumber": "Страница {{page}}",
-      "pages": "Страницы GitHub",
-      "pullRequests": "Пул-реквесты",
-      "queryingSource": "Запрос к {{source}}",
-      "repoDescription": "Выберите репозитории для поиска.",
-      "repos": "Репозитории",
-      "upstream": "Вышестоящий репозиторий"
+      "allRepositories": "Все репозитории"
     },
     "providerViewProjection": {
       "all": "Все",
@@ -5402,7 +5309,6 @@
       "allWorkspaces": "Все рабочие пространства",
       "chooseProject": "Выбрать проект",
       "default": "По умолчанию",
-      "defaultSubtitle": "{{subtitle}} · По умолчанию",
       "issues": "Задачи",
       "openState": "Открытые",
       "projects": "Проекты",
@@ -5420,15 +5326,7 @@
     "screenChrome": {
       "newGitHubIssue": "Новая задача GitHub",
       "newLinearIssue": "Новая задача Linear",
-      "refreshGitHub": "Обновить задачи GitHub",
-      "refreshGitLab": "Обновить задачи GitLab",
-      "refreshJira": "Обновить задачи Jira",
-      "refreshLinear": "Обновить Linear",
       "title": "Задачи"
-    },
-    "searchControl": {
-      "projectPlaceholder": "Поиск в проекте…",
-      "providerPlaceholder": "Поиск задач {{provider}}…"
     },
     "smartSourceModes": {
       "allStates": "Все",
@@ -5548,30 +5446,15 @@
       "createFailed": "Не удалось создать рабочее пространство"
     },
     "filterSheet": {
-      "sortBy": "Сортировать по",
       "issueSource": "Источник задач",
-      "issueSourceRow": "Upstream или origin",
       "view": "Вид",
-      "projectView": "Вид проекта",
-      "projectItems_one": "{{count}} элемент",
-      "projectItems_other": "{{count}} элемента",
-      "projectItems_few": "{{count}} элемента",
-      "projectItems_many": "{{count}} элементов",
-      "chooseView": "Выбрать",
       "showOnRows": "Показывать в строках",
-      "projectFields": "Поля проекта",
       "workspace": "Рабочее пространство",
-      "linearWorkspace": "Рабочее пространство Linear",
       "layout": "Макет",
       "groupBy": "Группировать по",
       "orderBy": "Упорядочить по",
-      "displayProperties": "Свойства отображения",
       "title": "Фильтр и отображение",
-      "done": "Готово",
-      "jqlReplacesPreset": "Ваш поиск JQL заменяет пресет «Показать». Очистите поиск, чтобы снова выбрать пресет."
-    },
-    "jiraViewControls": {
-      "jqlSearch": "Поиск JQL"
+      "done": "Готово"
     },
     "itemComments": {
       "noComments": "Комментариев пока нет",
@@ -5619,7 +5502,6 @@
     },
     "webviewEngineErrorState": {
       "code": "код {{code}}",
-      "reload": "Перезагрузить",
       "rendererCrashed": "сбой процесса отрисовки",
       "status": "статус {{statusCode}}",
       "title": "Не удалось загрузить терминал"
@@ -5734,7 +5616,6 @@
   },
   "automations": {
     "mobile": {
-      "extraAgentArguments": "Дополнительные аргументы агента",
       "allAutomations": "Все автоматизации",
       "schedule": "Расписание",
       "agent": "Агент",
@@ -5747,8 +5628,6 @@
       "cancel": "Отмена",
       "name": "Название",
       "back": "Назад",
-      "continue": "Продолжить",
-      "createAutomation": "Создать автоматизацию",
       "automations": "Автоматизации",
       "runs": "Запуски",
       "refresh": "Обновить",
@@ -5772,40 +5651,17 @@
       "host": "Сервер",
       "pending": "Ожидание",
       "starting": "Запуск",
-      "baseBranchOptional": "Базовая ветка (необязательно)",
-      "workspaceSetupScript": "Скрипт настройки рабочей области",
-      "useProjectSettings": "Использовать настройки проекта",
-      "runSetupScript": "Выполнить скрипт настройки",
-      "skipSetupScript": "Пропустить скрипт настройки",
       "reuseAgentSession": "Повторно использовать сеанс агента",
-      "precheckCommandOptional": "Команда предварительной проверки (необязательно)",
-      "precheckTimeoutSeconds": "Тайм-аут предварительной проверки (секунды)",
-      "missedRunGraceMinutes": "Допуск пропущенного запуска (минуты)",
-      "choose": "Выбрать…",
       "runOnSchedule": "Запускать {{name}} по расписанию",
       "noNextScheduledRun": "Следующий запуск не запланирован",
-      "newWorkspacePerRun": "Новая рабочая область для каждого запуска",
       "instructions": "Инструкции",
       "runNow": "Запустить сейчас",
-      "savedAgent": "{{agent}} (сохранён)",
       "chooseAProjectSetUpOnThisHost": "Выберите проект, настроенный на этом хосте.",
       "newAutomation": "Новая автоматизация",
-      "editorStep": "{{step}} из 3 · {{section}}",
-      "retryProjectLoading": "Повторить загрузку проектов",
-      "loadingProjects": "Загрузка проектов…",
-      "projectAndHostSetup": "Настройка проекта и хоста",
       "savedTarget": "Сохранённая цель",
-      "useAnExistingWorkspace": "Использовать существующую рабочую область",
-      "existingWorkspace": "Существующая рабочая область",
       "savedWorkspace": "Сохранённая рабочая область",
       "loadMoreWorkspaces": "Загрузить ещё рабочие области",
-      "thisHostSWorkspaceInventoryIsIncompleteRefreshOrLoadMoreWorkspaces": "Список рабочих областей хоста неполон. Обновите или загрузите ещё рабочие области.",
-      "agentDetecting": "Агент · обнаружение…",
       "installAndEnableAnAgentOnThisHostThenRetry": "Установите и включите агента на этом хосте, затем повторите попытку.",
-      "hideAdvancedOptions": "Скрыть дополнительные параметры",
-      "advancedOptions": "Дополнительные параметры",
-      "chooseAnAgent": "Выберите агента",
-      "saveChanges": "Сохранить изменения",
       "loadingAutomations": "Загрузка автоматизаций…",
       "letYourAgentsWorkOnASchedule": "Пусть агенты работают по расписанию",
       "createAnAutomationToRunATaskOnThisHost": "Создайте автоматизацию для выполнения задачи на этом хосте.",
@@ -5836,12 +5692,7 @@
       "scheduled": "По расписанию",
       "loadMoreRuns": "Загрузить ещё запуски",
       "customCronOrRRULE": "Свой Cron или RRULE",
-      "cronOrRRULE": "Cron или RRULE",
-      "minuteFromHHMM": "Минуты (из HH:MM)",
-      "timeHHMM24Hour": "Время (HH:MM, 24 часа)",
-      "useATimeSuchAs0900": "Укажите время, например 09:00.",
       "timeZone": "Часовой пояс",
-      "runsOnTheSelectedHostKeepThatHostAvailableAtTheScheduledTime": "Выполняется на выбранном хосте. Он должен быть доступен в назначенное время.",
       "pairedHost": "Сопряжённый хост",
       "selectedServerUnavailable": "Выбранный сервер (недоступен)",
       "addANameInstructionsAndAnAgent": "Добавьте название, инструкции и агента.",
@@ -5869,8 +5720,6 @@
       "unknownResult": "Неизвестный результат",
       "notReported": "Не сообщено",
       "searchOptions": "Поиск вариантов",
-      "task": "Задача",
-      "review": "Проверка",
       "discardChangesTitle": "Отменить изменения?",
       "discardChangesMessage": "Несохранённые изменения этой автоматизации будут потеряны.",
       "discard": "Отменить изменения",
@@ -5880,7 +5729,6 @@
       "repeats": "Повтор",
       "moreActions": "Другие действия",
       "noRunsYet": "Запусков пока нет",
-      "newOnePerRun": "Новое при каждом запуске",
       "nextRunToday": "Следующий запуск сегодня в {{time}}",
       "nextRunTomorrow": "Следующий запуск завтра в {{time}}",
       "nextRunWeekday": "Следующий запуск: {{day}}, {{time}}",
@@ -5995,7 +5843,6 @@
         }
       },
       "TaskPage": {
-        "99c2755218": "Найдите задачи или введите JQL, например project = ABC",
         "jiraTextMatchesNotice": "Показаны текстовые совпадения. Jira не удалось выполнить этот поиск как JQL."
       },
       "editor": {
